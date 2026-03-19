@@ -1,0 +1,3 @@
+CREATE SERVER IF NOT EXISTS file_server
+    FOREIGN DATA WRAPPER file_fdw;
+

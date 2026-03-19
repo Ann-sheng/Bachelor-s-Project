@@ -1,0 +1,11 @@
+
+
+CREATE SEQUENCE IF NOT EXISTS bl_dm.sq_supplier_surr_id     START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS bl_dm.sq_product_surr_id      START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS bl_dm.sq_customer_surr_id     START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS bl_dm.sq_employee_surr_id     START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS bl_dm.sq_store_branch_surr_id START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS bl_dm.sq_shipping_surr_id     START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS bl_dm.sq_junk_surr_id         START 1 INCREMENT 1;
+
+
