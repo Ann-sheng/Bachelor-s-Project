@@ -2,5 +2,7 @@ draft 1 creation - create DWH structure, create python code for data generation,
 
 
 
+draft 2 modify data loading process - incorporate could service for more realistic data loading, remove external tables use python to load from cloud into src layer
 
-draft 2 modify data loading process - incorporate could service for more realistic data loading, remove external tables load directly into the staging area 
+
+draft 3 create following pipelines setup, initial load, incremental load, +pipline runner as a custome orchestration layer/ move logging functionality for audit and bl_cn layers to python for security 
