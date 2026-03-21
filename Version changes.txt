@@ -1,6 +1,0 @@
-draft 1 creation - create DWH structure, create python code for data generation, first version of power bi report
-
-
-
-
-draft 2 modify data loading process - incorporate could service for more realistic data loading, remove external tables load directly into the staging area 
