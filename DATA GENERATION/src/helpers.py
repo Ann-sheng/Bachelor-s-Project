@@ -1,14 +1,12 @@
-# ================================================================
-# FILE    : src/helpers.py
-# PURPOSE : Utility functions shared between both generator scripts
-# ================================================================
+
+#  Utility functions shared between both generator scripts
 
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
 
 
-# ── Date utilities ────────────────────────────────────────────────
+#  Date utilities
 
 def date_range_days(start: str, end: str) -> int:
     """Number of calendar days between two YYYY-MM-DD strings."""
@@ -24,7 +22,6 @@ def generate_dates(n: int, start: str, end: str, rng: np.random.Generator) -> pd
     (simulating growing brand popularity).
     """
     delta = date_range_days(start, end)
-    # Linear upward weight: later dates are ~2x more likely than earliest
     weights = np.linspace(1.0, 2.0, delta)
     weights /= weights.sum()
 
@@ -40,7 +37,7 @@ def add_business_days(dates: pd.Series, min_days: int, max_days: int,
     return dates + pd.to_timedelta(offsets, unit="D")
 
 
-# ── ID generators ─────────────────────────────────────────────────
+# ID generators 
 
 def make_transaction_ids(n: int, prefix: str, start: int = 1) -> list:
     """e.g. prefix='OFF', start=1 → ['OFF0000001', 'OFF0000002', ...]"""
@@ -57,7 +54,7 @@ def make_short_ids(n: int, prefix: str, start: int = 1) -> list:
     return [f"{prefix}{str(i).zfill(3)}" for i in range(start, start + n)]
 
 
-# ── Personal data generators ──────────────────────────────────────
+#  Personal data generators
 
 def make_emails(firstnames, lastnames, domains, rng: np.random.Generator) -> list:
     """Deterministic-ish email from name + random suffix."""
@@ -85,13 +82,12 @@ def make_salaries(titles: list, salary_ranges: dict, rng: np.random.Generator) -
     salaries = []
     for title in titles:
         lo, hi = salary_ranges.get(title, (30_000, 50_000))
-        # Round to nearest 500
         val = int(rng.integers(lo, hi) / 500) * 500
         salaries.append(val)
     return salaries
 
 
-# ── Sale amount calculation ───────────────────────────────────────
+#  Sale amount calculation
 
 def calc_sale_amounts(quantities: np.ndarray,
                       unit_prices: np.ndarray,
@@ -104,7 +100,7 @@ def calc_sale_amounts(quantities: np.ndarray,
     return np.round(raw, 2)
 
 
-# ── Weighted random sampling wrapper ──────────────────────────────
+#  Weighted random sampling wrapper
 
 def weighted_choice(choices: list, weights: list, n: int,
                     rng: np.random.Generator) -> np.ndarray:

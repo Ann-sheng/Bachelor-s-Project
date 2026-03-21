@@ -1,15 +1,11 @@
-# ================================================================
-# FILE    : src/vintage_data.py
-# PURPOSE : All brand-specific reference data for
-#           Retrograde Collective – Vintage Unisex Clothing Brand
-# ================================================================
+
+#  All brand-specific reference data for  Retrograde Collective – Vintage Unisex Clothing Brand
+
 
 BRAND_NAME = "Retrograde Collective"
 
-# ── Products ──────────────────────────────────────────────────────
-# Format: (product_name, unit_cost, unit_price, warranty_months)
-# warranty_months = 0 means no warranty (soft goods rarely have one)
 
+# Format: (product_name, unit_cost, unit_price, warranty_months)
 PRODUCT_CATALOG = {
     "Jackets & Outerwear": [
         ("70s Quilted Puffer Jacket",       32,  88,  24),
@@ -288,7 +284,6 @@ INTL_CITIES = {
     "Netherlands":    ["Amsterdam", "Rotterdam", "The Hague", "Utrecht", "Eindhoven"],
 }
 
-# Unisex first names (fits the vintage unisex brand identity)
 FIRST_NAMES = [
     "Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Avery", "Quinn",
     "Harper", "Sage", "River", "Rowan", "Emery", "Blake", "Cameron", "Finley",
