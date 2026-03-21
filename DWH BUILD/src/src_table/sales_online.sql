@@ -1,6 +1,13 @@
 -- Raw source table - online sales
 
 CREATE TABLE IF NOT EXISTS src.sales_online (
+    --Row-level audit
+    src_id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+    batch_id        VARCHAR(50)     NOT NULL, 
+    load_type       VARCHAR(20)     NOT NULL, 
+    batch_dt        TIMESTAMP, 
+    staged_at       TIMESTAMP       NOT NULL DEFAULT NOW(), 
+    source_file     VARCHAR(500)    NOT NULL, 
 
     -- Customer 
     Customer_ID                  VARCHAR(255),
