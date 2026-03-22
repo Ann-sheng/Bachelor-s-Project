@@ -1,7 +1,21 @@
 draft 1 creation - create DWH structure, create python code for data generation, first version of power bi reporty/ correct any bugs found in prev version
 
-
 draft 2 modify data loading process - incorporate could service for more realistic data loading, remove external tables use python to load from cloud into src layery/ correct any bugs found in prev version
 
+draft 3 full system checkout - fix major bugs, improve code quality, result- runnable dwh
 
-draft 3 pipelines and logging - create following pipelines setup, initial load, incremental load, +pipeline runner as a custom orchestration layer/ move logging functionality for audit and bl_cn layers to python for security/ correct any bugs found in prev version
+draft 4 pipelines and logging - create following pipelines setup, initial load, incremental load, +pipeline runner as a custom orchestration layer/ move logging functionality for audit and bl_cn layers to python for security
+
+draft 5 second system checkout - last step before moving on from dwh system chekc pipline work, code performance, coding standarts, naming standarts , comments on script.
+
+draft 6 documentation - renew model documentation, create visual diagrams, user manual, setup guide
+
+draft 7 power bi - modify initial report desired result- report ready for deployment for stakeholders
+
+draft 8 LLM - language model to convert natural language to sql train/test model 
+
+draft 9 documentation - document llm creation create user guide make disclaimers for accuracy
+
+draft 10 - crearte custom visual for llm inside seperate power bi sheet
+
+draft 11 - perform final bug control, update user manual
