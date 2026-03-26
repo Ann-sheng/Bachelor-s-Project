@@ -1,0 +1,8 @@
+{
+  "last_customer_id": 15500,
+  "last_product_id": 119,
+  "last_off_tx_id": 750000,
+  "last_onl_tx_id": 750000,
+  "initial_off_key": "offline/initial/offline_initial_20260326T154950Z.parquet",
+  "initial_onl_key": "online/initial/online_initial_20260326T154950Z.parquet"
+}
