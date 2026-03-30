@@ -56,5 +56,26 @@ CREATE TABLE IF NOT EXISTS stg_cln.sales_online (
 
     -- Metadata
     stg_insert_dt               TIMESTAMP       DEFAULT NOW(),
-    src_system                  VARCHAR(10)     DEFAULT 'ONLINE'
+    src_system                  VARCHAR(10)     DEFAULT 'ONLINE',
+    customer_row_hash VARCHAR(32)
+        GENERATED ALWAYS AS (
+            MD5(
+                COALESCE(customer_firstname, '') ||
+                COALESCE(customer_lastname, '') ||
+                COALESCE(customer_email, '') ||
+                COALESCE(customer_country, '') ||
+                COALESCE(customer_city, '') ||
+                COALESCE(customer_phone_number, '')
+            )
+        ) STORED,
+    employee_row_hash VARCHAR(32)
+        GENERATED ALWAYS AS (
+            MD5(
+                COALESCE(employee_firstname, '') ||
+                COALESCE(employee_lastname, '') ||
+                COALESCE(employee_title, '') ||
+                COALESCE(employee_email, '') ||
+                COALESCE(employee_salary::TEXT, '')
+            )
+        ) STORED
 );

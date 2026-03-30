@@ -1,6 +1,3 @@
-
---  Extract deduplicated supplier records from stg_cln, Combines offline + online sources
-
 CREATE OR REPLACE FUNCTION bl_3nf.fn_get_suppliers_data()
 RETURNS TABLE (
     supplier_src_id          VARCHAR(15),
@@ -13,23 +10,27 @@ RETURNS TABLE (
     source_entity            VARCHAR(50)
 )
 LANGUAGE sql STABLE AS $$
+
+(
     SELECT DISTINCT ON (supplier_id, src_system)
-        COALESCE(supplier_id,              'n. a.') ::VARCHAR(15),
-        COALESCE(supplier_name,            'n. a.') ::VARCHAR(100),
-        supplier_email,                            
-        supplier_number,                       
-        supplier_primary_contact,              
-        supplier_location,                      
+        COALESCE(supplier_id,   'n. a.')::VARCHAR(15),
+        COALESCE(supplier_name, 'n. a.')::VARCHAR(100),
+        supplier_email,
+        supplier_number,
+        supplier_primary_contact,
+        supplier_location,
         'OFFLINE'::VARCHAR(20),
         'SALES_OFFLINE'::VARCHAR(50)
     FROM stg_cln.sales_offline
     ORDER BY supplier_id, src_system, stg_insert_dt DESC
+)
 
-    UNION ALL
+UNION ALL
 
+(
     SELECT DISTINCT ON (supplier_id, src_system)
-        COALESCE(supplier_id,              'n. a.') ::VARCHAR(15),
-        COALESCE(supplier_name,            'n. a.') ::VARCHAR(100),
+        COALESCE(supplier_id,   'n. a.')::VARCHAR(15),
+        COALESCE(supplier_name, 'n. a.')::VARCHAR(100),
         supplier_email,
         supplier_number,
         supplier_primary_contact,
@@ -37,5 +38,7 @@ LANGUAGE sql STABLE AS $$
         'ONLINE'::VARCHAR(20),
         'SALES_ONLINE'::VARCHAR(50)
     FROM stg_cln.sales_online
-    ORDER BY supplier_id, src_system, stg_insert_dt DESC;
+    ORDER BY supplier_id, src_system, stg_insert_dt DESC
+);
+
 $$;

@@ -66,26 +66,5 @@ CREATE TABLE IF NOT EXISTS src.sales_online (
 
     -- Metadata
     src_insert_dt                TIMESTAMP DEFAULT NOW(),
-    src_filename                 VARCHAR(255) DEFAULT 'Online_Sales_Dataset.csv',
-    customer_row_hash VARCHAR(32)
-        GENERATED ALWAYS AS (
-            MD5(
-                COALESCE(customer_firstname, '') ||
-                COALESCE(customer_lastname, '') ||
-                COALESCE(customer_email, '') ||
-                COALESCE(customer_country, '') ||
-                COALESCE(customer_city, '') ||
-                COALESCE(customer_phone_number, '')
-            )
-        ) STORED,
-    employee_row_hash VARCHAR(32)
-        GENERATED ALWAYS AS (
-            MD5(
-                COALESCE(employee_firstname, '') ||
-                COALESCE(employee_lastname, '') ||
-                COALESCE(employee_title, '') ||
-                COALESCE(employee_email, '') ||
-                COALESCE(employee_salary::TEXT, '')
-            )
-        ) STORED
+    src_filename                 VARCHAR(255) DEFAULT 'Online_Sales_Dataset.csv'
 );

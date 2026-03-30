@@ -54,5 +54,25 @@ CREATE TABLE IF NOT EXISTS stg_cln.sales_offline (
 
     -- Metadata
     stg_insert_dt               TIMESTAMP       DEFAULT NOW(),
-    src_system                  VARCHAR(10)     DEFAULT 'OFFLINE'
+    src_system                  VARCHAR(10)     DEFAULT 'OFFLINE',
+    customer_row_hash VARCHAR(32)
+        GENERATED ALWAYS AS (
+            MD5(
+                COALESCE(customer_firstname,    '') ||
+                COALESCE(customer_lastname,     '') ||
+                COALESCE(customer_email,        '') ||
+                COALESCE(customer_id,           '')   
+            )
+        ) STORED,
+
+    employee_row_hash VARCHAR(32)
+        GENERATED ALWAYS AS (
+            MD5(
+                COALESCE(employee_firstname, '') ||
+                COALESCE(employee_lastname,  '') ||
+                COALESCE(employee_title,     '') ||
+                COALESCE(employee_email,     '') ||
+                COALESCE(employee_salary,    '')
+            )
+        ) STORED
 );

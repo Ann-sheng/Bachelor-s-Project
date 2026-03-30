@@ -1,6 +1,6 @@
+call stg_cln.load_stg_all();
 
-
-CREATE OR REPLACE PROCEDURE stg_cl.load_stg_all()
+CREATE OR REPLACE PROCEDURE stg_cln.load_stg_all()
 LANGUAGE plpgsql AS $$
 DECLARE
     v_run_id  BIGINT;
@@ -13,12 +13,12 @@ BEGIN
 
     PERFORM set_config('bl_cn.current_run_id', v_run_id::TEXT, FALSE);
 
-    v_log_id := bl_cn.log_start('stg_cl.load_stg_all', 'STG_CLN');
+    v_log_id := bl_cn.log_start('stg_cln.load_stg_all', 'STG_CLN');
 
     RAISE NOTICE '=== STG_CLN LAYER START (run_id=%) ===', v_run_id;
 
-    CALL stg_cl.load_stg_offline();
-    CALL stg_cl.load_stg_online();
+    CALL stg_cln.load_stg_offline();
+    CALL stg_cln.load_stg_online();
 
     UPDATE bl_cn.etl_run
     SET run_status = 'SUCCESS', run_end = NOW()
@@ -26,7 +26,7 @@ BEGIN
 
     CALL bl_cn.log_success(v_log_id, 0);
 
-    RAISE NOTICE '=== STG_CL LAYER COMPLETE (run_id=%) ===', v_run_id;
+    RAISE NOTICE '=== STG_CLN LAYER COMPLETE (run_id=%) ===', v_run_id;
 
 EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;

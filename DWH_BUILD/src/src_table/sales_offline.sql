@@ -60,26 +60,6 @@ CREATE TABLE IF NOT EXISTS src.sales_offline (
 
     -- Metadata
     src_insert_dt                TIMESTAMP DEFAULT NOW(),
-    src_filename                 VARCHAR(255) DEFAULT 'Offline_Sales_Dataset.csv',
+    src_filename                 VARCHAR(255) DEFAULT 'Offline_Sales_Dataset.csv'
 
-    customer_row_hash VARCHAR(32)
-        GENERATED ALWAYS AS (
-            MD5(
-                COALESCE(customer_firstname,    '') ||
-                COALESCE(customer_lastname,     '') ||
-                COALESCE(customer_email,        '') ||
-                COALESCE(customer_id,           '')   
-            )
-        ) STORED,
-
-    employee_row_hash VARCHAR(32)
-        GENERATED ALWAYS AS (
-            MD5(
-                COALESCE(employee_firstname, '') ||
-                COALESCE(employee_lastname,  '') ||
-                COALESCE(employee_title,     '') ||
-                COALESCE(employee_email,     '') ||
-                COALESCE(employee_salary,    '')
-            )
-        ) STORED
 );
