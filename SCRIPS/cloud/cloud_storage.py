@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import List
 from botocore.config import Config
 from dotenv import load_dotenv
-from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
 
 load_dotenv()
 log = logging.getLogger(__name__)

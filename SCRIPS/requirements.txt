@@ -1,0 +1,15 @@
+# Core data
+numpy>=2.1.3
+pandas>=2.3.0
+pyarrow>=21.0.0
+
+# Cloud storage
+boto3>=1.34.0            # AWS S3 + MinIO
+
+# Database
+psycopg2-binary>=2.9.10   # PostgreSQL driver
+
+# Utilities
+python-dotenv>=1.0.1     # .env file loading
+
+
