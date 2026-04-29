@@ -63,7 +63,6 @@ BEGIN
     LEFT JOIN bl_3nf.ce_store_branches sb     
            ON sb.store_branch_id = e.store_branch_id
     WHERE e.employee_id <> -1
-    WHERE e.employee_id <> -1
       AND NOT EXISTS (
           SELECT 1 FROM bl_dm.dm_employees_scd d
           WHERE d.employee_src_id = e.employee_id
