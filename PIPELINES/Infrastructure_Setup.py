@@ -29,7 +29,6 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler("setup.log", mode="a", encoding="utf-8"),
     ],
 )
 log = logging.getLogger("dwh_setup")

@@ -35,7 +35,6 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler("pipeline.log", mode="a", encoding="utf-8"),
     ],
 )
 log = logging.getLogger("orchestrator")
