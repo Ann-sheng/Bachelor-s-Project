@@ -1,16 +1,29 @@
-
---  SCD2 mirror load from BL_3NF.CE_EMPLOYEES_SCD
-
-
 CREATE OR REPLACE PROCEDURE bl_dm.load_dm_employees_scd()
 LANGUAGE plpgsql AS $$
 DECLARE
     v_log_id   BIGINT;
     v_inserted INT := 0;
+    v_updated  INT := 0;
+    v_rows     INT := 0;
     v_err_msg  TEXT;
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dm_employees_scd', 'BL_DM');
 
+    -- Step 1: close versions in DM that were closed in 3NF
+    UPDATE bl_dm.dm_employees_scd d
+    SET    end_dt    = e.end_dt,
+           is_active = FALSE
+    FROM   bl_3nf.ce_employees_scd e
+    WHERE  d.employee_src_id = e.employee_id
+      AND  d.source_system   = 'BL_3NF'
+      AND  d.source_entity   = 'CE_EMPLOYEES_SCD'
+      AND  e.is_active       = FALSE
+      AND  d.is_active       = TRUE;
+
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+    v_updated := v_updated + v_rows;
+
+    -- Step 2: insert new/changed versions not yet in DM
     INSERT INTO bl_dm.dm_employees_scd (
         employee_surr_id,
         employee_src_id,
@@ -29,13 +42,13 @@ BEGIN
     )
     SELECT
         nextval('bl_dm.sq_employee_surr_id'),
-        e.employee_id,          
+        e.employee_id,
         e.employee_firstname,
         e.employee_lastname,
         e.employee_title,
         e.employee_email,
         e.employee_phone_number,
-        e.employee_salary,     
+        e.employee_salary,
         e.start_dt,
         e.end_dt,
         e.is_active,
@@ -51,11 +64,12 @@ BEGIN
             AND d.source_entity   = 'CE_EMPLOYEES_SCD'
       );
 
-    GET DIAGNOSTICS v_inserted = ROW_COUNT;
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+    v_inserted := v_inserted + v_rows;
 
-    CALL bl_cn.log_success(v_log_id, v_inserted);
+    CALL bl_cn.log_success(v_log_id, v_inserted, v_updated);
 
-    RAISE NOTICE '[load_dm_employees_scd] Inserted: % new version rows', v_inserted;
+    RAISE NOTICE '[load_dm_employees_scd] Inserted: %, Updated: %', v_inserted, v_updated;
 
 EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
@@ -63,4 +77,3 @@ EXCEPTION WHEN OTHERS THEN
     RAISE;
 END;
 $$;
-

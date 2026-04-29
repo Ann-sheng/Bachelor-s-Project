@@ -1,0 +1,8 @@
+01:13:38  INFO      Bootstrap will connect as admin user: postgres
+01:13:38  INFO      ============================================================
+01:13:38  INFO      DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+01:13:38  INFO      ============================================================
+01:13:38  ERROR       [FAIL] step 01 — Create database  (0.00s)
+01:13:38  ERROR              file : bootstrap/database.sql
+01:13:38  ERROR              error: database "dnd_sales" already exists
+

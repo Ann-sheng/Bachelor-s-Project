@@ -3,7 +3,7 @@
 CREATE INDEX IF NOT EXISTS idx_ce_employees_src_active ON bl_3nf.ce_employees_scd (employee_src_id, source_system, is_active);
 
 -- Fast hash comparison during change detection
-CREATE INDEX IF NOT EXISTS idx_ce_employees_hash ON bl_3nf.ce_employees_scd (row_hash);
+CREATE INDEX IF NOT EXISTS idx_ce_employees_hash ON bl_3nf.ce_employees_scd (employee_row_hash);
 
 -- Fast lookup  by store ID
 CREATE INDEX IF NOT EXISTS idx_ce_employees_branch ON bl_3nf.ce_employees_scd (store_branch_id);

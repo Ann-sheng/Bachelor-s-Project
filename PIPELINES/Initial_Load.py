@@ -1,17 +1,10 @@
-"""
-Pipeline: Initial Load
-======================
-Full sequence:
-  1. Install/refresh ETL procedures  (idempotent CREATE OR REPLACE)
-  2. Generate initial data + upload to cloud
-  3. Load cloud → src staging tables
-  4. CALL stg_cl  → bl_3nf → bl_dm layer procedures
 
-Usage:
-    Called from run.py or directly:
+# Pipeline: Initial Load,  Install/refresh ETL procedures, Generate initial data + upload to cloud, Load cloud, CALL stg_cln  → bl_3nf → bl_dm layer procedures
+
+"""
         python initial_load.py
-        python initial_load.py --skip-generate   (if data already in cloud)
-        python initial_load.py --skip-install     (if procedures already exist)
+        python initial_load.py --skip-generate   
+        python initial_load.py --skip-install     
 """
 
 import argparse
@@ -20,11 +13,10 @@ import sys
 import time
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
-# Path setup — so we can import from SCRIPS/ subfolders
-# ---------------------------------------------------------------------------
-ROOT    = Path(_file_).resolve().parent.parent
-SCRIPS  = ROOT / "SCRIPS"
+
+# Path setup 
+ROOT    = Path(__file__).resolve().parent.parent
+SCRIPS  = ROOT / "SCRIPTS"
 
 sys.path.insert(0, str(SCRIPS / "generator"))
 sys.path.insert(0, str(SCRIPS / "helper"))
@@ -36,9 +28,8 @@ log = logging.getLogger("pipeline.initial")
 DWH_BUILD_ROOT = ROOT / "DWH_BUILD"
 
 
-# ---------------------------------------------------------------------------
+
 # Pipeline steps
-# ---------------------------------------------------------------------------
 
 def step_install_procedures():
     from procedure_runner import install_etl_procedures
@@ -66,12 +57,11 @@ def step_load_staging():
 
 def step_run_etl():
     from procedure_runner import run_etl_layers
-    run_etl_layers(layers=["stg_cl", "bl_3nf", "bl_dm"])
+    run_etl_layers(layers=["stg_cln", "bl_3nf", "bl_dm"])
 
 
-# ---------------------------------------------------------------------------
+
 # Pipeline orchestration
-# ---------------------------------------------------------------------------
 
 STEPS = [
     ("Install ETL Procedures",  step_install_procedures),
@@ -82,48 +72,45 @@ STEPS = [
 
 
 def run(skip_generate: bool = False, skip_install: bool = False):
-    log.info("╔══════════════════════════════════════════════════╗")
-    log.info("║         PIPELINE: INITIAL LOAD                  ║")
-    log.info("╚══════════════════════════════════════════════════╝")
+    log.info("   PIPELINE: INITIAL LOAD  ")
 
     skips = set()
     if skip_generate:
         skips.add("Generate Initial Data")
-        log.info("⏭  --skip-generate: generation step will be skipped")
+        log.info("  --skip-generate: generation step will be skipped")
     if skip_install:
         skips.add("Install ETL Procedures")
-        log.info("⏭  --skip-install: procedure install will be skipped")
+        log.info("  --skip-install: procedure install will be skipped")
 
     pipeline_t0 = time.perf_counter()
 
     for i, (name, func) in enumerate(STEPS, 1):
         if name in skips:
-            log.info("[%d/%d]  ⏭  SKIP: %s", i, len(STEPS), name)
+            log.info("[%d/%d]   SKIP: %s", i, len(STEPS), name)
             continue
 
         log.info("━" * 55)
-        log.info("[%d/%d]  ▶  START: %s", i, len(STEPS), name)
+        log.info("[%d/%d]   START: %s", i, len(STEPS), name)
         log.info("━" * 55)
 
         t0 = time.perf_counter()
         try:
             func()
             elapsed = time.perf_counter() - t0
-            log.info("[%d/%d]  ✅  DONE: %s  (%.1fs)", i, len(STEPS), name, elapsed)
+            log.info("[%d/%d]   DONE: %s  (%.1fs)", i, len(STEPS), name, elapsed)
         except Exception:
             elapsed = time.perf_counter() - t0
-            log.exception("[%d/%d]  ❌  FAILED: %s  (%.1fs)", i, len(STEPS), name, elapsed)
+            log.exception("[%d/%d]   FAILED: %s  (%.1fs)", i, len(STEPS), name, elapsed)
             raise
 
     total = time.perf_counter() - pipeline_t0
     log.info("═" * 55)
-    log.info("✅  INITIAL LOAD PIPELINE COMPLETE  (%.1fs total)", total)
+    log.info(" INITIAL LOAD PIPELINE COMPLETE  (%.1fs total)", total)
     log.info("═" * 55)
 
 
-# ---------------------------------------------------------------------------
+
 # CLI
-# ---------------------------------------------------------------------------
 
 def main():
     logging.basicConfig(
@@ -141,5 +128,5 @@ def main():
     run(skip_generate=args.skip_generate, skip_install=args.skip_install)
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()

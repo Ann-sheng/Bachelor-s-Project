@@ -1,27 +1,12 @@
+
+# DWH Infrastructure Setup, Executes the structural DDL files from DWH_BUILD in the correct
+
+
 """
-DWH Infrastructure Setup
-========================
-Executes the structural DDL files from DWH_BUILD in the correct
-dependency order. Creates everything needed before any ETL load runs:
-schemas, roles, tables, sequences, indexes, logging routines,
-monitoring views, unknown members, and permissions.
-
-Intentionally excluded (ETL, not infrastructure):
-    - stg_cl/stg_cl_procedure/   (staging load procedures)
-    - bl_3nf/bl_3nf_function/    (data extraction functions)
-    - bl_3nf/bl_3nf_procedure/   (3NF load procedures)
-    - bl_dm/bl_dm_procedure/     (DM load procedures)
-
-Usage
------
-    python setup.py                          # uses .env in current directory
-    python setup.py --env /path/to/.env      # explicit env file
-    python setup.py --dry-run                # print plan without executing
-    python setup.py --from-step 14           # resume from a specific step
-
-Requirements
-------------
-    pip install psycopg2-binary python-dotenv
+    python Infrastructure_Setup.py                         
+    python Infrastructure_Setup.py --env /path/to/.env     
+    python Infrastructure_Setup.py --dry-run               
+    python Infrastructure_Setup.py --from-step 14          
 """
 
 import argparse
@@ -35,9 +20,8 @@ from typing import Optional
 import psycopg2
 from dotenv import load_dotenv
 
-# ---------------------------------------------------------------------------
+
 # Logging
-# ---------------------------------------------------------------------------
 
 logging.basicConfig(
     level=logging.INFO,
@@ -50,30 +34,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("dwh_setup")
 
-# ---------------------------------------------------------------------------
-# Execution plan
-#
-# Each entry is a tuple of:
-#   (step_number, label, relative_path_from_DWH_BUILD_root, target_db)
-#
-# target_db:
-#   "postgres"  — must run against the maintenance DB (CREATE DATABASE, roles)
-#   "dwh"       — runs against DnD_SALES
-#
-# Dependency rules encoded in the order:
-#   1.  Database + roles (postgres)
-#   2.  Schemas + role settings (dwh)
-#   3.  bl_cn tables & indexes — logging infra must exist before anything logs
-#   4.  bl_cn routines & views
-#   5.  sa_audit
-#   6.  src raw tables
-#   7.  stg_cln tables → indexes → procedures
-#   8.  bl_3nf sequences → tables (FK order) → indexes → functions → procedures
-#       → unknown members
-#   9.  bl_dm sequences → tables (FK order) → indexes → procedures
-#       → unknown members
-#  10.  Permissions last (all objects must exist first)
-# ---------------------------------------------------------------------------
+
 
 PLAN = [
     # ── Bootstrap (postgres DB) ────────────────────────────────────────────
@@ -85,12 +46,12 @@ PLAN = [
     ( 4, "Role DB settings",                 "setup/role.sql",                                 "dwh"),
 
     # ── BL_CN — control & logging infrastructure ───────────────────────────
-    # Tables first (etl_run has no deps; etl_log FKs etl_run)
+    # Tables first 
     ( 5, "BL_CN: etl_run table",             "bl_cn/bl_cn_table/etl_run.sql",                  "dwh"),
     ( 6, "BL_CN: etl_log table",             "bl_cn/bl_cn_table/etl_log.sql",                  "dwh"),
     ( 7, "BL_CN: etl_run index",             "bl_cn/bl_cn_index/etl_run.sql",                  "dwh"),
     ( 8, "BL_CN: etl_log indexes",           "bl_cn/bl_cn_index/etl_log.sql",                  "dwh"),
-    # Logging routines (infrastructure — called by every load procedure)
+    # Logging routines 
     ( 9, "BL_CN: log_start function",        "bl_cn/bl_cn_function/log_start.sql",             "dwh"),
     (10, "BL_CN: log_success procedure",     "bl_cn/bl_cn_procedure/log_success.sql",          "dwh"),
     (11, "BL_CN: log_failure procedure",     "bl_cn/bl_cn_procedure/log_failure.sql",          "dwh"),
@@ -109,15 +70,14 @@ PLAN = [
     (19, "SRC: sales_online table",          "src/src_table/sales_online.sql",                 "dwh"),
 
     # ── STG_CLN — tables & indexes only (no load procedures) ──────────────
-    (20, "STG: reject_sales table",          "stg_cl/stg_cl_table/reject_sales.sql",           "dwh"),
-    (21, "STG: sales_offline table",         "stg_cl/stg_cl_table/sales_offline.sql",          "dwh"),
-    (22, "STG: sales_online table",          "stg_cl/stg_cl_table/sales_online.sql",           "dwh"),
-    (23, "STG: reject_sales index",          "stg_cl/stg_cl_index/reject_sales.sql",           "dwh"),
-    (24, "STG: sales_offline indexes",       "stg_cl/stg_cl_index/sales_offline.sql",          "dwh"),
-    (25, "STG: sales_online indexes",        "stg_cl/stg_cl_index/sales_online.sql",           "dwh"),
+    (20, "STG: reject_sales table",          "stg_cln/stg_cln_table/reject_sales.sql",           "dwh"),
+    (21, "STG: sales_offline table",         "stg_cln/stg_cln_table/sales_offline.sql",          "dwh"),
+    (22, "STG: sales_online table",          "stg_cln/stg_cln_table/sales_online.sql",           "dwh"),
+    (23, "STG: reject_sales index",          "stg_cln/stg_cln_index/reject_sales.sql",           "dwh"),
+    (24, "STG: sales_offline indexes",       "stg_cln/stg_cln_index/sales_offline.sql",          "dwh"),
+    (25, "STG: sales_online indexes",        "stg_cln/stg_cln_index/sales_online.sql",           "dwh"),
 
-    # ── BL_3NF — sequences → tables (FK order) → indexes → unknown members ─
-    # (functions & load procedures are ETL, not infrastructure)
+    # ── BL_3NF — sequences → tables (FK order) → indexes → unknown members 
     (26, "BL_3NF: sequences",                "bl_3nf/bl_3nf_sequence/surrogate_keys.sql",      "dwh"),
     (27, "BL_3NF: ce_suppliers table",       "bl_3nf/bl_3nf_tables/ce_suppliers.sql",          "dwh"),
     (28, "BL_3NF: ce_shippings table",       "bl_3nf/bl_3nf_tables/ce_shippings.sql",          "dwh"),
@@ -135,8 +95,7 @@ PLAN = [
     (40, "BL_3NF: ce_transactions indexes",  "bl_3nf/bl_3nf_index/ce_transactions.sql",        "dwh"),
     (41, "BL_3NF: unknown members",          "bl_3nf/bl_3nf_unknown_members/insert_unknown_members.sql", "dwh"),
 
-    # ── BL_DM — sequences → tables (FK order) → indexes → unknown members ─
-    # (load procedures are ETL, not infrastructure)
+    # ── BL_DM — sequences → tables (FK order) → indexes → unknown members 
     (42, "BL_DM: sequences",                 "bl_dm/bl_dm_table_sequence/surrogate_keys.sql",  "dwh"),
     (43, "BL_DM: dm_suppliers table",        "bl_dm/bl_dm_table/dm_suppliers.sql",             "dwh"),
     (44, "BL_DM: dm_shippings table",        "bl_dm/bl_dm_table/dm_shippings.sql",             "dwh"),
@@ -158,30 +117,29 @@ PLAN = [
     (60, "BL_DM: fct_transactions indexes",  "bl_dm/bl_dm_index/fct_transactions_dd.sql",      "dwh"),
     (61, "BL_DM: unknown members",           "bl_dm/bl_dm_unknown_members/insert_unknown_members.sql", "dwh"),
 
-    # ── Permissions (must run after all objects exist) ─────────────────────
+    # ── Permissions
     (62, "Permissions",                      "setup/permission.sql",                           "dwh"),
 ]
 
 
-# ---------------------------------------------------------------------------
+
 # DB connection helpers
-# ---------------------------------------------------------------------------
 
 def _build_dsn(env: dict, dbname: str, role: str) -> dict:
     if role == "admin":
         return {
-            "host": env["DB_HOST"],
-            "port": int(env.get("DB_PORT", 5432)),
-            "dbname": dbname,
-            "user": env["ADMIN_USER"],
-            "password": env["ADMIN_PASSWORD"],
+            "host":     env["DB_HOST"],
+            "port":     int(env.get("DB_PORT", 5432)),
+            "dbname":   dbname,
+            "user":     env.get("ADMIN_USER", "postgres"),      
+            "password": env.get("ADMIN_PASSWORD", ""),          
         }
     else:
         return {
-            "host": env["DB_HOST"],
-            "port": int(env.get("DB_PORT", 5432)),
-            "dbname": dbname,
-            "user": env["DB_USER"],
+            "host":     env["DB_HOST"],
+            "port":     int(env.get("DB_PORT", 5432)),
+            "dbname":   dbname,
+            "user":     env["DB_USER"],
             "password": env["DB_PASSWORD"],
         }
 
@@ -199,20 +157,17 @@ def get_connection(env: dict, target: str):
     return conn
 
 
-# ---------------------------------------------------------------------------
-# SQL execution
-# ---------------------------------------------------------------------------
+
+# SQL execution, Checker
 
 def execute_file(conn: psycopg2.extensions.connection, path: Path) -> None:
-    """Read and execute a single SQL file via the supplied connection."""
     sql = path.read_text(encoding="utf-8")
     with conn.cursor() as cur:
         cur.execute(sql)
 
 
-# ---------------------------------------------------------------------------
+
 # Main runner
-# ---------------------------------------------------------------------------
 
 def run(
     dwh_root: Path,
@@ -226,7 +181,6 @@ def run(
     failed  = 0
     skipped = 0
 
-    # Pre-flight: verify every file exists before touching the DB
     missing = [
         (step, label, rel)
         for step, label, rel, _ in PLAN
@@ -246,7 +200,6 @@ def run(
         log.info("Resuming from step %d", from_step)
     log.info("=" * 60)
 
-    # Keep one connection per target so we don't reconnect every step
     connections: dict[str, Optional[psycopg2.extensions.connection]] = {
         "postgres": None,
         "dwh":      None,
@@ -266,7 +219,6 @@ def run(
                 log.info("  [dry ] step %02d — %s  (%s)", step, label, rel_path)
                 continue
 
-            # Lazy-open connection for this target
             if connections[target] is None:
                 log.debug("Opening '%s' connection…", target)
                 connections[target] = get_connection(env, target)
@@ -287,11 +239,10 @@ def run(
                 log.error("         error: %s", exc)
                 failed += 1
 
-                # Ask whether to continue or abort
                 try:
                     answer = input("\nStep failed. Continue anyway? [y/N] ").strip().lower()
                 except EOFError:
-                    answer = "n"  # non-interactive — abort on failure
+                    answer = "n" 
 
                 if answer != "y":
                     log.error("Aborting setup at step %d.", step)
@@ -322,9 +273,8 @@ def run(
         sys.exit(1)
 
 
-# ---------------------------------------------------------------------------
+
 # Entry point
-# ---------------------------------------------------------------------------
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -354,35 +304,36 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # Load environment
-    env_path = Path(args.env)
-    if not env_path.exists():
-        log.error(".env file not found: %s", env_path)
-        sys.exit(1)
+    root_dir = Path(__file__).resolve().parent  
+    dwh_root = root_dir.parent / "DWH_BUILD"  
+    scripts_dir = root_dir.parent / "SCRIPTS"  
 
-    load_dotenv(env_path, override=True)
+    dotenv_path = scripts_dir / ".env" 
+    load_dotenv(dotenv_path=dotenv_path)
 
-    required_vars = [
-    "DB_HOST", "DB_PORT",
-    "DB_NAME", "DB_USER", "DB_PASSWORD",
-    "ADMIN_USER", "ADMIN_PASSWORD"
-]
+    required_vars = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]
     env = {k: os.environ.get(k) for k in required_vars}
     missing_vars = [k for k, v in env.items() if not v]
     if missing_vars:
         log.error("Missing required env vars: %s", missing_vars)
         sys.exit(1)
 
-    dwh_root = Path(args.dwh_root)
+    # Optional admin override — falls back to postgres defaults if absent
+    env["ADMIN_USER"]     = os.environ.get("ADMIN_USER", "postgres")
+    env["ADMIN_PASSWORD"] = os.environ.get("ADMIN_PASSWORD", "")
+    env["ADMIN_DB"]       = os.environ.get("ADMIN_DB", "postgres")
+
+    log.info("Bootstrap will connect as admin user: %s", env["ADMIN_USER"])
+
     if not dwh_root.is_dir():
         log.error("DWH_BUILD root not found: %s", dwh_root)
         sys.exit(1)
 
     run(
-        dwh_root  = dwh_root,
-        env       = env,
-        from_step = args.from_step,
-        dry_run   = args.dry_run,
+        dwh_root=dwh_root,
+        env=env,
+        from_step=args.from_step,
+        dry_run=args.dry_run,
     )
 
 

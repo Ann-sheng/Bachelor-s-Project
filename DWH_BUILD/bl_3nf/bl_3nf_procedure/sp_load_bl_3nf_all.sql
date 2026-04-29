@@ -1,7 +1,3 @@
-call bl_3nf.sp_load_bl_3nf_all()
-
--- PURPOSE : Master procedure for full BL_3NF layer load
-
 CREATE OR REPLACE PROCEDURE bl_3nf.sp_load_bl_3nf_all()
 LANGUAGE plpgsql AS $$
 DECLARE

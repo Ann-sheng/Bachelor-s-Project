@@ -72,7 +72,7 @@ INSERT INTO bl_3nf.ce_customers_scd (
     customer_country, customer_city,
     customer_phone_number, customer_email,
     start_dt, end_dt, is_active,
-    row_hash, ta_insert_dt,
+    customer_row_hash, ta_insert_dt,
     source_system, source_entity
 )
 SELECT -1, 'n. a.',
@@ -93,7 +93,7 @@ INSERT INTO bl_3nf.ce_employees_scd (
     employee_title, employee_email,
     employee_phone_number, employee_salary,
     start_dt, end_dt, is_active,
-    row_hash, ta_insert_dt,
+    employee_row_hash, ta_insert_dt,
     source_system, source_entity
 )
 SELECT -1, 'n. a.', -1,

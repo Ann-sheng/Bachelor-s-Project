@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS bl_3nf.ce_employees_scd (
     start_dt              DATE           NOT NULL DEFAULT CURRENT_DATE,
     end_dt                DATE           NOT NULL DEFAULT '9999-12-31',
     is_active             BOOLEAN        NOT NULL DEFAULT TRUE,
-    row_hash              VARCHAR(32)    NOT NULL DEFAULT 'n. a.',
+    employee_row_hash              VARCHAR(32)    NOT NULL DEFAULT 'n. a.',
     ta_insert_dt          TIMESTAMP      NOT NULL DEFAULT NOW(),
     source_system         VARCHAR(20)    NOT NULL,
     source_entity         VARCHAR(50)    NOT NULL,

@@ -7,7 +7,7 @@ RETURNS TABLE (
     customer_city         VARCHAR(50),
     customer_phone_number VARCHAR(20),
     customer_email        VARCHAR(100),
-    row_hash              VARCHAR(32),
+    customer_row_hash     VARCHAR(32),
     source_system         VARCHAR(20),
     source_entity         VARCHAR(50)
 )
@@ -79,7 +79,7 @@ WHERE
           AND c.source_system   = l.source_system
           AND c.source_entity   = l.source_entity
           AND c.is_active       = TRUE
-          AND c.row_hash IS DISTINCT FROM l.customer_row_hash
+          AND c.customer_row_hash IS DISTINCT FROM l.customer_row_hash
     );
 
 $$;

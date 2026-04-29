@@ -1,0 +1,829 @@
+2026-04-28 15:55:44,827 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-28 15:55:44,828 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-28 15:55:44,829 | INFO    | orchestrator |   Started  : 2026-04-28 15:55:44                   ║
+2026-04-28 15:55:44,829 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-28 15:55:44,830 | INFO    | orchestrator | 
+2026-04-28 15:55:44,830 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-28 15:55:45,264 | ERROR   | orchestrator | Missing env vars: ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']
+2026-04-28 17:22:54,340 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-28 17:22:54,341 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-28 17:22:54,341 | INFO    | orchestrator |   Started  : 2026-04-28 17:22:54                   ║
+2026-04-28 17:22:54,342 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-28 17:22:54,342 | INFO    | orchestrator | 
+2026-04-28 17:22:54,342 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-28 17:22:54,694 | ERROR   | orchestrator | Missing env vars: ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']
+2026-04-28 17:29:22,325 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-28 17:29:22,326 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-28 17:29:22,327 | INFO    | orchestrator |   Started  : 2026-04-28 17:29:22                   ║
+2026-04-28 17:29:22,327 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-28 17:29:22,327 | INFO    | orchestrator | 
+2026-04-28 17:29:22,327 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-28 17:29:22,480 | ERROR   | orchestrator | Missing env vars: ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']
+2026-04-28 17:30:25,874 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-28 17:30:25,875 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-28 17:30:25,876 | INFO    | orchestrator |   Started  : 2026-04-28 17:30:25                   ║
+2026-04-28 17:30:25,877 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-28 17:30:25,877 | INFO    | orchestrator | 
+2026-04-28 17:30:25,877 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-28 17:30:26,078 | ERROR   | orchestrator | Missing env vars: ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']
+2026-04-28 17:31:04,589 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-28 17:31:04,589 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-28 17:31:04,590 | INFO    | orchestrator |   Started  : 2026-04-28 17:31:04                   ║
+2026-04-28 17:31:04,590 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-28 17:31:04,590 | INFO    | orchestrator | 
+2026-04-28 17:31:04,591 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-28 17:31:04,662 | ERROR   | orchestrator | Missing env vars: ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']
+2026-04-28 17:31:40,467 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-28 17:31:40,468 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-28 17:31:40,469 | INFO    | orchestrator |   Started  : 2026-04-28 17:31:40                   ║
+2026-04-28 17:31:40,469 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-28 17:31:40,470 | INFO    | orchestrator | 
+2026-04-28 17:31:40,470 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-28 17:31:40,570 | ERROR   | orchestrator | Missing env vars: ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']
+2026-04-28 17:34:48,955 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-28 17:34:48,956 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-28 17:34:48,956 | INFO    | orchestrator |   Started  : 2026-04-28 17:34:48                   ║
+2026-04-28 17:34:48,957 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-28 17:34:48,957 | INFO    | orchestrator | 
+2026-04-28 17:34:48,958 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-28 17:34:49,057 | ERROR   | dwh_setup | Missing SQL files — aborting before any DB changes:
+2026-04-28 17:34:49,058 | ERROR   | dwh_setup |   step 01  Create database                                bootstrap/database.sql
+2026-04-28 17:34:49,058 | ERROR   | dwh_setup |   step 02  Create roles & users                           bootstrap/roles.sql
+2026-04-28 17:34:49,058 | ERROR   | dwh_setup |   step 03  Create schemas                                 setup/schema.sql
+2026-04-28 17:34:49,058 | ERROR   | dwh_setup |   step 04  Role DB settings                               setup/role.sql
+2026-04-28 17:34:49,058 | ERROR   | dwh_setup |   step 05  BL_CN: etl_run table                           bl_cn/bl_cn_table/etl_run.sql
+2026-04-28 17:34:49,058 | ERROR   | dwh_setup |   step 06  BL_CN: etl_log table                           bl_cn/bl_cn_table/etl_log.sql
+2026-04-28 17:34:49,058 | ERROR   | dwh_setup |   step 07  BL_CN: etl_run index                           bl_cn/bl_cn_index/etl_run.sql
+2026-04-28 17:34:49,059 | ERROR   | dwh_setup |   step 08  BL_CN: etl_log indexes                         bl_cn/bl_cn_index/etl_log.sql
+2026-04-28 17:34:49,059 | ERROR   | dwh_setup |   step 09  BL_CN: log_start function                      bl_cn/bl_cn_function/log_start.sql
+2026-04-28 17:34:49,059 | ERROR   | dwh_setup |   step 10  BL_CN: log_success procedure                   bl_cn/bl_cn_procedure/log_success.sql
+2026-04-28 17:34:49,060 | ERROR   | dwh_setup |   step 11  BL_CN: log_failure procedure                   bl_cn/bl_cn_procedure/log_failure.sql
+2026-04-28 17:34:49,060 | ERROR   | dwh_setup |   step 12  BL_CN: v_latest_runs view                      bl_cn/bl_cn_view/v_latest_runs.sql
+2026-04-28 17:34:49,061 | ERROR   | dwh_setup |   step 13  BL_CN: v_etl_summary view                      bl_cn/bl_cn_view/v_etl_summary.sql
+2026-04-28 17:34:49,061 | ERROR   | dwh_setup |   step 14  BL_CN: v_failed_runs view                      bl_cn/bl_cn_view/v_failed_runs.sql
+2026-04-28 17:34:49,061 | ERROR   | dwh_setup |   step 15  BL_CN: v_pipeline_runs view                    bl_cn/bl_cn_view/v_pipeline_runs.sql
+2026-04-28 17:34:49,061 | ERROR   | dwh_setup |   step 16  SA_AUDIT: file_load_log table                  sa_audit/sa_audit_table/file_load_log.sql
+2026-04-28 17:34:49,061 | ERROR   | dwh_setup |   step 17  SA_AUDIT: file_load_log indexes                sa_audit/sa_audit_index/file_load_log.sql
+2026-04-28 17:34:49,062 | ERROR   | dwh_setup |   step 18  SRC: sales_offline table                       src/src_table/sales_offline.sql
+2026-04-28 17:34:49,062 | ERROR   | dwh_setup |   step 19  SRC: sales_online table                        src/src_table/sales_online.sql
+2026-04-28 17:34:49,062 | ERROR   | dwh_setup |   step 20  STG: reject_sales table                        stg_cl/stg_cl_table/reject_sales.sql
+2026-04-28 17:34:49,062 | ERROR   | dwh_setup |   step 21  STG: sales_offline table                       stg_cl/stg_cl_table/sales_offline.sql
+2026-04-28 17:34:49,063 | ERROR   | dwh_setup |   step 22  STG: sales_online table                        stg_cl/stg_cl_table/sales_online.sql
+2026-04-28 17:34:49,063 | ERROR   | dwh_setup |   step 23  STG: reject_sales index                        stg_cl/stg_cl_index/reject_sales.sql
+2026-04-28 17:34:49,063 | ERROR   | dwh_setup |   step 24  STG: sales_offline indexes                     stg_cl/stg_cl_index/sales_offline.sql
+2026-04-28 17:34:49,064 | ERROR   | dwh_setup |   step 25  STG: sales_online indexes                      stg_cl/stg_cl_index/sales_online.sql
+2026-04-28 17:34:49,064 | ERROR   | dwh_setup |   step 26  BL_3NF: sequences                              bl_3nf/bl_3nf_sequence/surrogate_keys.sql
+2026-04-28 17:34:49,064 | ERROR   | dwh_setup |   step 27  BL_3NF: ce_suppliers table                     bl_3nf/bl_3nf_tables/ce_suppliers.sql
+2026-04-28 17:34:49,065 | ERROR   | dwh_setup |   step 28  BL_3NF: ce_shippings table                     bl_3nf/bl_3nf_tables/ce_shippings.sql
+2026-04-28 17:34:49,065 | ERROR   | dwh_setup |   step 29  BL_3NF: ce_store_branches table                bl_3nf/bl_3nf_tables/ce_store_branches.sql
+2026-04-28 17:34:49,065 | ERROR   | dwh_setup |   step 30  BL_3NF: ce_products table                      bl_3nf/bl_3nf_tables/ce_products.sql
+2026-04-28 17:34:49,065 | ERROR   | dwh_setup |   step 31  BL_3NF: ce_customers_scd table                 bl_3nf/bl_3nf_tables/ce_customers_scd.sql
+2026-04-28 17:34:49,066 | ERROR   | dwh_setup |   step 32  BL_3NF: ce_employees_scd table                 bl_3nf/bl_3nf_tables/ce_employees_scd.sql
+2026-04-28 17:34:49,066 | ERROR   | dwh_setup |   step 33  BL_3NF: ce_transactions table                  bl_3nf/bl_3nf_tables/ce_transactions.sql
+2026-04-28 17:34:49,066 | ERROR   | dwh_setup |   step 34  BL_3NF: ce_suppliers indexes                   bl_3nf/bl_3nf_index/ce_suppliers.sql
+2026-04-28 17:34:49,067 | ERROR   | dwh_setup |   step 35  BL_3NF: ce_shippings indexes                   bl_3nf/bl_3nf_index/ce_shippings.sql
+2026-04-28 17:34:49,067 | ERROR   | dwh_setup |   step 36  BL_3NF: ce_store_branches index                bl_3nf/bl_3nf_index/ce_store_branches.sql
+2026-04-28 17:34:49,067 | ERROR   | dwh_setup |   step 37  BL_3NF: ce_products indexes                    bl_3nf/bl_3nf_index/ce_products.sql
+2026-04-28 17:34:49,067 | ERROR   | dwh_setup |   step 38  BL_3NF: ce_customers_scd indexes               bl_3nf/bl_3nf_index/ce_customers_scd.sql
+2026-04-28 17:34:49,068 | ERROR   | dwh_setup |   step 39  BL_3NF: ce_employees_scd indexes               bl_3nf/bl_3nf_index/ce_employees_scd.sql
+2026-04-28 17:34:49,068 | ERROR   | dwh_setup |   step 40  BL_3NF: ce_transactions indexes                bl_3nf/bl_3nf_index/ce_transactions.sql
+2026-04-28 17:34:49,068 | ERROR   | dwh_setup |   step 41  BL_3NF: unknown members                        bl_3nf/bl_3nf_unknown_members/insert_unknown_members.sql
+2026-04-28 17:34:49,068 | ERROR   | dwh_setup |   step 42  BL_DM: sequences                               bl_dm/bl_dm_table_sequence/surrogate_keys.sql
+2026-04-28 17:34:49,068 | ERROR   | dwh_setup |   step 43  BL_DM: dm_suppliers table                      bl_dm/bl_dm_table/dm_suppliers.sql
+2026-04-28 17:34:49,068 | ERROR   | dwh_setup |   step 44  BL_DM: dm_shippings table                      bl_dm/bl_dm_table/dm_shippings.sql
+2026-04-28 17:34:49,070 | ERROR   | dwh_setup |   step 45  BL_DM: dm_store_branches table                 bl_dm/bl_dm_table/dm_store_branches.sql
+2026-04-28 17:34:49,070 | ERROR   | dwh_setup |   step 46  BL_DM: dim_dates table                         bl_dm/bl_dm_table/dim_dates.sql
+2026-04-28 17:34:49,070 | ERROR   | dwh_setup |   step 47  BL_DM: dm_customers_scd table                  bl_dm/bl_dm_table/dm_customers_scd.sql
+2026-04-28 17:34:49,070 | ERROR   | dwh_setup |   step 48  BL_DM: dm_employees_scd table                  bl_dm/bl_dm_table/dm_employees_scd.sql
+2026-04-28 17:34:49,071 | ERROR   | dwh_setup |   step 49  BL_DM: dm_junk_transactions table              bl_dm/bl_dm_table/dm_junk_transactions.sql
+2026-04-28 17:34:49,071 | ERROR   | dwh_setup |   step 50  BL_DM: dm_products table                       bl_dm/bl_dm_table/dm_products.sql
+2026-04-28 17:34:49,071 | ERROR   | dwh_setup |   step 51  BL_DM: fct_transactions_dd table               bl_dm/bl_dm_table/fct_transactions_dd.sql
+2026-04-28 17:34:49,072 | ERROR   | dwh_setup |   step 52  BL_DM: dm_suppliers indexes                    bl_dm/bl_dm_index/dm_suppliers.sql
+2026-04-28 17:34:49,073 | ERROR   | dwh_setup |   step 53  BL_DM: dm_shippings indexes                    bl_dm/bl_dm_index/dm_shippings.sql
+2026-04-28 17:34:49,073 | ERROR   | dwh_setup |   step 54  BL_DM: dm_store_branches indexes               bl_dm/bl_dm_index/dm_store_branches.sql
+2026-04-28 17:34:49,073 | ERROR   | dwh_setup |   step 55  BL_DM: dim_dates indexes                       bl_dm/bl_dm_index/dim_dates.sql
+2026-04-28 17:34:49,073 | ERROR   | dwh_setup |   step 56  BL_DM: dm_customers_scd indexes                bl_dm/bl_dm_index/dm_customers_scd.sql
+2026-04-28 17:34:49,074 | ERROR   | dwh_setup |   step 57  BL_DM: dm_employees_scd indexes                bl_dm/bl_dm_index/dm_employees_scd.sql
+2026-04-28 17:34:49,075 | ERROR   | dwh_setup |   step 58  BL_DM: dm_junk index                           bl_dm/bl_dm_index/dm_junk_transactions.sql
+2026-04-28 17:34:49,075 | ERROR   | dwh_setup |   step 59  BL_DM: dm_products indexes                     bl_dm/bl_dm_index/dm_products.sql
+2026-04-28 17:34:49,075 | ERROR   | dwh_setup |   step 60  BL_DM: fct_transactions indexes                bl_dm/bl_dm_index/fct_transactions_dd.sql
+2026-04-28 17:34:49,075 | ERROR   | dwh_setup |   step 61  BL_DM: unknown members                         bl_dm/bl_dm_unknown_members/insert_unknown_members.sql
+2026-04-28 17:34:49,076 | ERROR   | dwh_setup |   step 62  Permissions                                    setup/permission.sql
+2026-04-29 14:12:53,615 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:12:53,616 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:12:53,617 | INFO    | orchestrator |   Started  : 2026-04-29 14:12:53                   ║
+2026-04-29 14:12:53,617 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:12:53,617 | INFO    | orchestrator | 
+2026-04-29 14:12:53,617 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:12:53,789 | ERROR   | dwh_setup | Missing SQL files — aborting before any DB changes:
+2026-04-29 14:12:53,790 | ERROR   | dwh_setup |   step 01  Create database                                bootstrap/database.sql
+2026-04-29 14:12:53,790 | ERROR   | dwh_setup |   step 02  Create roles & users                           bootstrap/roles.sql
+2026-04-29 14:12:53,790 | ERROR   | dwh_setup |   step 03  Create schemas                                 setup/schema.sql
+2026-04-29 14:12:53,790 | ERROR   | dwh_setup |   step 04  Role DB settings                               setup/role.sql
+2026-04-29 14:12:53,791 | ERROR   | dwh_setup |   step 05  BL_CN: etl_run table                           bl_cn/bl_cn_table/etl_run.sql
+2026-04-29 14:12:53,791 | ERROR   | dwh_setup |   step 06  BL_CN: etl_log table                           bl_cn/bl_cn_table/etl_log.sql
+2026-04-29 14:12:53,792 | ERROR   | dwh_setup |   step 07  BL_CN: etl_run index                           bl_cn/bl_cn_index/etl_run.sql
+2026-04-29 14:12:53,792 | ERROR   | dwh_setup |   step 08  BL_CN: etl_log indexes                         bl_cn/bl_cn_index/etl_log.sql
+2026-04-29 14:12:53,792 | ERROR   | dwh_setup |   step 09  BL_CN: log_start function                      bl_cn/bl_cn_function/log_start.sql
+2026-04-29 14:12:53,792 | ERROR   | dwh_setup |   step 10  BL_CN: log_success procedure                   bl_cn/bl_cn_procedure/log_success.sql
+2026-04-29 14:12:53,792 | ERROR   | dwh_setup |   step 11  BL_CN: log_failure procedure                   bl_cn/bl_cn_procedure/log_failure.sql
+2026-04-29 14:12:53,792 | ERROR   | dwh_setup |   step 12  BL_CN: v_latest_runs view                      bl_cn/bl_cn_view/v_latest_runs.sql
+2026-04-29 14:12:53,792 | ERROR   | dwh_setup |   step 13  BL_CN: v_etl_summary view                      bl_cn/bl_cn_view/v_etl_summary.sql
+2026-04-29 14:12:53,793 | ERROR   | dwh_setup |   step 14  BL_CN: v_failed_runs view                      bl_cn/bl_cn_view/v_failed_runs.sql
+2026-04-29 14:12:53,793 | ERROR   | dwh_setup |   step 15  BL_CN: v_pipeline_runs view                    bl_cn/bl_cn_view/v_pipeline_runs.sql
+2026-04-29 14:12:53,793 | ERROR   | dwh_setup |   step 16  SA_AUDIT: file_load_log table                  sa_audit/sa_audit_table/file_load_log.sql
+2026-04-29 14:12:53,793 | ERROR   | dwh_setup |   step 17  SA_AUDIT: file_load_log indexes                sa_audit/sa_audit_index/file_load_log.sql
+2026-04-29 14:12:53,794 | ERROR   | dwh_setup |   step 18  SRC: sales_offline table                       src/src_table/sales_offline.sql
+2026-04-29 14:12:53,794 | ERROR   | dwh_setup |   step 19  SRC: sales_online table                        src/src_table/sales_online.sql
+2026-04-29 14:12:53,794 | ERROR   | dwh_setup |   step 20  STG: reject_sales table                        stg_cl/stg_cl_table/reject_sales.sql
+2026-04-29 14:12:53,794 | ERROR   | dwh_setup |   step 21  STG: sales_offline table                       stg_cl/stg_cl_table/sales_offline.sql
+2026-04-29 14:12:53,794 | ERROR   | dwh_setup |   step 22  STG: sales_online table                        stg_cl/stg_cl_table/sales_online.sql
+2026-04-29 14:12:53,795 | ERROR   | dwh_setup |   step 23  STG: reject_sales index                        stg_cl/stg_cl_index/reject_sales.sql
+2026-04-29 14:12:53,796 | ERROR   | dwh_setup |   step 24  STG: sales_offline indexes                     stg_cl/stg_cl_index/sales_offline.sql
+2026-04-29 14:12:53,796 | ERROR   | dwh_setup |   step 25  STG: sales_online indexes                      stg_cl/stg_cl_index/sales_online.sql
+2026-04-29 14:12:53,796 | ERROR   | dwh_setup |   step 26  BL_3NF: sequences                              bl_3nf/bl_3nf_sequence/surrogate_keys.sql
+2026-04-29 14:12:53,797 | ERROR   | dwh_setup |   step 27  BL_3NF: ce_suppliers table                     bl_3nf/bl_3nf_tables/ce_suppliers.sql
+2026-04-29 14:12:53,797 | ERROR   | dwh_setup |   step 28  BL_3NF: ce_shippings table                     bl_3nf/bl_3nf_tables/ce_shippings.sql
+2026-04-29 14:12:53,797 | ERROR   | dwh_setup |   step 29  BL_3NF: ce_store_branches table                bl_3nf/bl_3nf_tables/ce_store_branches.sql
+2026-04-29 14:12:53,797 | ERROR   | dwh_setup |   step 30  BL_3NF: ce_products table                      bl_3nf/bl_3nf_tables/ce_products.sql
+2026-04-29 14:12:53,797 | ERROR   | dwh_setup |   step 31  BL_3NF: ce_customers_scd table                 bl_3nf/bl_3nf_tables/ce_customers_scd.sql
+2026-04-29 14:12:53,797 | ERROR   | dwh_setup |   step 32  BL_3NF: ce_employees_scd table                 bl_3nf/bl_3nf_tables/ce_employees_scd.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 33  BL_3NF: ce_transactions table                  bl_3nf/bl_3nf_tables/ce_transactions.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 34  BL_3NF: ce_suppliers indexes                   bl_3nf/bl_3nf_index/ce_suppliers.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 35  BL_3NF: ce_shippings indexes                   bl_3nf/bl_3nf_index/ce_shippings.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 36  BL_3NF: ce_store_branches index                bl_3nf/bl_3nf_index/ce_store_branches.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 37  BL_3NF: ce_products indexes                    bl_3nf/bl_3nf_index/ce_products.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 38  BL_3NF: ce_customers_scd indexes               bl_3nf/bl_3nf_index/ce_customers_scd.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 39  BL_3NF: ce_employees_scd indexes               bl_3nf/bl_3nf_index/ce_employees_scd.sql
+2026-04-29 14:12:53,798 | ERROR   | dwh_setup |   step 40  BL_3NF: ce_transactions indexes                bl_3nf/bl_3nf_index/ce_transactions.sql
+2026-04-29 14:12:53,799 | ERROR   | dwh_setup |   step 41  BL_3NF: unknown members                        bl_3nf/bl_3nf_unknown_members/insert_unknown_members.sql
+2026-04-29 14:12:53,799 | ERROR   | dwh_setup |   step 42  BL_DM: sequences                               bl_dm/bl_dm_table_sequence/surrogate_keys.sql
+2026-04-29 14:12:53,799 | ERROR   | dwh_setup |   step 43  BL_DM: dm_suppliers table                      bl_dm/bl_dm_table/dm_suppliers.sql
+2026-04-29 14:12:53,799 | ERROR   | dwh_setup |   step 44  BL_DM: dm_shippings table                      bl_dm/bl_dm_table/dm_shippings.sql
+2026-04-29 14:12:53,799 | ERROR   | dwh_setup |   step 45  BL_DM: dm_store_branches table                 bl_dm/bl_dm_table/dm_store_branches.sql
+2026-04-29 14:12:53,799 | ERROR   | dwh_setup |   step 46  BL_DM: dim_dates table                         bl_dm/bl_dm_table/dim_dates.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 47  BL_DM: dm_customers_scd table                  bl_dm/bl_dm_table/dm_customers_scd.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 48  BL_DM: dm_employees_scd table                  bl_dm/bl_dm_table/dm_employees_scd.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 49  BL_DM: dm_junk_transactions table              bl_dm/bl_dm_table/dm_junk_transactions.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 50  BL_DM: dm_products table                       bl_dm/bl_dm_table/dm_products.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 51  BL_DM: fct_transactions_dd table               bl_dm/bl_dm_table/fct_transactions_dd.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 52  BL_DM: dm_suppliers indexes                    bl_dm/bl_dm_index/dm_suppliers.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 53  BL_DM: dm_shippings indexes                    bl_dm/bl_dm_index/dm_shippings.sql
+2026-04-29 14:12:53,800 | ERROR   | dwh_setup |   step 54  BL_DM: dm_store_branches indexes               bl_dm/bl_dm_index/dm_store_branches.sql
+2026-04-29 14:12:53,802 | ERROR   | dwh_setup |   step 55  BL_DM: dim_dates indexes                       bl_dm/bl_dm_index/dim_dates.sql
+2026-04-29 14:12:53,802 | ERROR   | dwh_setup |   step 56  BL_DM: dm_customers_scd indexes                bl_dm/bl_dm_index/dm_customers_scd.sql
+2026-04-29 14:12:53,803 | ERROR   | dwh_setup |   step 57  BL_DM: dm_employees_scd indexes                bl_dm/bl_dm_index/dm_employees_scd.sql
+2026-04-29 14:12:53,803 | ERROR   | dwh_setup |   step 58  BL_DM: dm_junk index                           bl_dm/bl_dm_index/dm_junk_transactions.sql
+2026-04-29 14:12:53,807 | ERROR   | dwh_setup |   step 59  BL_DM: dm_products indexes                     bl_dm/bl_dm_index/dm_products.sql
+2026-04-29 14:12:53,808 | ERROR   | dwh_setup |   step 60  BL_DM: fct_transactions indexes                bl_dm/bl_dm_index/fct_transactions_dd.sql
+2026-04-29 14:12:53,808 | ERROR   | dwh_setup |   step 61  BL_DM: unknown members                         bl_dm/bl_dm_unknown_members/insert_unknown_members.sql
+2026-04-29 14:12:53,809 | ERROR   | dwh_setup |   step 62  Permissions                                    setup/permission.sql
+2026-04-29 14:15:04,397 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:15:04,397 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:15:04,398 | INFO    | orchestrator |   Started  : 2026-04-29 14:15:04                   ║
+2026-04-29 14:15:04,398 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:15:04,398 | INFO    | orchestrator | 
+2026-04-29 14:15:04,399 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:15:04,502 | ERROR   | dwh_setup | Missing SQL files — aborting before any DB changes:
+2026-04-29 14:15:04,503 | ERROR   | dwh_setup |   step 20  STG: reject_sales table                        stg_cl/stg_cl_table/reject_sales.sql
+2026-04-29 14:15:04,503 | ERROR   | dwh_setup |   step 21  STG: sales_offline table                       stg_cl/stg_cl_table/sales_offline.sql
+2026-04-29 14:15:04,504 | ERROR   | dwh_setup |   step 22  STG: sales_online table                        stg_cl/stg_cl_table/sales_online.sql
+2026-04-29 14:15:04,504 | ERROR   | dwh_setup |   step 23  STG: reject_sales index                        stg_cl/stg_cl_index/reject_sales.sql
+2026-04-29 14:15:04,504 | ERROR   | dwh_setup |   step 24  STG: sales_offline indexes                     stg_cl/stg_cl_index/sales_offline.sql
+2026-04-29 14:15:04,504 | ERROR   | dwh_setup |   step 25  STG: sales_online indexes                      stg_cl/stg_cl_index/sales_online.sql
+2026-04-29 14:22:00,606 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:22:00,607 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:22:00,607 | INFO    | orchestrator |   Started  : 2026-04-29 14:22:00                   ║
+2026-04-29 14:22:00,608 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:22:00,609 | INFO    | orchestrator | 
+2026-04-29 14:22:00,609 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:22:00,760 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:22:00,761 | INFO    | dwh_setup | DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+2026-04-29 14:22:00,761 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:22:00,895 | ERROR   | orchestrator | ═══  [1/4]  Create DWH    FAILED  (0.3s)  ═══
+Traceback (most recent call last):
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 161, in main
+    func(args)
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 69, in do_create_dwh
+    infra_run(
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Infrastructure_Setup.py", line 224, in run
+    connections[target] = get_connection(env, target)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Infrastructure_Setup.py", line 155, in get_connection
+    conn = psycopg2.connect(**_build_dsn(env, dbname, role))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\SCRIPTS\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+2026-04-29 14:22:00,910 | ERROR   | orchestrator | Pipeline aborted.
+2026-04-29 14:23:06,459 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:23:06,460 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:23:06,461 | INFO    | orchestrator |   Started  : 2026-04-29 14:23:06                   ║
+2026-04-29 14:23:06,462 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:23:06,466 | INFO    | orchestrator | 
+2026-04-29 14:23:06,467 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:23:06,554 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:23:06,555 | INFO    | dwh_setup | DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+2026-04-29 14:23:06,556 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:23:06,678 | ERROR   | orchestrator | ═══  [1/4]  Create DWH    FAILED  (0.2s)  ═══
+Traceback (most recent call last):
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 161, in main
+    func(args)
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 69, in do_create_dwh
+    infra_run(
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Infrastructure_Setup.py", line 224, in run
+    connections[target] = get_connection(env, target)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Infrastructure_Setup.py", line 155, in get_connection
+    conn = psycopg2.connect(**_build_dsn(env, dbname, role))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\SCRIPTS\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: fe_sendauth: no password supplied
+
+2026-04-29 14:23:06,684 | ERROR   | orchestrator | Pipeline aborted.
+2026-04-29 14:36:25,583 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:36:25,584 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:36:25,584 | INFO    | orchestrator |   Started  : 2026-04-29 14:36:25                   ║
+2026-04-29 14:36:25,584 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:36:25,585 | INFO    | orchestrator | 
+2026-04-29 14:36:25,585 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:36:25,749 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:36:25,750 | INFO    | dwh_setup | DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+2026-04-29 14:36:25,750 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:36:25,930 | ERROR   | dwh_setup |   [FAIL] step 01 — Create database  (0.00s)
+2026-04-29 14:36:25,930 | ERROR   | dwh_setup |          file : bootstrap/database.sql
+2026-04-29 14:36:25,930 | ERROR   | dwh_setup |          error: database "dnd_sales" already exists
+
+2026-04-29 14:37:06,483 | ERROR   | dwh_setup | Aborting setup at step 1.
+2026-04-29 14:37:06,484 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:37:06,484 | INFO    | dwh_setup | Setup complete — passed: 0  |  failed: 1  |  skipped: 0
+2026-04-29 14:37:06,485 | WARNING | dwh_setup | Re-run with --from-step <N> to retry failed steps.
+2026-04-29 14:37:06,485 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:37:08,475 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:37:08,475 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:37:08,476 | INFO    | orchestrator |   Started  : 2026-04-29 14:37:08                   ║
+2026-04-29 14:37:08,476 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:37:08,476 | INFO    | orchestrator | 
+2026-04-29 14:37:08,476 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:37:08,557 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:37:08,557 | INFO    | dwh_setup | DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+2026-04-29 14:37:08,558 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:37:09,451 | INFO    | dwh_setup |   [ ok ] step 01 — Create database                               (0.78s)
+2026-04-29 14:37:09,467 | INFO    | dwh_setup |   [ ok ] step 02 — Create roles & users                          (0.02s)
+2026-04-29 14:37:09,574 | INFO    | dwh_setup |   [ ok ] step 03 — Create schemas                                (0.00s)
+2026-04-29 14:37:09,580 | INFO    | dwh_setup |   [ ok ] step 04 — Role DB settings                              (0.00s)
+2026-04-29 14:37:09,582 | INFO    | dwh_setup |   [ ok ] step 05 — BL_CN: etl_run table                          (0.00s)
+2026-04-29 14:37:09,584 | INFO    | dwh_setup |   [ ok ] step 06 — BL_CN: etl_log table                          (0.00s)
+2026-04-29 14:37:09,589 | INFO    | dwh_setup |   [ ok ] step 07 — BL_CN: etl_run index                          (0.00s)
+2026-04-29 14:37:09,591 | INFO    | dwh_setup |   [ ok ] step 08 — BL_CN: etl_log indexes                        (0.00s)
+2026-04-29 14:37:09,599 | INFO    | dwh_setup |   [ ok ] step 09 — BL_CN: log_start function                     (0.01s)
+2026-04-29 14:37:09,602 | INFO    | dwh_setup |   [ ok ] step 10 — BL_CN: log_success procedure                  (0.00s)
+2026-04-29 14:37:09,603 | INFO    | dwh_setup |   [ ok ] step 11 — BL_CN: log_failure procedure                  (0.00s)
+2026-04-29 14:37:09,608 | INFO    | dwh_setup |   [ ok ] step 12 — BL_CN: v_latest_runs view                     (0.00s)
+2026-04-29 14:37:09,616 | INFO    | dwh_setup |   [ ok ] step 13 — BL_CN: v_etl_summary view                     (0.01s)
+2026-04-29 14:37:09,621 | INFO    | dwh_setup |   [ ok ] step 14 — BL_CN: v_failed_runs view                     (0.00s)
+2026-04-29 14:37:09,625 | INFO    | dwh_setup |   [ ok ] step 15 — BL_CN: v_pipeline_runs view                   (0.00s)
+2026-04-29 14:37:09,628 | INFO    | dwh_setup |   [ ok ] step 16 — SA_AUDIT: file_load_log table                 (0.00s)
+2026-04-29 14:37:09,630 | INFO    | dwh_setup |   [ ok ] step 17 — SA_AUDIT: file_load_log indexes               (0.00s)
+2026-04-29 14:37:09,631 | INFO    | dwh_setup |   [ ok ] step 18 — SRC: sales_offline table                      (0.00s)
+2026-04-29 14:37:09,632 | INFO    | dwh_setup |   [ ok ] step 19 — SRC: sales_online table                       (0.00s)
+2026-04-29 14:37:09,634 | INFO    | dwh_setup |   [ ok ] step 20 — STG: reject_sales table                       (0.00s)
+2026-04-29 14:37:09,636 | INFO    | dwh_setup |   [ ok ] step 21 — STG: sales_offline table                      (0.00s)
+2026-04-29 14:37:09,637 | INFO    | dwh_setup |   [ ok ] step 22 — STG: sales_online table                       (0.00s)
+2026-04-29 14:37:09,640 | INFO    | dwh_setup |   [ ok ] step 23 — STG: reject_sales index                       (0.00s)
+2026-04-29 14:37:09,642 | INFO    | dwh_setup |   [ ok ] step 24 — STG: sales_offline indexes                    (0.00s)
+2026-04-29 14:37:09,644 | INFO    | dwh_setup |   [ ok ] step 25 — STG: sales_online indexes                     (0.00s)
+2026-04-29 14:37:09,646 | INFO    | dwh_setup |   [ ok ] step 26 — BL_3NF: sequences                             (0.00s)
+2026-04-29 14:37:09,648 | INFO    | dwh_setup |   [ ok ] step 27 — BL_3NF: ce_suppliers table                    (0.00s)
+2026-04-29 14:37:09,649 | INFO    | dwh_setup |   [ ok ] step 28 — BL_3NF: ce_shippings table                    (0.00s)
+2026-04-29 14:37:09,651 | INFO    | dwh_setup |   [ ok ] step 29 — BL_3NF: ce_store_branches table               (0.00s)
+2026-04-29 14:37:09,654 | INFO    | dwh_setup |   [ ok ] step 30 — BL_3NF: ce_products table                     (0.00s)
+2026-04-29 14:37:09,658 | INFO    | dwh_setup |   [ ok ] step 31 — BL_3NF: ce_customers_scd table                (0.00s)
+2026-04-29 14:37:09,660 | INFO    | dwh_setup |   [ ok ] step 32 — BL_3NF: ce_employees_scd table                (0.00s)
+2026-04-29 14:37:09,662 | INFO    | dwh_setup |   [ ok ] step 33 — BL_3NF: ce_transactions table                 (0.00s)
+2026-04-29 14:37:09,664 | INFO    | dwh_setup |   [ ok ] step 34 — BL_3NF: ce_suppliers indexes                  (0.00s)
+2026-04-29 14:37:09,665 | INFO    | dwh_setup |   [ ok ] step 35 — BL_3NF: ce_shippings indexes                  (0.00s)
+2026-04-29 14:37:09,666 | INFO    | dwh_setup |   [ ok ] step 36 — BL_3NF: ce_store_branches index               (0.00s)
+2026-04-29 14:37:09,668 | INFO    | dwh_setup |   [ ok ] step 37 — BL_3NF: ce_products indexes                   (0.00s)
+2026-04-29 14:37:09,682 | INFO    | dwh_setup |   [ ok ] step 38 — BL_3NF: ce_customers_scd indexes              (0.01s)
+2026-04-29 14:37:09,684 | INFO    | dwh_setup |   [ ok ] step 39 — BL_3NF: ce_employees_scd indexes              (0.00s)
+2026-04-29 14:37:09,685 | INFO    | dwh_setup |   [ ok ] step 40 — BL_3NF: ce_transactions indexes               (0.00s)
+2026-04-29 14:37:09,697 | INFO    | dwh_setup |   [ ok ] step 41 — BL_3NF: unknown members                       (0.01s)
+2026-04-29 14:37:09,699 | INFO    | dwh_setup |   [ ok ] step 42 — BL_DM: sequences                              (0.00s)
+2026-04-29 14:37:09,701 | INFO    | dwh_setup |   [ ok ] step 43 — BL_DM: dm_suppliers table                     (0.00s)
+2026-04-29 14:37:09,702 | INFO    | dwh_setup |   [ ok ] step 44 — BL_DM: dm_shippings table                     (0.00s)
+2026-04-29 14:37:09,703 | INFO    | dwh_setup |   [ ok ] step 45 — BL_DM: dm_store_branches table                (0.00s)
+2026-04-29 14:37:09,704 | INFO    | dwh_setup |   [ ok ] step 46 — BL_DM: dim_dates table                        (0.00s)
+2026-04-29 14:37:09,706 | INFO    | dwh_setup |   [ ok ] step 47 — BL_DM: dm_customers_scd table                 (0.00s)
+2026-04-29 14:37:09,707 | INFO    | dwh_setup |   [ ok ] step 48 — BL_DM: dm_employees_scd table                 (0.00s)
+2026-04-29 14:37:09,708 | INFO    | dwh_setup |   [ ok ] step 49 — BL_DM: dm_junk_transactions table             (0.00s)
+2026-04-29 14:37:09,709 | INFO    | dwh_setup |   [ ok ] step 50 — BL_DM: dm_products table                      (0.00s)
+2026-04-29 14:37:09,710 | INFO    | dwh_setup |   [ ok ] step 51 — BL_DM: fct_transactions_dd table              (0.00s)
+2026-04-29 14:37:09,711 | INFO    | dwh_setup |   [ ok ] step 52 — BL_DM: dm_suppliers indexes                   (0.00s)
+2026-04-29 14:37:09,713 | INFO    | dwh_setup |   [ ok ] step 53 — BL_DM: dm_shippings indexes                   (0.00s)
+2026-04-29 14:37:09,714 | INFO    | dwh_setup |   [ ok ] step 54 — BL_DM: dm_store_branches indexes              (0.00s)
+2026-04-29 14:37:09,715 | INFO    | dwh_setup |   [ ok ] step 55 — BL_DM: dim_dates indexes                      (0.00s)
+2026-04-29 14:37:09,717 | INFO    | dwh_setup |   [ ok ] step 56 — BL_DM: dm_customers_scd indexes               (0.00s)
+2026-04-29 14:37:09,718 | INFO    | dwh_setup |   [ ok ] step 57 — BL_DM: dm_employees_scd indexes               (0.00s)
+2026-04-29 14:37:09,719 | INFO    | dwh_setup |   [ ok ] step 58 — BL_DM: dm_junk index                          (0.00s)
+2026-04-29 14:37:09,720 | INFO    | dwh_setup |   [ ok ] step 59 — BL_DM: dm_products indexes                    (0.00s)
+2026-04-29 14:37:09,722 | INFO    | dwh_setup |   [ ok ] step 60 — BL_DM: fct_transactions indexes               (0.00s)
+2026-04-29 14:37:09,735 | INFO    | dwh_setup |   [ ok ] step 61 — BL_DM: unknown members                        (0.01s)
+2026-04-29 14:37:09,748 | INFO    | dwh_setup |   [ ok ] step 62 — Permissions                                   (0.01s)
+2026-04-29 14:37:09,749 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:37:09,751 | INFO    | dwh_setup | Setup complete — passed: 62  |  failed: 0  |  skipped: 0
+2026-04-29 14:37:09,752 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:37:09,752 | INFO    | orchestrator | ═══  [1/4]  Create DWH    (1.3s)  ═══
+2026-04-29 14:37:09,752 | INFO    | orchestrator | 
+2026-04-29 14:37:09,752 | INFO    | orchestrator | ═══  [2/4]  Install ETL Procs  ═══
+2026-04-29 14:37:09,869 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:37:09,870 | INFO    | procedure_runner | INSTALLING ETL PROCEDURES  (27 files)
+2026-04-29 14:37:09,870 | INFO    | procedure_runner | DWH_BUILD root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD
+2026-04-29 14:37:09,870 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:37:09,879 | INFO    | procedure_runner |   [ 1/27]    STG_CLN: load_stg_offline                 (0.00s)
+2026-04-29 14:37:09,882 | INFO    | procedure_runner |   [ 2/27]    STG_CLN: load_stg_online                  (0.00s)
+2026-04-29 14:37:09,883 | INFO    | procedure_runner |   [ 3/27]    STG_CLN: load_stg_all                     (0.00s)
+2026-04-29 14:37:09,886 | INFO    | procedure_runner |   [ 4/27]    BL_3NF fn: get_suppliers                  (0.00s)
+2026-04-29 14:37:09,888 | INFO    | procedure_runner |   [ 5/27]    BL_3NF fn: get_shippings                  (0.00s)
+2026-04-29 14:37:09,889 | INFO    | procedure_runner |   [ 6/27]    BL_3NF fn: get_store_branches             (0.00s)
+2026-04-29 14:37:09,892 | INFO    | procedure_runner |   [ 7/27]    BL_3NF fn: get_products                   (0.00s)
+2026-04-29 14:37:09,895 | INFO    | procedure_runner |   [ 8/27]    BL_3NF fn: get_customers_scd              (0.00s)
+2026-04-29 14:37:09,898 | INFO    | procedure_runner |   [ 9/27]    BL_3NF fn: get_employees_scd              (0.00s)
+2026-04-29 14:37:09,900 | INFO    | procedure_runner |   [10/27]    BL_3NF: load_ce_suppliers                 (0.00s)
+2026-04-29 14:37:09,902 | INFO    | procedure_runner |   [11/27]    BL_3NF: load_ce_shippings                 (0.00s)
+2026-04-29 14:37:09,905 | INFO    | procedure_runner |   [12/27]    BL_3NF: load_ce_store_branches            (0.00s)
+2026-04-29 14:37:09,906 | INFO    | procedure_runner |   [13/27]    BL_3NF: load_ce_products                  (0.00s)
+2026-04-29 14:37:09,908 | INFO    | procedure_runner |   [14/27]    BL_3NF: load_ce_customers_scd             (0.00s)
+2026-04-29 14:37:09,910 | INFO    | procedure_runner |   [15/27]    BL_3NF: load_ce_employees_scd             (0.00s)
+2026-04-29 14:37:09,912 | INFO    | procedure_runner |   [16/27]    BL_3NF: load_ce_transactions              (0.00s)
+2026-04-29 14:37:09,914 | INFO    | procedure_runner |   [17/27]    BL_3NF: sp_load_bl_3nf_all                (0.00s)
+2026-04-29 14:37:09,916 | INFO    | procedure_runner |   [18/27]    BL_DM: load_dim_dates                     (0.00s)
+2026-04-29 14:37:09,917 | INFO    | procedure_runner |   [19/27]    BL_DM: load_dm_suppliers                  (0.00s)
+2026-04-29 14:37:09,919 | INFO    | procedure_runner |   [20/27]    BL_DM: load_dm_shippings                  (0.00s)
+2026-04-29 14:37:09,921 | INFO    | procedure_runner |   [21/27]    BL_DM: load_dm_store_branches             (0.00s)
+2026-04-29 14:37:09,923 | INFO    | procedure_runner |   [22/27]    BL_DM: load_dm_products                   (0.00s)
+2026-04-29 14:37:09,925 | INFO    | procedure_runner |   [23/27]    BL_DM: load_dm_customers_scd              (0.00s)
+2026-04-29 14:37:09,927 | INFO    | procedure_runner |   [24/27]    BL_DM: load_dm_employees_scd              (0.00s)
+2026-04-29 14:37:09,929 | INFO    | procedure_runner |   [25/27]    BL_DM: load_dm_junk_transactions          (0.00s)
+2026-04-29 14:37:09,931 | INFO    | procedure_runner |   [26/27]    BL_DM: load_fct_transactions_dd           (0.00s)
+2026-04-29 14:37:09,934 | INFO    | procedure_runner |   [27/27]    BL_DM: sp_load_bl_dm_all                  (0.00s)
+2026-04-29 14:37:09,934 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:37:09,934 | INFO    | procedure_runner | ETL PROCEDURES INSTALLED: 27/27
+2026-04-29 14:37:09,934 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:37:09,936 | INFO    | orchestrator | ═══  [2/4]  Install ETL Procs    (0.2s)  ═══
+2026-04-29 14:37:09,936 | INFO    | orchestrator | 
+2026-04-29 14:37:09,936 | INFO    | orchestrator | ═══  [3/4]  Initial Load  ═══
+2026-04-29 14:37:09,937 | ERROR   | orchestrator | ═══  [3/4]  Initial Load    FAILED  (0.0s)  ═══
+Traceback (most recent call last):
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 157, in main
+    func(args)
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 79, in do_initial
+    from initial_load import run as initial_run
+ModuleNotFoundError: No module named 'initial_load'
+2026-04-29 14:37:09,945 | ERROR   | orchestrator | Pipeline aborted.
+2026-04-29 14:49:02,749 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:49:02,750 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:49:02,750 | INFO    | orchestrator |   Started  : 2026-04-29 14:49:02                   ║
+2026-04-29 14:49:02,751 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:49:02,751 | INFO    | orchestrator | 
+2026-04-29 14:49:02,752 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:49:02,875 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:02,876 | INFO    | dwh_setup | DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+2026-04-29 14:49:02,876 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:03,066 | ERROR   | dwh_setup |   [FAIL] step 01 — Create database  (0.00s)
+2026-04-29 14:49:03,066 | ERROR   | dwh_setup |          file : bootstrap/database.sql
+2026-04-29 14:49:03,066 | ERROR   | dwh_setup |          error: database "dnd_sales" already exists
+
+2026-04-29 14:49:16,871 | ERROR   | dwh_setup | Aborting setup at step 1.
+2026-04-29 14:49:16,873 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:16,873 | INFO    | dwh_setup | Setup complete — passed: 0  |  failed: 1  |  skipped: 0
+2026-04-29 14:49:16,874 | WARNING | dwh_setup | Re-run with --from-step <N> to retry failed steps.
+2026-04-29 14:49:16,875 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:19,044 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:49:19,044 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:49:19,045 | INFO    | orchestrator |   Started  : 2026-04-29 14:49:19                   ║
+2026-04-29 14:49:19,045 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:49:19,046 | INFO    | orchestrator | 
+2026-04-29 14:49:19,046 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:49:19,138 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:19,139 | INFO    | dwh_setup | DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+2026-04-29 14:49:19,139 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:20,149 | INFO    | dwh_setup |   [ ok ] step 01 — Create database                               (0.89s)
+2026-04-29 14:49:20,158 | INFO    | dwh_setup |   [ ok ] step 02 — Create roles & users                          (0.01s)
+2026-04-29 14:49:20,273 | INFO    | dwh_setup |   [ ok ] step 03 — Create schemas                                (0.00s)
+2026-04-29 14:49:20,281 | INFO    | dwh_setup |   [ ok ] step 04 — Role DB settings                              (0.01s)
+2026-04-29 14:49:20,283 | INFO    | dwh_setup |   [ ok ] step 05 — BL_CN: etl_run table                          (0.00s)
+2026-04-29 14:49:20,286 | INFO    | dwh_setup |   [ ok ] step 06 — BL_CN: etl_log table                          (0.00s)
+2026-04-29 14:49:20,288 | INFO    | dwh_setup |   [ ok ] step 07 — BL_CN: etl_run index                          (0.00s)
+2026-04-29 14:49:20,290 | INFO    | dwh_setup |   [ ok ] step 08 — BL_CN: etl_log indexes                        (0.00s)
+2026-04-29 14:49:20,297 | INFO    | dwh_setup |   [ ok ] step 09 — BL_CN: log_start function                     (0.01s)
+2026-04-29 14:49:20,300 | INFO    | dwh_setup |   [ ok ] step 10 — BL_CN: log_success procedure                  (0.00s)
+2026-04-29 14:49:20,303 | INFO    | dwh_setup |   [ ok ] step 11 — BL_CN: log_failure procedure                  (0.00s)
+2026-04-29 14:49:20,321 | INFO    | dwh_setup |   [ ok ] step 12 — BL_CN: v_latest_runs view                     (0.01s)
+2026-04-29 14:49:20,330 | INFO    | dwh_setup |   [ ok ] step 13 — BL_CN: v_etl_summary view                     (0.01s)
+2026-04-29 14:49:20,334 | INFO    | dwh_setup |   [ ok ] step 14 — BL_CN: v_failed_runs view                     (0.00s)
+2026-04-29 14:49:20,340 | INFO    | dwh_setup |   [ ok ] step 15 — BL_CN: v_pipeline_runs view                   (0.01s)
+2026-04-29 14:49:20,342 | INFO    | dwh_setup |   [ ok ] step 16 — SA_AUDIT: file_load_log table                 (0.00s)
+2026-04-29 14:49:20,344 | INFO    | dwh_setup |   [ ok ] step 17 — SA_AUDIT: file_load_log indexes               (0.00s)
+2026-04-29 14:49:20,345 | INFO    | dwh_setup |   [ ok ] step 18 — SRC: sales_offline table                      (0.00s)
+2026-04-29 14:49:20,347 | INFO    | dwh_setup |   [ ok ] step 19 — SRC: sales_online table                       (0.00s)
+2026-04-29 14:49:20,348 | INFO    | dwh_setup |   [ ok ] step 20 — STG: reject_sales table                       (0.00s)
+2026-04-29 14:49:20,349 | INFO    | dwh_setup |   [ ok ] step 21 — STG: sales_offline table                      (0.00s)
+2026-04-29 14:49:20,351 | INFO    | dwh_setup |   [ ok ] step 22 — STG: sales_online table                       (0.00s)
+2026-04-29 14:49:20,352 | INFO    | dwh_setup |   [ ok ] step 23 — STG: reject_sales index                       (0.00s)
+2026-04-29 14:49:20,354 | INFO    | dwh_setup |   [ ok ] step 24 — STG: sales_offline indexes                    (0.00s)
+2026-04-29 14:49:20,356 | INFO    | dwh_setup |   [ ok ] step 25 — STG: sales_online indexes                     (0.00s)
+2026-04-29 14:49:20,358 | INFO    | dwh_setup |   [ ok ] step 26 — BL_3NF: sequences                             (0.00s)
+2026-04-29 14:49:20,359 | INFO    | dwh_setup |   [ ok ] step 27 — BL_3NF: ce_suppliers table                    (0.00s)
+2026-04-29 14:49:20,361 | INFO    | dwh_setup |   [ ok ] step 28 — BL_3NF: ce_shippings table                    (0.00s)
+2026-04-29 14:49:20,362 | INFO    | dwh_setup |   [ ok ] step 29 — BL_3NF: ce_store_branches table               (0.00s)
+2026-04-29 14:49:20,363 | INFO    | dwh_setup |   [ ok ] step 30 — BL_3NF: ce_products table                     (0.00s)
+2026-04-29 14:49:20,365 | INFO    | dwh_setup |   [ ok ] step 31 — BL_3NF: ce_customers_scd table                (0.00s)
+2026-04-29 14:49:20,366 | INFO    | dwh_setup |   [ ok ] step 32 — BL_3NF: ce_employees_scd table                (0.00s)
+2026-04-29 14:49:20,367 | INFO    | dwh_setup |   [ ok ] step 33 — BL_3NF: ce_transactions table                 (0.00s)
+2026-04-29 14:49:20,369 | INFO    | dwh_setup |   [ ok ] step 34 — BL_3NF: ce_suppliers indexes                  (0.00s)
+2026-04-29 14:49:20,371 | INFO    | dwh_setup |   [ ok ] step 35 — BL_3NF: ce_shippings indexes                  (0.00s)
+2026-04-29 14:49:20,373 | INFO    | dwh_setup |   [ ok ] step 36 — BL_3NF: ce_store_branches index               (0.00s)
+2026-04-29 14:49:20,375 | INFO    | dwh_setup |   [ ok ] step 37 — BL_3NF: ce_products indexes                   (0.00s)
+2026-04-29 14:49:20,388 | INFO    | dwh_setup |   [ ok ] step 38 — BL_3NF: ce_customers_scd indexes              (0.01s)
+2026-04-29 14:49:20,390 | INFO    | dwh_setup |   [ ok ] step 39 — BL_3NF: ce_employees_scd indexes              (0.00s)
+2026-04-29 14:49:20,392 | INFO    | dwh_setup |   [ ok ] step 40 — BL_3NF: ce_transactions indexes               (0.00s)
+2026-04-29 14:49:20,404 | INFO    | dwh_setup |   [ ok ] step 41 — BL_3NF: unknown members                       (0.01s)
+2026-04-29 14:49:20,407 | INFO    | dwh_setup |   [ ok ] step 42 — BL_DM: sequences                              (0.00s)
+2026-04-29 14:49:20,408 | INFO    | dwh_setup |   [ ok ] step 43 — BL_DM: dm_suppliers table                     (0.00s)
+2026-04-29 14:49:20,409 | INFO    | dwh_setup |   [ ok ] step 44 — BL_DM: dm_shippings table                     (0.00s)
+2026-04-29 14:49:20,411 | INFO    | dwh_setup |   [ ok ] step 45 — BL_DM: dm_store_branches table                (0.00s)
+2026-04-29 14:49:20,412 | INFO    | dwh_setup |   [ ok ] step 46 — BL_DM: dim_dates table                        (0.00s)
+2026-04-29 14:49:20,414 | INFO    | dwh_setup |   [ ok ] step 47 — BL_DM: dm_customers_scd table                 (0.00s)
+2026-04-29 14:49:20,415 | INFO    | dwh_setup |   [ ok ] step 48 — BL_DM: dm_employees_scd table                 (0.00s)
+2026-04-29 14:49:20,416 | INFO    | dwh_setup |   [ ok ] step 49 — BL_DM: dm_junk_transactions table             (0.00s)
+2026-04-29 14:49:20,417 | INFO    | dwh_setup |   [ ok ] step 50 — BL_DM: dm_products table                      (0.00s)
+2026-04-29 14:49:20,419 | INFO    | dwh_setup |   [ ok ] step 51 — BL_DM: fct_transactions_dd table              (0.00s)
+2026-04-29 14:49:20,420 | INFO    | dwh_setup |   [ ok ] step 52 — BL_DM: dm_suppliers indexes                   (0.00s)
+2026-04-29 14:49:20,422 | INFO    | dwh_setup |   [ ok ] step 53 — BL_DM: dm_shippings indexes                   (0.00s)
+2026-04-29 14:49:20,424 | INFO    | dwh_setup |   [ ok ] step 54 — BL_DM: dm_store_branches indexes              (0.00s)
+2026-04-29 14:49:20,425 | INFO    | dwh_setup |   [ ok ] step 55 — BL_DM: dim_dates indexes                      (0.00s)
+2026-04-29 14:49:20,427 | INFO    | dwh_setup |   [ ok ] step 56 — BL_DM: dm_customers_scd indexes               (0.00s)
+2026-04-29 14:49:20,429 | INFO    | dwh_setup |   [ ok ] step 57 — BL_DM: dm_employees_scd indexes               (0.00s)
+2026-04-29 14:49:20,430 | INFO    | dwh_setup |   [ ok ] step 58 — BL_DM: dm_junk index                          (0.00s)
+2026-04-29 14:49:20,431 | INFO    | dwh_setup |   [ ok ] step 59 — BL_DM: dm_products indexes                    (0.00s)
+2026-04-29 14:49:20,433 | INFO    | dwh_setup |   [ ok ] step 60 — BL_DM: fct_transactions indexes               (0.00s)
+2026-04-29 14:49:20,446 | INFO    | dwh_setup |   [ ok ] step 61 — BL_DM: unknown members                        (0.01s)
+2026-04-29 14:49:20,464 | INFO    | dwh_setup |   [ ok ] step 62 — Permissions                                   (0.02s)
+2026-04-29 14:49:20,465 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:20,466 | INFO    | dwh_setup | Setup complete — passed: 62  |  failed: 0  |  skipped: 0
+2026-04-29 14:49:20,466 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:49:20,466 | INFO    | orchestrator | ═══  [1/4]  Create DWH    (1.4s)  ═══
+2026-04-29 14:49:20,466 | INFO    | orchestrator | 
+2026-04-29 14:49:20,467 | INFO    | orchestrator | ═══  [2/4]  Install ETL Procs  ═══
+2026-04-29 14:49:20,582 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:49:20,583 | INFO    | procedure_runner | INSTALLING ETL PROCEDURES  (27 files)
+2026-04-29 14:49:20,583 | INFO    | procedure_runner | DWH_BUILD root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD
+2026-04-29 14:49:20,583 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:49:20,597 | INFO    | procedure_runner |   [ 1/27]    STG_CLN: load_stg_offline                 (0.01s)
+2026-04-29 14:49:20,600 | INFO    | procedure_runner |   [ 2/27]    STG_CLN: load_stg_online                  (0.00s)
+2026-04-29 14:49:20,601 | INFO    | procedure_runner |   [ 3/27]    STG_CLN: load_stg_all                     (0.00s)
+2026-04-29 14:49:20,605 | INFO    | procedure_runner |   [ 4/27]    BL_3NF fn: get_suppliers                  (0.00s)
+2026-04-29 14:49:20,607 | INFO    | procedure_runner |   [ 5/27]    BL_3NF fn: get_shippings                  (0.00s)
+2026-04-29 14:49:20,608 | INFO    | procedure_runner |   [ 6/27]    BL_3NF fn: get_store_branches             (0.00s)
+2026-04-29 14:49:20,611 | INFO    | procedure_runner |   [ 7/27]    BL_3NF fn: get_products                   (0.00s)
+2026-04-29 14:49:20,613 | INFO    | procedure_runner |   [ 8/27]    BL_3NF fn: get_customers_scd              (0.00s)
+2026-04-29 14:49:20,616 | INFO    | procedure_runner |   [ 9/27]    BL_3NF fn: get_employees_scd              (0.00s)
+2026-04-29 14:49:20,618 | INFO    | procedure_runner |   [10/27]    BL_3NF: load_ce_suppliers                 (0.00s)
+2026-04-29 14:49:20,624 | INFO    | procedure_runner |   [11/27]    BL_3NF: load_ce_shippings                 (0.01s)
+2026-04-29 14:49:20,625 | INFO    | procedure_runner |   [12/27]    BL_3NF: load_ce_store_branches            (0.00s)
+2026-04-29 14:49:20,628 | INFO    | procedure_runner |   [13/27]    BL_3NF: load_ce_products                  (0.00s)
+2026-04-29 14:49:20,630 | INFO    | procedure_runner |   [14/27]    BL_3NF: load_ce_customers_scd             (0.00s)
+2026-04-29 14:49:20,632 | INFO    | procedure_runner |   [15/27]    BL_3NF: load_ce_employees_scd             (0.00s)
+2026-04-29 14:49:20,634 | INFO    | procedure_runner |   [16/27]    BL_3NF: load_ce_transactions              (0.00s)
+2026-04-29 14:49:20,636 | INFO    | procedure_runner |   [17/27]    BL_3NF: sp_load_bl_3nf_all                (0.00s)
+2026-04-29 14:49:20,640 | INFO    | procedure_runner |   [18/27]    BL_DM: load_dim_dates                     (0.00s)
+2026-04-29 14:49:20,643 | INFO    | procedure_runner |   [19/27]    BL_DM: load_dm_suppliers                  (0.00s)
+2026-04-29 14:49:20,645 | INFO    | procedure_runner |   [20/27]    BL_DM: load_dm_shippings                  (0.00s)
+2026-04-29 14:49:20,646 | INFO    | procedure_runner |   [21/27]    BL_DM: load_dm_store_branches             (0.00s)
+2026-04-29 14:49:20,648 | INFO    | procedure_runner |   [22/27]    BL_DM: load_dm_products                   (0.00s)
+2026-04-29 14:49:20,650 | INFO    | procedure_runner |   [23/27]    BL_DM: load_dm_customers_scd              (0.00s)
+2026-04-29 14:49:20,652 | INFO    | procedure_runner |   [24/27]    BL_DM: load_dm_employees_scd              (0.00s)
+2026-04-29 14:49:20,654 | INFO    | procedure_runner |   [25/27]    BL_DM: load_dm_junk_transactions          (0.00s)
+2026-04-29 14:49:20,657 | INFO    | procedure_runner |   [26/27]    BL_DM: load_fct_transactions_dd           (0.00s)
+2026-04-29 14:49:20,660 | INFO    | procedure_runner |   [27/27]    BL_DM: sp_load_bl_dm_all                  (0.00s)
+2026-04-29 14:49:20,660 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:49:20,660 | INFO    | procedure_runner | ETL PROCEDURES INSTALLED: 27/27
+2026-04-29 14:49:20,660 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:49:20,661 | INFO    | orchestrator | ═══  [2/4]  Install ETL Procs    (0.2s)  ═══
+2026-04-29 14:49:20,661 | INFO    | orchestrator | 
+2026-04-29 14:49:20,661 | INFO    | orchestrator | ═══  [3/4]  Initial Load  ═══
+2026-04-29 14:49:20,663 | ERROR   | orchestrator | ═══  [3/4]  Initial Load    FAILED  (0.0s)  ═══
+Traceback (most recent call last):
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 157, in main
+    func(args)
+  File "C:\Users\Ana\Desktop\Bachelor-s-Project\PIPELINES\Orchestrator.py", line 79, in do_initial
+    from initial_load import run as initial_run
+ModuleNotFoundError: No module named 'initial_load'
+2026-04-29 14:49:20,667 | ERROR   | orchestrator | Pipeline aborted.
+2026-04-29 14:54:15,363 | INFO    | orchestrator | DWH PIPELINE ORCHESTRATOR 
+2026-04-29 14:54:15,364 | INFO    | orchestrator |   Pipeline : all                                   ║
+2026-04-29 14:54:15,364 | INFO    | orchestrator |   Started  : 2026-04-29 14:54:15                   ║
+2026-04-29 14:54:15,365 | INFO    | orchestrator |   Steps    : 4                                     ║
+2026-04-29 14:54:15,365 | INFO    | orchestrator | 
+2026-04-29 14:54:15,366 | INFO    | orchestrator | ═══  [1/4]  Create DWH  ═══
+2026-04-29 14:54:15,498 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:54:15,499 | INFO    | dwh_setup | DWH Infrastructure Setup  —  62 steps  (root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD)
+2026-04-29 14:54:15,499 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:54:16,459 | INFO    | dwh_setup |   [ ok ] step 01 — Create database                               (0.83s)
+2026-04-29 14:54:16,468 | INFO    | dwh_setup |   [ ok ] step 02 — Create roles & users                          (0.01s)
+2026-04-29 14:54:16,583 | INFO    | dwh_setup |   [ ok ] step 03 — Create schemas                                (0.00s)
+2026-04-29 14:54:16,592 | INFO    | dwh_setup |   [ ok ] step 04 — Role DB settings                              (0.01s)
+2026-04-29 14:54:16,593 | INFO    | dwh_setup |   [ ok ] step 05 — BL_CN: etl_run table                          (0.00s)
+2026-04-29 14:54:16,594 | INFO    | dwh_setup |   [ ok ] step 06 — BL_CN: etl_log table                          (0.00s)
+2026-04-29 14:54:16,596 | INFO    | dwh_setup |   [ ok ] step 07 — BL_CN: etl_run index                          (0.00s)
+2026-04-29 14:54:16,597 | INFO    | dwh_setup |   [ ok ] step 08 — BL_CN: etl_log indexes                        (0.00s)
+2026-04-29 14:54:16,601 | INFO    | dwh_setup |   [ ok ] step 09 — BL_CN: log_start function                     (0.00s)
+2026-04-29 14:54:16,603 | INFO    | dwh_setup |   [ ok ] step 10 — BL_CN: log_success procedure                  (0.00s)
+2026-04-29 14:54:16,605 | INFO    | dwh_setup |   [ ok ] step 11 — BL_CN: log_failure procedure                  (0.00s)
+2026-04-29 14:54:16,608 | INFO    | dwh_setup |   [ ok ] step 12 — BL_CN: v_latest_runs view                     (0.00s)
+2026-04-29 14:54:16,612 | INFO    | dwh_setup |   [ ok ] step 13 — BL_CN: v_etl_summary view                     (0.00s)
+2026-04-29 14:54:16,615 | INFO    | dwh_setup |   [ ok ] step 14 — BL_CN: v_failed_runs view                     (0.00s)
+2026-04-29 14:54:16,618 | INFO    | dwh_setup |   [ ok ] step 15 — BL_CN: v_pipeline_runs view                   (0.00s)
+2026-04-29 14:54:16,619 | INFO    | dwh_setup |   [ ok ] step 16 — SA_AUDIT: file_load_log table                 (0.00s)
+2026-04-29 14:54:16,621 | INFO    | dwh_setup |   [ ok ] step 17 — SA_AUDIT: file_load_log indexes               (0.00s)
+2026-04-29 14:54:16,622 | INFO    | dwh_setup |   [ ok ] step 18 — SRC: sales_offline table                      (0.00s)
+2026-04-29 14:54:16,623 | INFO    | dwh_setup |   [ ok ] step 19 — SRC: sales_online table                       (0.00s)
+2026-04-29 14:54:16,624 | INFO    | dwh_setup |   [ ok ] step 20 — STG: reject_sales table                       (0.00s)
+2026-04-29 14:54:16,625 | INFO    | dwh_setup |   [ ok ] step 21 — STG: sales_offline table                      (0.00s)
+2026-04-29 14:54:16,626 | INFO    | dwh_setup |   [ ok ] step 22 — STG: sales_online table                       (0.00s)
+2026-04-29 14:54:16,628 | INFO    | dwh_setup |   [ ok ] step 23 — STG: reject_sales index                       (0.00s)
+2026-04-29 14:54:16,629 | INFO    | dwh_setup |   [ ok ] step 24 — STG: sales_offline indexes                    (0.00s)
+2026-04-29 14:54:16,630 | INFO    | dwh_setup |   [ ok ] step 25 — STG: sales_online indexes                     (0.00s)
+2026-04-29 14:54:16,632 | INFO    | dwh_setup |   [ ok ] step 26 — BL_3NF: sequences                             (0.00s)
+2026-04-29 14:54:16,633 | INFO    | dwh_setup |   [ ok ] step 27 — BL_3NF: ce_suppliers table                    (0.00s)
+2026-04-29 14:54:16,633 | INFO    | dwh_setup |   [ ok ] step 28 — BL_3NF: ce_shippings table                    (0.00s)
+2026-04-29 14:54:16,635 | INFO    | dwh_setup |   [ ok ] step 29 — BL_3NF: ce_store_branches table               (0.00s)
+2026-04-29 14:54:16,636 | INFO    | dwh_setup |   [ ok ] step 30 — BL_3NF: ce_products table                     (0.00s)
+2026-04-29 14:54:16,636 | INFO    | dwh_setup |   [ ok ] step 31 — BL_3NF: ce_customers_scd table                (0.00s)
+2026-04-29 14:54:16,637 | INFO    | dwh_setup |   [ ok ] step 32 — BL_3NF: ce_employees_scd table                (0.00s)
+2026-04-29 14:54:16,638 | INFO    | dwh_setup |   [ ok ] step 33 — BL_3NF: ce_transactions table                 (0.00s)
+2026-04-29 14:54:16,640 | INFO    | dwh_setup |   [ ok ] step 34 — BL_3NF: ce_suppliers indexes                  (0.00s)
+2026-04-29 14:54:16,641 | INFO    | dwh_setup |   [ ok ] step 35 — BL_3NF: ce_shippings indexes                  (0.00s)
+2026-04-29 14:54:16,642 | INFO    | dwh_setup |   [ ok ] step 36 — BL_3NF: ce_store_branches index               (0.00s)
+2026-04-29 14:54:16,643 | INFO    | dwh_setup |   [ ok ] step 37 — BL_3NF: ce_products indexes                   (0.00s)
+2026-04-29 14:54:16,651 | INFO    | dwh_setup |   [ ok ] step 38 — BL_3NF: ce_customers_scd indexes              (0.01s)
+2026-04-29 14:54:16,653 | INFO    | dwh_setup |   [ ok ] step 39 — BL_3NF: ce_employees_scd indexes              (0.00s)
+2026-04-29 14:54:16,655 | INFO    | dwh_setup |   [ ok ] step 40 — BL_3NF: ce_transactions indexes               (0.00s)
+2026-04-29 14:54:16,661 | INFO    | dwh_setup |   [ ok ] step 41 — BL_3NF: unknown members                       (0.01s)
+2026-04-29 14:54:16,662 | INFO    | dwh_setup |   [ ok ] step 42 — BL_DM: sequences                              (0.00s)
+2026-04-29 14:54:16,663 | INFO    | dwh_setup |   [ ok ] step 43 — BL_DM: dm_suppliers table                     (0.00s)
+2026-04-29 14:54:16,663 | INFO    | dwh_setup |   [ ok ] step 44 — BL_DM: dm_shippings table                     (0.00s)
+2026-04-29 14:54:16,665 | INFO    | dwh_setup |   [ ok ] step 45 — BL_DM: dm_store_branches table                (0.00s)
+2026-04-29 14:54:16,666 | INFO    | dwh_setup |   [ ok ] step 46 — BL_DM: dim_dates table                        (0.00s)
+2026-04-29 14:54:16,666 | INFO    | dwh_setup |   [ ok ] step 47 — BL_DM: dm_customers_scd table                 (0.00s)
+2026-04-29 14:54:16,667 | INFO    | dwh_setup |   [ ok ] step 48 — BL_DM: dm_employees_scd table                 (0.00s)
+2026-04-29 14:54:16,668 | INFO    | dwh_setup |   [ ok ] step 49 — BL_DM: dm_junk_transactions table             (0.00s)
+2026-04-29 14:54:16,669 | INFO    | dwh_setup |   [ ok ] step 50 — BL_DM: dm_products table                      (0.00s)
+2026-04-29 14:54:16,670 | INFO    | dwh_setup |   [ ok ] step 51 — BL_DM: fct_transactions_dd table              (0.00s)
+2026-04-29 14:54:16,671 | INFO    | dwh_setup |   [ ok ] step 52 — BL_DM: dm_suppliers indexes                   (0.00s)
+2026-04-29 14:54:16,672 | INFO    | dwh_setup |   [ ok ] step 53 — BL_DM: dm_shippings indexes                   (0.00s)
+2026-04-29 14:54:16,673 | INFO    | dwh_setup |   [ ok ] step 54 — BL_DM: dm_store_branches indexes              (0.00s)
+2026-04-29 14:54:16,674 | INFO    | dwh_setup |   [ ok ] step 55 — BL_DM: dim_dates indexes                      (0.00s)
+2026-04-29 14:54:16,675 | INFO    | dwh_setup |   [ ok ] step 56 — BL_DM: dm_customers_scd indexes               (0.00s)
+2026-04-29 14:54:16,676 | INFO    | dwh_setup |   [ ok ] step 57 — BL_DM: dm_employees_scd indexes               (0.00s)
+2026-04-29 14:54:16,677 | INFO    | dwh_setup |   [ ok ] step 58 — BL_DM: dm_junk index                          (0.00s)
+2026-04-29 14:54:16,678 | INFO    | dwh_setup |   [ ok ] step 59 — BL_DM: dm_products indexes                    (0.00s)
+2026-04-29 14:54:16,679 | INFO    | dwh_setup |   [ ok ] step 60 — BL_DM: fct_transactions indexes               (0.00s)
+2026-04-29 14:54:16,687 | INFO    | dwh_setup |   [ ok ] step 61 — BL_DM: unknown members                        (0.01s)
+2026-04-29 14:54:16,698 | INFO    | dwh_setup |   [ ok ] step 62 — Permissions                                   (0.01s)
+2026-04-29 14:54:16,699 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:54:16,699 | INFO    | dwh_setup | Setup complete — passed: 62  |  failed: 0  |  skipped: 0
+2026-04-29 14:54:16,699 | INFO    | dwh_setup | ============================================================
+2026-04-29 14:54:16,700 | INFO    | orchestrator | ═══  [1/4]  Create DWH    (1.3s)  ═══
+2026-04-29 14:54:16,700 | INFO    | orchestrator | 
+2026-04-29 14:54:16,700 | INFO    | orchestrator | ═══  [2/4]  Install ETL Procs  ═══
+2026-04-29 14:54:16,821 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,821 | INFO    | procedure_runner | INSTALLING ETL PROCEDURES  (27 files)
+2026-04-29 14:54:16,822 | INFO    | procedure_runner | DWH_BUILD root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD
+2026-04-29 14:54:16,822 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,835 | INFO    | procedure_runner |   [ 1/27]    STG_CLN: load_stg_offline                 (0.01s)
+2026-04-29 14:54:16,837 | INFO    | procedure_runner |   [ 2/27]    STG_CLN: load_stg_online                  (0.00s)
+2026-04-29 14:54:16,838 | INFO    | procedure_runner |   [ 3/27]    STG_CLN: load_stg_all                     (0.00s)
+2026-04-29 14:54:16,840 | INFO    | procedure_runner |   [ 4/27]    BL_3NF fn: get_suppliers                  (0.00s)
+2026-04-29 14:54:16,841 | INFO    | procedure_runner |   [ 5/27]    BL_3NF fn: get_shippings                  (0.00s)
+2026-04-29 14:54:16,842 | INFO    | procedure_runner |   [ 6/27]    BL_3NF fn: get_store_branches             (0.00s)
+2026-04-29 14:54:16,843 | INFO    | procedure_runner |   [ 7/27]    BL_3NF fn: get_products                   (0.00s)
+2026-04-29 14:54:16,845 | INFO    | procedure_runner |   [ 8/27]    BL_3NF fn: get_customers_scd              (0.00s)
+2026-04-29 14:54:16,846 | INFO    | procedure_runner |   [ 9/27]    BL_3NF fn: get_employees_scd              (0.00s)
+2026-04-29 14:54:16,848 | INFO    | procedure_runner |   [10/27]    BL_3NF: load_ce_suppliers                 (0.00s)
+2026-04-29 14:54:16,849 | INFO    | procedure_runner |   [11/27]    BL_3NF: load_ce_shippings                 (0.00s)
+2026-04-29 14:54:16,851 | INFO    | procedure_runner |   [12/27]    BL_3NF: load_ce_store_branches            (0.00s)
+2026-04-29 14:54:16,852 | INFO    | procedure_runner |   [13/27]    BL_3NF: load_ce_products                  (0.00s)
+2026-04-29 14:54:16,854 | INFO    | procedure_runner |   [14/27]    BL_3NF: load_ce_customers_scd             (0.00s)
+2026-04-29 14:54:16,855 | INFO    | procedure_runner |   [15/27]    BL_3NF: load_ce_employees_scd             (0.00s)
+2026-04-29 14:54:16,857 | INFO    | procedure_runner |   [16/27]    BL_3NF: load_ce_transactions              (0.00s)
+2026-04-29 14:54:16,858 | INFO    | procedure_runner |   [17/27]    BL_3NF: sp_load_bl_3nf_all                (0.00s)
+2026-04-29 14:54:16,859 | INFO    | procedure_runner |   [18/27]    BL_DM: load_dim_dates                     (0.00s)
+2026-04-29 14:54:16,860 | INFO    | procedure_runner |   [19/27]    BL_DM: load_dm_suppliers                  (0.00s)
+2026-04-29 14:54:16,861 | INFO    | procedure_runner |   [20/27]    BL_DM: load_dm_shippings                  (0.00s)
+2026-04-29 14:54:16,863 | INFO    | procedure_runner |   [21/27]    BL_DM: load_dm_store_branches             (0.00s)
+2026-04-29 14:54:16,864 | INFO    | procedure_runner |   [22/27]    BL_DM: load_dm_products                   (0.00s)
+2026-04-29 14:54:16,865 | INFO    | procedure_runner |   [23/27]    BL_DM: load_dm_customers_scd              (0.00s)
+2026-04-29 14:54:16,867 | INFO    | procedure_runner |   [24/27]    BL_DM: load_dm_employees_scd              (0.00s)
+2026-04-29 14:54:16,868 | INFO    | procedure_runner |   [25/27]    BL_DM: load_dm_junk_transactions          (0.00s)
+2026-04-29 14:54:16,870 | INFO    | procedure_runner |   [26/27]    BL_DM: load_fct_transactions_dd           (0.00s)
+2026-04-29 14:54:16,871 | INFO    | procedure_runner |   [27/27]    BL_DM: sp_load_bl_dm_all                  (0.00s)
+2026-04-29 14:54:16,871 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,871 | INFO    | procedure_runner | ETL PROCEDURES INSTALLED: 27/27
+2026-04-29 14:54:16,871 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,872 | INFO    | orchestrator | ═══  [2/4]  Install ETL Procs    (0.2s)  ═══
+2026-04-29 14:54:16,872 | INFO    | orchestrator | 
+2026-04-29 14:54:16,872 | INFO    | orchestrator | ═══  [3/4]  Initial Load  ═══
+2026-04-29 14:54:16,881 | INFO    | pipeline.initial |    PIPELINE: INITIAL LOAD  
+2026-04-29 14:54:16,881 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,881 | INFO    | pipeline.initial | [1/4]   START: Install ETL Procedures
+2026-04-29 14:54:16,882 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,978 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,978 | INFO    | procedure_runner | INSTALLING ETL PROCEDURES  (27 files)
+2026-04-29 14:54:16,979 | INFO    | procedure_runner | DWH_BUILD root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD
+2026-04-29 14:54:16,979 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:16,986 | INFO    | procedure_runner |   [ 1/27]    STG_CLN: load_stg_offline                 (0.00s)
+2026-04-29 14:54:16,988 | INFO    | procedure_runner |   [ 2/27]    STG_CLN: load_stg_online                  (0.00s)
+2026-04-29 14:54:16,990 | INFO    | procedure_runner |   [ 3/27]    STG_CLN: load_stg_all                     (0.00s)
+2026-04-29 14:54:16,992 | INFO    | procedure_runner |   [ 4/27]    BL_3NF fn: get_suppliers                  (0.00s)
+2026-04-29 14:54:16,993 | INFO    | procedure_runner |   [ 5/27]    BL_3NF fn: get_shippings                  (0.00s)
+2026-04-29 14:54:16,994 | INFO    | procedure_runner |   [ 6/27]    BL_3NF fn: get_store_branches             (0.00s)
+2026-04-29 14:54:16,997 | INFO    | procedure_runner |   [ 7/27]    BL_3NF fn: get_products                   (0.00s)
+2026-04-29 14:54:17,000 | INFO    | procedure_runner |   [ 8/27]    BL_3NF fn: get_customers_scd              (0.00s)
+2026-04-29 14:54:17,002 | INFO    | procedure_runner |   [ 9/27]    BL_3NF fn: get_employees_scd              (0.00s)
+2026-04-29 14:54:17,004 | INFO    | procedure_runner |   [10/27]    BL_3NF: load_ce_suppliers                 (0.00s)
+2026-04-29 14:54:17,006 | INFO    | procedure_runner |   [11/27]    BL_3NF: load_ce_shippings                 (0.00s)
+2026-04-29 14:54:17,007 | INFO    | procedure_runner |   [12/27]    BL_3NF: load_ce_store_branches            (0.00s)
+2026-04-29 14:54:17,009 | INFO    | procedure_runner |   [13/27]    BL_3NF: load_ce_products                  (0.00s)
+2026-04-29 14:54:17,010 | INFO    | procedure_runner |   [14/27]    BL_3NF: load_ce_customers_scd             (0.00s)
+2026-04-29 14:54:17,012 | INFO    | procedure_runner |   [15/27]    BL_3NF: load_ce_employees_scd             (0.00s)
+2026-04-29 14:54:17,014 | INFO    | procedure_runner |   [16/27]    BL_3NF: load_ce_transactions              (0.00s)
+2026-04-29 14:54:17,015 | INFO    | procedure_runner |   [17/27]    BL_3NF: sp_load_bl_3nf_all                (0.00s)
+2026-04-29 14:54:17,017 | INFO    | procedure_runner |   [18/27]    BL_DM: load_dim_dates                     (0.00s)
+2026-04-29 14:54:17,018 | INFO    | procedure_runner |   [19/27]    BL_DM: load_dm_suppliers                  (0.00s)
+2026-04-29 14:54:17,019 | INFO    | procedure_runner |   [20/27]    BL_DM: load_dm_shippings                  (0.00s)
+2026-04-29 14:54:17,021 | INFO    | procedure_runner |   [21/27]    BL_DM: load_dm_store_branches             (0.00s)
+2026-04-29 14:54:17,022 | INFO    | procedure_runner |   [22/27]    BL_DM: load_dm_products                   (0.00s)
+2026-04-29 14:54:17,023 | INFO    | procedure_runner |   [23/27]    BL_DM: load_dm_customers_scd              (0.00s)
+2026-04-29 14:54:17,024 | INFO    | procedure_runner |   [24/27]    BL_DM: load_dm_employees_scd              (0.00s)
+2026-04-29 14:54:17,025 | INFO    | procedure_runner |   [25/27]    BL_DM: load_dm_junk_transactions          (0.00s)
+2026-04-29 14:54:17,026 | INFO    | procedure_runner |   [26/27]    BL_DM: load_fct_transactions_dd           (0.00s)
+2026-04-29 14:54:17,028 | INFO    | procedure_runner |   [27/27]    BL_DM: sp_load_bl_dm_all                  (0.00s)
+2026-04-29 14:54:17,028 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:17,028 | INFO    | procedure_runner | ETL PROCEDURES INSTALLED: 27/27
+2026-04-29 14:54:17,028 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:17,028 | INFO    | pipeline.initial | [1/4]   DONE: Install ETL Procedures  (0.1s)
+2026-04-29 14:54:17,029 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:17,029 | INFO    | pipeline.initial | [2/4]   START: Generate Initial Data
+2026-04-29 14:54:17,029 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:18,641 | INFO    | cloud_storage | Cloud provider: minio
+2026-04-29 14:54:26,832 | INFO    | cloud_storage | Uploading 16.7 MB → offline/initial/offline_initial_20260429T105418Z.parquet
+2026-04-29 14:54:27,046 | INFO    | cloud_storage | Uploading 17.9 MB → online/initial/online_initial_20260429T105418Z.parquet
+2026-04-29 14:54:27,318 | INFO    | pipeline.initial | [2/4]   DONE: Generate Initial Data  (10.3s)
+2026-04-29 14:54:27,319 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:27,321 | INFO    | pipeline.initial | [3/4]   START: Load Cloud → Staging
+2026-04-29 14:54:27,321 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:54:27,553 | INFO    | staging_loader |  STAGING LOADER STARTED
+2026-04-29 14:54:27,553 | INFO    | staging_loader | Load type : initial
+2026-04-29 14:54:27,554 | INFO    | staging_loader | Source    : both
+2026-04-29 14:54:27,554 | INFO    | staging_loader | Force load: False
+2026-04-29 14:54:27,671 | INFO    | staging_loader | Collecting files from MinIO...
+2026-04-29 14:54:27,671 | INFO    | staging_loader | 🔎 Checking prefix: offline/initial/
+2026-04-29 14:54:27,692 | INFO    | staging_loader |    → found 1 parquet file(s)
+2026-04-29 14:54:27,693 | INFO    | staging_loader | 🔎 Checking prefix: online/initial/
+2026-04-29 14:54:27,699 | INFO    | staging_loader |    → found 1 parquet file(s)
+2026-04-29 14:54:27,700 | INFO    | staging_loader |  TOTAL FILES FOUND: 2
+2026-04-29 14:54:27,700 | INFO    | staging_loader |   Starting ingestion...
+2026-04-29 14:54:27,700 | INFO    | staging_loader | ➡ [1/2] Processing: offline/initial/offline_initial_20260429T105418Z.parquet
+2026-04-29 14:54:58,793 | INFO    | staging_loader |    SUCCESS — 500000 rows inserted into src.sales_offline
+2026-04-29 14:54:58,794 | INFO    | staging_loader | ➡ [2/2] Processing: online/initial/online_initial_20260429T105418Z.parquet
+2026-04-29 14:55:30,208 | INFO    | staging_loader |    SUCCESS — 500000 rows inserted into src.sales_online
+2026-04-29 14:55:30,209 | INFO    | staging_loader | ───────────────────────────────────────────────────────
+2026-04-29 14:55:30,209 | INFO    | staging_loader |  FINAL SUMMARY
+2026-04-29 14:55:30,209 | INFO    | staging_loader |    Rows loaded : 1000000
+2026-04-29 14:55:30,210 | INFO    | staging_loader |    Skipped     : 0
+2026-04-29 14:55:30,211 | INFO    | staging_loader |    Failed      : 0
+2026-04-29 14:55:30,211 | INFO    | staging_loader |  PIPELINE COMPLETED SUCCESSFULLY
+2026-04-29 14:55:30,211 | INFO    | staging_loader |  DB connection closed
+2026-04-29 14:55:30,212 | INFO    | pipeline.initial | [3/4]   DONE: Load Cloud → Staging  (62.9s)
+2026-04-29 14:55:30,214 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:55:30,214 | INFO    | pipeline.initial | [4/4]   START: Run ETL (stg→3nf→dm)
+2026-04-29 14:55:30,214 | INFO    | pipeline.initial | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:55:30,334 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:55:30,335 | INFO    | procedure_runner | CALLING ETL PROCEDURES  (3 layers)
+2026-04-29 14:55:30,335 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 14:55:30,335 | INFO    | procedure_runner |   [1/3]    CALL stg_cln.sp_load_stg_all() ...
+2026-04-29 15:02:03,104 | INFO    | procedure_runner |   [1/3]    stg_cln  (392.8s)
+2026-04-29 15:02:03,105 | INFO    | procedure_runner |   [2/3]    CALL bl_3nf.sp_load_bl_3nf_all() ...
+2026-04-29 15:06:20,150 | INFO    | procedure_runner |   [2/3]    bl_3nf  (257.0s)
+2026-04-29 15:06:20,151 | INFO    | procedure_runner |   [3/3]    CALL bl_dm.sp_load_bl_dm_all() ...
+2026-04-29 15:13:23,421 | INFO    | procedure_runner |   [3/3]    bl_dm  (423.3s)
+2026-04-29 15:13:23,421 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,422 | INFO    | procedure_runner | ALL ETL LAYERS COMPLETE
+2026-04-29 15:13:23,422 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,423 | INFO    | pipeline.initial | [4/4]   DONE: Run ETL (stg→3nf→dm)  (1073.2s)
+2026-04-29 15:13:23,424 | INFO    | pipeline.initial | ═══════════════════════════════════════════════════════
+2026-04-29 15:13:23,424 | INFO    | pipeline.initial |  INITIAL LOAD PIPELINE COMPLETE  (1146.5s total)
+2026-04-29 15:13:23,427 | INFO    | pipeline.initial | ═══════════════════════════════════════════════════════
+2026-04-29 15:13:23,428 | INFO    | orchestrator | ═══  [3/4]  Initial Load    (1146.6s)  ═══
+2026-04-29 15:13:23,429 | INFO    | orchestrator | 
+2026-04-29 15:13:23,429 | INFO    | orchestrator | ═══  [4/4]  Incremental Load  ═══
+2026-04-29 15:13:23,445 | INFO    | pipeline.incremental |  PIPELINE: INCREMENTAL LOAD  
+2026-04-29 15:13:23,445 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,445 | INFO    | pipeline.incremental | [1/4]    START: Install ETL Procedures
+2026-04-29 15:13:23,447 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,536 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,537 | INFO    | procedure_runner | INSTALLING ETL PROCEDURES  (27 files)
+2026-04-29 15:13:23,537 | INFO    | procedure_runner | DWH_BUILD root: C:\Users\Ana\Desktop\Bachelor-s-Project\DWH_BUILD
+2026-04-29 15:13:23,537 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,564 | INFO    | procedure_runner |   [ 1/27]    STG_CLN: load_stg_offline                 (0.02s)
+2026-04-29 15:13:23,566 | INFO    | procedure_runner |   [ 2/27]    STG_CLN: load_stg_online                  (0.00s)
+2026-04-29 15:13:23,568 | INFO    | procedure_runner |   [ 3/27]    STG_CLN: load_stg_all                     (0.00s)
+2026-04-29 15:13:23,572 | INFO    | procedure_runner |   [ 4/27]    BL_3NF fn: get_suppliers                  (0.00s)
+2026-04-29 15:13:23,573 | INFO    | procedure_runner |   [ 5/27]    BL_3NF fn: get_shippings                  (0.00s)
+2026-04-29 15:13:23,574 | INFO    | procedure_runner |   [ 6/27]    BL_3NF fn: get_store_branches             (0.00s)
+2026-04-29 15:13:23,576 | INFO    | procedure_runner |   [ 7/27]    BL_3NF fn: get_products                   (0.00s)
+2026-04-29 15:13:23,578 | INFO    | procedure_runner |   [ 8/27]    BL_3NF fn: get_customers_scd              (0.00s)
+2026-04-29 15:13:23,580 | INFO    | procedure_runner |   [ 9/27]    BL_3NF fn: get_employees_scd              (0.00s)
+2026-04-29 15:13:23,582 | INFO    | procedure_runner |   [10/27]    BL_3NF: load_ce_suppliers                 (0.00s)
+2026-04-29 15:13:23,583 | INFO    | procedure_runner |   [11/27]    BL_3NF: load_ce_shippings                 (0.00s)
+2026-04-29 15:13:23,584 | INFO    | procedure_runner |   [12/27]    BL_3NF: load_ce_store_branches            (0.00s)
+2026-04-29 15:13:23,585 | INFO    | procedure_runner |   [13/27]    BL_3NF: load_ce_products                  (0.00s)
+2026-04-29 15:13:23,587 | INFO    | procedure_runner |   [14/27]    BL_3NF: load_ce_customers_scd             (0.00s)
+2026-04-29 15:13:23,588 | INFO    | procedure_runner |   [15/27]    BL_3NF: load_ce_employees_scd             (0.00s)
+2026-04-29 15:13:23,590 | INFO    | procedure_runner |   [16/27]    BL_3NF: load_ce_transactions              (0.00s)
+2026-04-29 15:13:23,591 | INFO    | procedure_runner |   [17/27]    BL_3NF: sp_load_bl_3nf_all                (0.00s)
+2026-04-29 15:13:23,593 | INFO    | procedure_runner |   [18/27]    BL_DM: load_dim_dates                     (0.00s)
+2026-04-29 15:13:23,595 | INFO    | procedure_runner |   [19/27]    BL_DM: load_dm_suppliers                  (0.00s)
+2026-04-29 15:13:23,597 | INFO    | procedure_runner |   [20/27]    BL_DM: load_dm_shippings                  (0.00s)
+2026-04-29 15:13:23,598 | INFO    | procedure_runner |   [21/27]    BL_DM: load_dm_store_branches             (0.00s)
+2026-04-29 15:13:23,599 | INFO    | procedure_runner |   [22/27]    BL_DM: load_dm_products                   (0.00s)
+2026-04-29 15:13:23,601 | INFO    | procedure_runner |   [23/27]    BL_DM: load_dm_customers_scd              (0.00s)
+2026-04-29 15:13:23,602 | INFO    | procedure_runner |   [24/27]    BL_DM: load_dm_employees_scd              (0.00s)
+2026-04-29 15:13:23,604 | INFO    | procedure_runner |   [25/27]    BL_DM: load_dm_junk_transactions          (0.00s)
+2026-04-29 15:13:23,605 | INFO    | procedure_runner |   [26/27]    BL_DM: load_fct_transactions_dd           (0.00s)
+2026-04-29 15:13:23,608 | INFO    | procedure_runner |   [27/27]    BL_DM: sp_load_bl_dm_all                  (0.00s)
+2026-04-29 15:13:23,608 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,608 | INFO    | procedure_runner | ETL PROCEDURES INSTALLED: 27/27
+2026-04-29 15:13:23,608 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,609 | INFO    | pipeline.incremental | [1/4]    DONE: Install ETL Procedures  (0.2s)
+2026-04-29 15:13:23,609 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,609 | INFO    | pipeline.incremental | [2/4]    START: Generate Incremental Data
+2026-04-29 15:13:23,609 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:23,621 | INFO    | cloud_storage | Cloud provider: minio
+2026-04-29 15:13:28,393 | INFO    | cloud_storage | Uploading 8.7 MB → offline/incremental/offline_incremental_20260429T111323Z.parquet
+2026-04-29 15:13:28,604 | INFO    | cloud_storage | Uploading 9.1 MB → online/incremental/online_incremental_20260429T111323Z.parquet
+2026-04-29 15:13:28,838 | INFO    | pipeline.incremental | [2/4]    DONE: Generate Incremental Data  (5.2s)
+2026-04-29 15:13:28,839 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:28,839 | INFO    | pipeline.incremental | [3/4]    START: Load Cloud → Staging
+2026-04-29 15:13:28,839 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:13:28,839 | INFO    | staging_loader |  STAGING LOADER STARTED
+2026-04-29 15:13:28,840 | INFO    | staging_loader | Load type : incremental
+2026-04-29 15:13:28,840 | INFO    | staging_loader | Source    : both
+2026-04-29 15:13:28,840 | INFO    | staging_loader | Force load: False
+2026-04-29 15:13:28,913 | INFO    | staging_loader | Collecting files from MinIO...
+2026-04-29 15:13:28,913 | INFO    | staging_loader | 🔎 Checking prefix: offline/incremental/
+2026-04-29 15:13:28,938 | INFO    | staging_loader |    → found 1 parquet file(s)
+2026-04-29 15:13:28,938 | INFO    | staging_loader | 🔎 Checking prefix: online/incremental/
+2026-04-29 15:13:28,941 | INFO    | staging_loader |    → found 1 parquet file(s)
+2026-04-29 15:13:28,942 | INFO    | staging_loader |  TOTAL FILES FOUND: 2
+2026-04-29 15:13:28,942 | INFO    | staging_loader |   Starting ingestion...
+2026-04-29 15:13:28,942 | INFO    | staging_loader | ➡ [1/2] Processing: offline/incremental/offline_incremental_20260429T111323Z.parquet
+2026-04-29 15:13:46,146 | INFO    | staging_loader |    SUCCESS — 250000 rows inserted into src.sales_offline
+2026-04-29 15:13:46,146 | INFO    | staging_loader | ➡ [2/2] Processing: online/incremental/online_incremental_20260429T111323Z.parquet
+2026-04-29 15:14:04,298 | INFO    | staging_loader |    SUCCESS — 250000 rows inserted into src.sales_online
+2026-04-29 15:14:04,298 | INFO    | staging_loader | ───────────────────────────────────────────────────────
+2026-04-29 15:14:04,298 | INFO    | staging_loader |  FINAL SUMMARY
+2026-04-29 15:14:04,299 | INFO    | staging_loader |    Rows loaded : 500000
+2026-04-29 15:14:04,299 | INFO    | staging_loader |    Skipped     : 0
+2026-04-29 15:14:04,299 | INFO    | staging_loader |    Failed      : 0
+2026-04-29 15:14:04,299 | INFO    | staging_loader |  PIPELINE COMPLETED SUCCESSFULLY
+2026-04-29 15:14:04,299 | INFO    | staging_loader |  DB connection closed
+2026-04-29 15:14:04,300 | INFO    | pipeline.incremental | [3/4]    DONE: Load Cloud → Staging  (35.5s)
+2026-04-29 15:14:04,300 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:14:04,300 | INFO    | pipeline.incremental | [4/4]    START: Run ETL (stg→3nf→dm)
+2026-04-29 15:14:04,301 | INFO    | pipeline.incremental | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:14:04,374 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:14:04,375 | INFO    | procedure_runner | CALLING ETL PROCEDURES  (3 layers)
+2026-04-29 15:14:04,375 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:14:04,375 | INFO    | procedure_runner |   [1/3]    CALL stg_cln.sp_load_stg_all() ...
+2026-04-29 15:25:01,799 | INFO    | procedure_runner |   [1/3]    stg_cln  (657.4s)
+2026-04-29 15:25:01,808 | INFO    | procedure_runner |   [2/3]    CALL bl_3nf.sp_load_bl_3nf_all() ...
+2026-04-29 15:31:28,016 | INFO    | procedure_runner |   [2/3]    bl_3nf  (386.2s)
+2026-04-29 15:31:28,016 | INFO    | procedure_runner |   [3/3]    CALL bl_dm.sp_load_bl_dm_all() ...
+2026-04-29 15:36:23,755 | INFO    | procedure_runner |   [3/3]    bl_dm  (295.7s)
+2026-04-29 15:36:23,767 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:36:23,769 | INFO    | procedure_runner | ALL ETL LAYERS COMPLETE
+2026-04-29 15:36:23,770 | INFO    | procedure_runner | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-04-29 15:36:23,778 | INFO    | pipeline.incremental | [4/4]    DONE: Run ETL (stg→3nf→dm)  (1339.5s)
+2026-04-29 15:36:23,781 | INFO    | pipeline.incremental | ═══════════════════════════════════════════════════════
+2026-04-29 15:36:23,783 | INFO    | pipeline.incremental |   INCREMENTAL LOAD PIPELINE COMPLETE  (1380.3s total)
+2026-04-29 15:36:23,791 | INFO    | pipeline.incremental | ═══════════════════════════════════════════════════════
+2026-04-29 15:36:23,796 | INFO    | orchestrator | ═══  [4/4]  Incremental Load    (1380.4s)  ═══
+2026-04-29 15:36:23,797 | INFO    | orchestrator | 
+2026-04-29 15:36:23,797 | INFO    | orchestrator | ║    ALL PIPELINES COMPLETE  (2528.4s total)      ║

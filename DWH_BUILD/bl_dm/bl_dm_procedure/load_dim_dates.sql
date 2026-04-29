@@ -43,13 +43,12 @@ BEGIN
     v_current_dt := v_start_date;
 
     WHILE v_current_dt <= v_end_date LOOP
-        fiscal_year_calc: BEGIN
             IF EXTRACT(MONTH FROM v_current_dt) >= 2 THEN
                 v_fiscal_year := EXTRACT(YEAR FROM v_current_dt)::INTEGER;
             ELSE
                 v_fiscal_year := (EXTRACT(YEAR FROM v_current_dt) - 1)::INTEGER;
             END IF;
-        END fiscal_year_calc;
+
 
         CASE
             WHEN EXTRACT(MONTH FROM v_current_dt) IN (2,3,4)   THEN v_fiscal_qtr := 1;

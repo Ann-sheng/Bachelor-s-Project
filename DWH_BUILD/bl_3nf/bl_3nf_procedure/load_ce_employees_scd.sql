@@ -18,7 +18,7 @@ BEGIN
         SELECT * FROM bl_3nf.fn_get_new_employees_scd()
     LOOP
         UPDATE bl_3nf.ce_employees_scd
-        SET    end_dt    = CURRENT_DATE - 1,
+        SET    end_dt    = CURRENT_DATE,
                is_active = FALSE
         WHERE  employee_src_id = rec.employee_src_id
           AND  source_system   = rec.source_system
@@ -41,7 +41,7 @@ BEGIN
             start_dt,
             end_dt,
             is_active,
-            row_hash,
+            employee_row_hash,
             ta_insert_dt,
             source_system,
             source_entity
@@ -58,11 +58,13 @@ BEGIN
             CURRENT_DATE,
             '9999-12-31',
             TRUE,
-            rec.row_hash,
+            rec.employee_row_hash,
             NOW(),
             rec.source_system,
             rec.source_entity
-        );
+        )
+        ON CONFLICT (employee_src_id, source_system, source_entity, start_dt) 
+        DO NOTHING;
 
         v_inserted := v_inserted + 1;
     END LOOP;

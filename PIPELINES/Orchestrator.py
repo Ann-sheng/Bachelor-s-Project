@@ -1,15 +1,13 @@
-"""
-DWH Pipeline Orchestrator
-=========================
-Single entry point for all pipelines.
 
-Usage:
-    python run.py create_dwh                     # infrastructure only
-    python run.py install_etl                     # install ETL procedures only
-    python run.py initial                         # generate + stage + ETL
-    python run.py incremental                     # generate + stage + ETL
-    python run.py initial --skip-generate         # stage + ETL (data already in cloud)
-    python run.py all                             # everything in order
+# DWH Pipeline Orchestrator - Single entry point for all pipelines.
+
+"""
+    python Orchestrator.py create_dwh                     # infrastructure only
+    python Orchestrator.py install_etl                     # install ETL procedures only
+    python Orchestrator.py initial                         # generate + stage + ETL
+    python Orchestrator.py incremental                     # generate + stage + ETL
+    python Orchestrator.py initial --skip-generate         # stage + ETL (data already in cloud)
+    python Orchestrator.py all                             # everything in order
 """
 
 import argparse
@@ -19,17 +17,18 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
-# Path setup
-# ---------------------------------------------------------------------------
-ROOT   = Path(_file_).resolve().parent
-SCRIPS = ROOT / "SCRIPS"
 
-sys.path.insert(0, str(ROOT / "PIPELINES"))
-sys.path.insert(0, str(SCRIPS / "generator"))
-sys.path.insert(0, str(SCRIPS / "helper"))
-sys.path.insert(0, str(SCRIPS / "cloud"))
-sys.path.insert(0, str(SCRIPS / "loader"))
+# Path setup
+PIPELINES_DIR  = Path(__file__).resolve().parent         
+PROJECT_ROOT   = PIPELINES_DIR.parent                    
+SCRIPTS_DIR    = PROJECT_ROOT / "SCRIPTS"
+DWH_BUILD_ROOT = PROJECT_ROOT / "DWH_BUILD"
+
+sys.path.insert(0, str(PIPELINES_DIR))                   
+sys.path.insert(0, str(SCRIPTS_DIR / "generator"))       
+sys.path.insert(0, str(SCRIPTS_DIR / "helper"))
+sys.path.insert(0, str(SCRIPTS_DIR / "cloud"))         
+sys.path.insert(0, str(SCRIPTS_DIR / "loader"))          
 
 logging.basicConfig(
     level=logging.INFO,
@@ -41,27 +40,24 @@ logging.basicConfig(
 )
 log = logging.getLogger("orchestrator")
 
-DWH_BUILD_ROOT = ROOT / "DWH_BUILD"
 
 
-# ---------------------------------------------------------------------------
+
 # Pipeline wrappers
-# ---------------------------------------------------------------------------
 
 def do_create_dwh(args):
     from Infrastructure_Setup import run as infra_run
     from dotenv import load_dotenv
     import os
 
-    load_dotenv(override=True)
+    load_dotenv(dotenv_path=SCRIPTS_DIR / ".env")
 
-    required_vars = [
-        "DB_HOST", "DB_PORT", "DB_NAME",
-        "DB_USER", "DB_PASSWORD",
-        "ADMIN_USER", "ADMIN_PASSWORD",
-    ]
-    env = {k: os.environ.get(k) for k in required_vars}
-    missing = [k for k, v in env.items() if not v]
+    env = {k: os.environ.get(k) for k in ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]}
+    env["ADMIN_USER"]     = os.environ.get("ADMIN_USER", "postgres")
+    env["ADMIN_PASSWORD"] = os.environ.get("ADMIN_PASSWORD", "")
+    env["ADMIN_DB"]       = os.environ.get("ADMIN_DB", "postgres")
+
+    missing = [k for k, v in env.items() if not v and k != "ADMIN_PASSWORD"]
     if missing:
         log.error("Missing env vars: %s", missing)
         sys.exit(1)
@@ -80,7 +76,7 @@ def do_install_etl(args):
 
 
 def do_initial(args):
-    from initial_load import run as initial_run
+    from Initial_Load import run as initial_run
     initial_run(
         skip_generate=getattr(args, "skip_generate", False),
         skip_install=getattr(args, "skip_install", False),
@@ -88,32 +84,19 @@ def do_initial(args):
 
 
 def do_incremental(args):
-    from incremental_load import run as incremental_run
+    from Incremental_Load import run as incremental_run
     incremental_run(
         skip_generate=getattr(args, "skip_generate", False),
         skip_install=getattr(args, "skip_install", False),
     )
 
 
-# ---------------------------------------------------------------------------
 # CLI
-# ---------------------------------------------------------------------------
 
 def main():
     parser = argparse.ArgumentParser(
         description="DWH Pipeline Orchestrator",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-examples:
-  python run.py all                        # full setup + initial + incremental
-  python run.py create_dwh                 # infrastructure only
-  python run.py create_dwh --dry-run       # see plan without executing
-  python run.py create_dwh --from-step 20  # resume from step 20
-  python run.py install_etl                # install ETL procedures only
-  python run.py initial                    # initial load pipeline
-  python run.py initial --skip-generate    # skip generation (data in cloud)
-  python run.py incremental                # incremental load pipeline
-        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
     sub = parser.add_subparsers(dest="pipeline", required=True)
@@ -143,7 +126,7 @@ examples:
 
     args = parser.parse_args()
 
-    # ── Dispatch ──────────────────────────────────────────────────────
+    # ── Dispatch 
     PIPELINE_MAP = {
         "create_dwh":  [("Create DWH",          do_create_dwh)],
         "install_etl": [("Install ETL Procs",   do_install_etl)],
@@ -159,13 +142,10 @@ examples:
 
     steps = PIPELINE_MAP[args.pipeline]
 
-    log.info("╔══════════════════════════════════════════════════╗")
-    log.info("║           DWH PIPELINE ORCHESTRATOR             ║")
-    log.info("╠══════════════════════════════════════════════════╣")
-    log.info("║  Pipeline : %-37s ║", args.pipeline)
-    log.info("║  Started  : %-37s ║", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    log.info("║  Steps    : %-37s ║", len(steps))
-    log.info("╚══════════════════════════════════════════════════╝")
+    log.info("DWH PIPELINE ORCHESTRATOR ")
+    log.info("  Pipeline : %-37s ║", args.pipeline)
+    log.info("  Started  : %-37s ║", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    log.info("  Steps    : %-37s ║", len(steps))
 
     total_t0 = time.perf_counter()
 
@@ -176,19 +156,17 @@ examples:
         try:
             func(args)
             elapsed = time.perf_counter() - t0
-            log.info("═══  [%d/%d]  %s  ✅  (%.1fs)  ═══", i, len(steps), name, elapsed)
+            log.info("═══  [%d/%d]  %s    (%.1fs)  ═══", i, len(steps), name, elapsed)
         except Exception:
             elapsed = time.perf_counter() - t0
-            log.exception("═══  [%d/%d]  %s  ❌  FAILED  (%.1fs)  ═══", i, len(steps), name, elapsed)
+            log.exception("═══  [%d/%d]  %s    FAILED  (%.1fs)  ═══", i, len(steps), name, elapsed)
             log.error("Pipeline aborted.")
             sys.exit(1)
 
     total = time.perf_counter() - total_t0
     log.info("")
-    log.info("╔══════════════════════════════════════════════════╗")
-    log.info("║  🎉  ALL PIPELINES COMPLETE  (%.1fs total)      ║", total)
-    log.info("╚══════════════════════════════════════════════════╝")
+    log.info("║    ALL PIPELINES COMPLETE  (%.1fs total)      ║", total)
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
