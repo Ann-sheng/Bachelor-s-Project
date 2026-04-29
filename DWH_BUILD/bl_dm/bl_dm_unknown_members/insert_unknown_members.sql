@@ -67,12 +67,12 @@ WHERE NOT EXISTS (
 
 -- DM_PRODUCTS: needs supplier_surr_id=-1 first (FK)
 INSERT INTO bl_dm.dm_products (
-    product_surr_id, product_src_id, supplier_surr_id,
+    product_surr_id, product_src_id, 
     product_category, product_name,
     product_unit_cost, product_unit_price, product_warranty_period,
     ta_insert_dt, ta_update_dt, source_system, source_entity
 )
-SELECT -1, -1, -1,
+SELECT -1, -1,
        'n. a.', 'n. a.',
        0, 0, NULL,
        TIMESTAMP '1900-01-01', TIMESTAMP '1900-01-01',

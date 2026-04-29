@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS bl_dm.fct_transactions_dd (
                                 REFERENCES bl_dm.dm_store_branches(store_branch_surr_id),
     shipping_surr_id            BIGINT          NOT NULL
                                 REFERENCES bl_dm.dm_shippings(shipping_surr_id),
+    supplier_surr_id            BIGINT          NOT NULL
+                                REFERENCES bl_dm.dm_suppliers(supplier_surr_id),                              
     junk_surr_id                BIGINT          NOT NULL
                                 REFERENCES bl_dm.dm_junk_transactions(junk_surr_id),
     event_date_key              INTEGER         NOT NULL
@@ -31,3 +33,4 @@ CREATE TABLE IF NOT EXISTS bl_dm.fct_transactions_dd (
     ta_insert_dt                TIMESTAMP       NOT NULL DEFAULT NOW(),
     ta_update_dt                TIMESTAMP       NOT NULL DEFAULT NOW()
 );
+

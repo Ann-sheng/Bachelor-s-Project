@@ -17,6 +17,7 @@ BEGIN
     WHERE  d.customer_src_id = c.customer_id      
       AND  d.source_system   = 'BL_3NF'
       AND  d.source_entity   = 'CE_CUSTOMERS_SCD'
+      AND  d.start_dt        = c.start_dt
       AND  c.is_active       = FALSE              
       AND  d.is_active       = TRUE;              
 

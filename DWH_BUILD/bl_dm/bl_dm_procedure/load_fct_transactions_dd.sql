@@ -16,6 +16,7 @@ BEGIN
         employee_surr_id,
         store_branch_surr_id, 
         shipping_surr_id, 
+        supplier_surr_id,
         junk_surr_id,
         event_date_key, 
         shipped_date_key, 
@@ -34,6 +35,7 @@ BEGIN
         COALESCE(de.employee_surr_id,      -1),
         COALESCE(dsb.store_branch_surr_id, -1),
         COALESCE(dsh.shipping_surr_id,     -1),
+        COALESCE(sup.supplier_surr_id,     -1),  
         COALESCE(dj.junk_surr_id,          -1),
         COALESCE(dd_event.date_key,        -1),
         COALESCE(dd_ship.date_key,         -1),
@@ -56,6 +58,9 @@ BEGIN
         END,
         NOW(), NOW()
     FROM bl_3nf.ce_transactions t
+
+    LEFT JOIN bl_3nf.ce_products ds            
+           ON ds.product_id = t.product_id
     LEFT JOIN bl_dm.dm_products dp
            ON dp.product_src_id = t.product_id
           AND dp.source_system  = 'BL_3NF'
@@ -76,6 +81,10 @@ BEGIN
            ON dsh.shipping_src_id = t.shipping_id
           AND dsh.source_system   = 'BL_3NF'
           AND dsh.source_entity   = 'CE_SHIPPINGS'
+    LEFT JOIN bl_dm.dm_suppliers sup
+           ON sup.supplier_src_id = ds.supplier_id   
+          AND sup.source_system   = 'BL_3NF'
+          AND sup.source_entity   = 'CE_SUPPLIERS'
     LEFT JOIN bl_dm.dm_junk_transactions dj
            ON dj.junk_payment_method  IS NOT DISTINCT FROM t.transaction_payment_method
           AND dj.junk_currency_paid   IS NOT DISTINCT FROM t.transaction_currency_paid
@@ -84,6 +93,7 @@ BEGIN
     LEFT JOIN bl_dm.dim_dates dd_event ON dd_event.full_date = t.transaction_dt
     LEFT JOIN bl_dm.dim_dates dd_ship  ON dd_ship.full_date  = t.transaction_shipped_dt
     LEFT JOIN bl_dm.dim_dates dd_deliv ON dd_deliv.full_date = t.transaction_delivery_dt
+
     WHERE NOT EXISTS (
         SELECT 1 FROM bl_dm.fct_transactions_dd f
         WHERE f.transaction_src_id = t.transaction_id
@@ -100,3 +110,6 @@ EXCEPTION WHEN OTHERS THEN
     RAISE;
 END;
 $$;
+
+
+CALL bl_dm.load_fct_transactions_dd();

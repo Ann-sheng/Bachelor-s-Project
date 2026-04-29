@@ -8,8 +8,6 @@ CREATE TABLE IF NOT EXISTS bl_dm.dm_products (
     product_surr_id          BIGINT          PRIMARY KEY
                              DEFAULT nextval('bl_dm.sq_product_surr_id'),
     product_src_id           BIGINT          NOT NULL,  
-    supplier_surr_id         BIGINT          NOT NULL
-                             REFERENCES bl_dm.dm_suppliers(supplier_surr_id),
     product_category         VARCHAR(100)    NOT NULL,
     product_name             VARCHAR(200)    NOT NULL,
     product_unit_cost        NUMERIC(12,2)   NOT NULL,
@@ -22,3 +20,4 @@ CREATE TABLE IF NOT EXISTS bl_dm.dm_products (
 
     CONSTRAINT uq_dm_products UNIQUE (product_src_id, source_system, source_entity)
 );
+

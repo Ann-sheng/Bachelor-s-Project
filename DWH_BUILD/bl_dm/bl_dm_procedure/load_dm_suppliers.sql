@@ -65,18 +65,14 @@ BEGIN
 
     GET DIAGNOSTICS v_affected = ROW_COUNT;
 
-    UPDATE bl_cn.etl_log
-    SET status = 'SUCCESS', rows_inserted = v_affected, finished_at = NOW()
-    WHERE log_id = v_log_id;
+    CALL bl_cn.log_success(v_log_id, v_affected);
 
     RAISE NOTICE '[load_dm_suppliers] Rows affected: %', v_affected;
 
 EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
-    UPDATE bl_cn.etl_log
-    SET status = 'FAILED', error_message = v_err_msg, finished_at = NOW()
-    WHERE log_id = v_log_id;
-    RAISE EXCEPTION '[load_dm_suppliers] FAILED: %', v_err_msg;
+    CALL bl_cn.log_failure(v_log_id, v_err_msg);
+    RAISE;
 END;
 $$;
 

@@ -33,6 +33,8 @@ BEGIN
         employee_email,
         employee_phone_number,
         employee_salary,
+        store_branch_state, 
+        store_branch_city,
         start_dt,
         end_dt,
         is_active,
@@ -49,6 +51,8 @@ BEGIN
         e.employee_email,
         e.employee_phone_number,
         e.employee_salary,
+        COALESCE(sb.store_branch_state, 'n. a.'),  
+        COALESCE(sb.store_branch_city,  'n. a.'),  
         e.start_dt,
         e.end_dt,
         e.is_active,
@@ -56,6 +60,9 @@ BEGIN
         'BL_3NF',
         'CE_EMPLOYEES_SCD'
     FROM bl_3nf.ce_employees_scd e
+    LEFT JOIN bl_3nf.ce_store_branches sb     
+           ON sb.store_branch_id = e.store_branch_id
+    WHERE e.employee_id <> -1
     WHERE e.employee_id <> -1
       AND NOT EXISTS (
           SELECT 1 FROM bl_dm.dm_employees_scd d

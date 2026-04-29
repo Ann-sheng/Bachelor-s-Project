@@ -54,7 +54,10 @@ BEGIN
             rec.customer_city,
             rec.customer_phone_number,
             rec.customer_email,
-            CURRENT_DATE,
+            CASE 
+                WHEN v_rows = 0 THEN DATE '1900-01-01'  
+                ELSE CURRENT_DATE                      
+            END,
             '9999-12-31',
             TRUE,
             rec.customer_row_hash,

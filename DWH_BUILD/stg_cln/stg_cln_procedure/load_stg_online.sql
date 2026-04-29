@@ -9,6 +9,7 @@ DECLARE
     v_total    INT := 0;
     v_err_msg  TEXT;
 BEGIN
+    v_log_id := bl_cn.log_start('stg_cln.load_stg_online', 'STG_CLN');
     SELECT COUNT(*) INTO v_total FROM src.sales_online;
 
     TRUNCATE TABLE stg_cln.sales_online;
@@ -116,7 +117,6 @@ BEGIN
 
     GET DIAGNOSTICS v_rejected = ROW_COUNT;
 
-    v_log_id := bl_cn.log_start('stg_cln.load_stg_online', 'STG_CLN');
     CALL bl_cn.log_success(v_log_id, v_inserted);
 
     RAISE NOTICE '[load_stg_online] Total: % | Valid: % | Rejected: %',
