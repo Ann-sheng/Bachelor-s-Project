@@ -6,7 +6,7 @@
 
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
 REVOKE ALL    ON SCHEMA public FROM PUBLIC;
-REVOKE CONNECT ON DATABASE "DnD_SALES" FROM PUBLIC;
+REVOKE CONNECT ON DATABASE "dnd_sales" FROM PUBLIC;
 REVOKE ALL ON SCHEMA src      FROM PUBLIC;
 REVOKE ALL ON SCHEMA stg_cln  FROM PUBLIC;
 REVOKE ALL ON SCHEMA bl_3nf   FROM PUBLIC;
@@ -17,19 +17,19 @@ REVOKE ALL ON SCHEMA sa_audit FROM PUBLIC;
 
 -- dwh_admin: full access on all schemas
 GRANT ALL ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn, sa_audit TO dwh_admin;
-GRANT CONNECT ON DATABASE "DnD_SALES" TO dwh_admin;
+GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_admin;
 
 -- dwh_etl: pipeline execution
 GRANT USAGE   ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn, sa_audit TO dwh_etl;
-GRANT CONNECT ON DATABASE "DnD_SALES" TO dwh_etl;
+GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_etl;
 
 -- dwh_analyst: DM + monitoring views
 GRANT USAGE   ON SCHEMA bl_dm, bl_cn TO dwh_analyst;
-GRANT CONNECT ON DATABASE "DnD_SALES" TO dwh_analyst;
+GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_analyst;
 
 -- dwh_reporter: DM only
 GRANT USAGE   ON SCHEMA bl_dm TO dwh_reporter;
-GRANT CONNECT ON DATABASE "DnD_SALES" TO dwh_reporter;
+GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_reporter;
 
 -- Table-level grants on existing objects
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA src      TO dwh_etl;

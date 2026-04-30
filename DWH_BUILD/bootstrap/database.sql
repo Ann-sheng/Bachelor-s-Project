@@ -1,4 +1,4 @@
 
 -- Create the DWH database.
 
-CREATE DATABASE DnD_SALES;
+CREATE DATABASE dnd_sales;

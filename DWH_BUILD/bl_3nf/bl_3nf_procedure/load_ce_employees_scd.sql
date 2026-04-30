@@ -55,8 +55,6 @@ BEGIN
             rec.employee_email,
             rec.employee_phone_number,
             rec.employee_salary,
-            COALESCE(sb.store_branch_state, 'n. a.'), 
-            COALESCE(sb.store_branch_city,  'n. a.'), 
             CASE 
                 WHEN v_rows = 0 THEN DATE '1900-01-01'  
                 ELSE CURRENT_DATE                   

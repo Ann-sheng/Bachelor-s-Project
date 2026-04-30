@@ -230,6 +230,11 @@ def run(
                 elapsed = time.perf_counter() - t0
                 log.info("  [ ok ] step %02d — %-45s (%.2fs)", step, label, elapsed)
                 passed += 1
+            
+            except psycopg2.errors.DuplicateDatabase:
+                elapsed = time.perf_counter() - t0
+                log.info("  [skip] step %02d — %-45s already exists (%.2fs)", step, label, elapsed)
+                skipped += 1
 
             except Exception as exc:
                 elapsed = time.perf_counter() - t0
