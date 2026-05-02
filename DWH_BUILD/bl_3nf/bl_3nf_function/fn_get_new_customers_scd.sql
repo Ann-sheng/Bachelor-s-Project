@@ -51,7 +51,7 @@ latest AS (
         *
     FROM unified
     WHERE customer_id IS NOT NULL
-    ORDER BY customer_id, source_system, stg_insert_dt DESC
+    ORDER BY customer_id, source_system, source_entity, stg_insert_dt DESC
 )
 
 SELECT

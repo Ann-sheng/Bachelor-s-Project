@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import json
+import os
+import tempfile
+from datetime import date, datetime, timezone
+
 import numpy as np
 import pandas as pd
-from datetime import date, datetime, timezone
-from pathlib import Path
 
 
-# Date utilities
+# ── Date utilities ─────────────────────────────────────────────────────────────
 
 def date_range_days(start: str, end: str) -> int:
     return (date.fromisoformat(end) - date.fromisoformat(start)).days
@@ -40,8 +43,7 @@ def add_calendar_days(
     return dates + pd.to_timedelta(offsets, unit="D")
 
 
-
-# ID generators
+# ── ID generators ──────────────────────────────────────────────────────────────
 
 def make_transaction_ids(n: int, prefix: str, start: int = 1) -> list[str]:
     return [f"{prefix}{i:07d}" for i in range(start, start + n)]
@@ -51,8 +53,7 @@ def make_entity_ids(n: int, prefix: str, start: int = 1) -> list[str]:
     return [f"{prefix}{i:06d}" for i in range(start, start + n)]
 
 
-
-# Personal data generators
+# ── Personal data generators ───────────────────────────────────────────────────
 
 def make_emails(
     firstnames,
@@ -89,8 +90,7 @@ def make_salaries(
     ]
 
 
-
-# Sale amount calculatio
+# ── Sale amount calculation ────────────────────────────────────────────────────
 
 def calc_sale_amounts(
     quantities: np.ndarray,
@@ -100,8 +100,8 @@ def calc_sale_amounts(
     return np.round(quantities * unit_prices * (1 - discounts / 100), 2)
 
 
+# ── Weighted random sampling ───────────────────────────────────────────────────
 
-# Weighted random sampling
 def weighted_choice(
     choices: list,
     weights: list,
@@ -113,8 +113,7 @@ def weighted_choice(
     return np.array(choices)[idx]
 
 
-
-# Shared Parquet / batch helpers 
+# ── DataFrame helpers ──────────────────────────────────────────────────────────
 
 def attach_entity_cols(
     df: pd.DataFrame,
@@ -138,7 +137,86 @@ def add_batch_metadata(df: pd.DataFrame, load_type: str, batch_id: str) -> pd.Da
     return df
 
 
-def save_parquet(df: pd.DataFrame, path: Path) -> None:
-    df.to_parquet(path, engine="pyarrow", compression="snappy", index=False)
-    mb = path.stat().st_size / 1e6
-    print(f"  Saved {path.name}  ({len(df):,} rows, {mb:.1f} MB)")
+# ── Cloud upload primitives ────────────────────────────────────────────────────
+
+def upload_df(cloud, df: pd.DataFrame, key: str) -> str:
+    with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as tmp:
+        tmp_path = tmp.name
+    try:
+        df.to_parquet(tmp_path, engine="pyarrow", compression="snappy", index=False)
+        return cloud.upload(tmp_path, key)
+    finally:
+        os.unlink(tmp_path)
+
+
+def upload_json(cloud, data: dict, key: str) -> str:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as tmp:
+        json.dump(data, tmp, indent=2)
+        tmp_path = tmp.name
+    try:
+        return cloud.upload(tmp_path, key)
+    finally:
+        os.unlink(tmp_path)
+
+
+# ── Cloud reference state ──────────────────────────────────────────────────────
+
+
+_REF_FRAMES: dict[str, str] = {
+    "customers_df":      "reference/customers.parquet",
+    "products_df":       "reference/products.parquet",
+    "store_branches_df": "reference/store_branches.parquet",
+    "employees_off_df":  "reference/employees_off.parquet",
+    "employees_onl_df":  "reference/employees_onl.parquet",
+    "shipping_df":       "reference/shipping.parquet",
+}
+_REF_STATE_KEY = "reference/state.json"
+
+
+def upload_reference_state(
+    cloud,
+    counters: dict,
+    customers_df: pd.DataFrame,
+    products_df: pd.DataFrame,
+    store_branches_df: pd.DataFrame,
+    employees_off_df: pd.DataFrame,
+    employees_onl_df: pd.DataFrame,
+    shipping_df: pd.DataFrame,
+) -> None:
+    frames = {
+        "customers_df":      customers_df,
+        "products_df":       products_df,
+        "store_branches_df": store_branches_df,
+        "employees_off_df":  employees_off_df,
+        "employees_onl_df":  employees_onl_df,
+        "shipping_df":       shipping_df,
+    }
+    for df_name, df in frames.items():
+        print(f"  Uploaded → {upload_df(cloud, df, _REF_FRAMES[df_name])}")
+    print(f"  Uploaded → {upload_json(cloud, counters, _REF_STATE_KEY)}")
+    print("  Reference state uploaded to cloud")
+
+
+def download_reference_state(cloud) -> tuple[dict, dict]:
+    dataframes: dict[str, pd.DataFrame] = {}
+
+    for df_name, key in _REF_FRAMES.items():
+        with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as tmp:
+            tmp_path = tmp.name
+        try:
+            cloud.download(key, tmp_path)
+            dataframes[df_name] = pd.read_parquet(tmp_path)
+        finally:
+            os.unlink(tmp_path)
+
+    with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as tmp:
+        tmp_path = tmp.name
+    try:
+        cloud.download(_REF_STATE_KEY, tmp_path)
+        with open(tmp_path) as fh:
+            counters = json.load(fh)
+    finally:
+        os.unlink(tmp_path)
+
+    print(" Reference state downloaded from cloud")
+    return dataframes, counters

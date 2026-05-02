@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import os
 import sys
 from datetime import datetime, timezone
@@ -11,7 +10,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "helper"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "cloud")) 
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -38,12 +38,13 @@ from helpers import (
     make_transaction_ids, make_entity_ids,
     make_emails, make_phones, make_salaries,
     calc_sale_amounts, weighted_choice,
-    attach_entity_cols, add_batch_metadata, save_parquet,
+    attach_entity_cols, add_batch_metadata,
+    upload_df, upload_reference_state,
 )
 from cloud_storage import get_cloud_client
 
 
-# Configuration
+# ── Configuration ──────────────────────────────────────────────────────────────
 
 SEED        = int(os.environ.get("SEED_INITIAL", 42))
 N_OFFLINE   = 500_000
@@ -52,29 +53,27 @@ N_CUSTOMERS = 14_000
 N_EMP_OFF   = 150
 N_EMP_ONL   = 80
 
-START_DATE  = "2020-01-01"
-END_DATE    = "2023-12-31"
+START_DATE = "2020-01-01"
+END_DATE   = "2023-12-31"
 
-OUTPUT_DIR  = Path(os.environ.get("DATA_INITIAL_DIR",  "data/initial"))
-REF_DIR     = Path(os.environ.get("DATA_REF_DIR",      "data/reference"))
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-REF_DIR.mkdir(parents=True, exist_ok=True)
+LOAD_TYPE  = "INITIAL"
 
-LOAD_TYPE = "INITIAL"
-
-# Normalize discount weights 
+# Normalize discount weights once at module level
 _DISC_W = np.array(DISCOUNT_WEIGHTS, dtype=float)
 _DISC_W /= _DISC_W.sum()
 
 
+# ── Entity builders ────────────────────────────────────────────────────────────
 
-# Entity builders
 def build_suppliers() -> pd.DataFrame:
     return pd.DataFrame([
         {
-            "supplier_id": f"SUPP{i:02d}", "supplier_name": name,
-            "supplier_email": email, "supplier_number": phone,
-            "supplier_primary_contact": contact, "supplier_location": location,
+            "supplier_id":               f"SUPP{i:02d}",
+            "supplier_name":             name,
+            "supplier_email":            email,
+            "supplier_number":           phone,
+            "supplier_primary_contact":  contact,
+            "supplier_location":         location,
         }
         for i, (name, email, phone, contact, location) in enumerate(SUPPLIERS, 1)
     ])
@@ -88,10 +87,13 @@ def build_products(suppliers_df: pd.DataFrame, rng: np.random.Generator) -> pd.D
         for name, cost, price, warranty in items:
             sup_idx = primary_sup_idx if rng.random() > 0.2 else int(rng.integers(len(sup_ids)))
             rows.append({
-                "product_id": f"PROD{prod_num:03d}", "product_category": category,
-                "product_name": name, "product_unit_cost": cost,
-                "product_unit_price": price, "product_warranty_period": warranty,
-                "supplier_id": sup_ids[sup_idx],
+                "product_id":               f"PROD{prod_num:03d}",
+                "product_category":         category,
+                "product_name":             name,
+                "product_unit_cost":        cost,
+                "product_unit_price":       price,
+                "product_warranty_period":  warranty,
+                "supplier_id":              sup_ids[sup_idx],
             })
             prod_num += 1
     return pd.DataFrame(rows).merge(suppliers_df, on="supplier_id", how="left")
@@ -100,10 +102,11 @@ def build_products(suppliers_df: pd.DataFrame, rng: np.random.Generator) -> pd.D
 def build_store_branches() -> pd.DataFrame:
     return pd.DataFrame([
         {
-            "store_branch_id": f"BRANCH{i:02d}",
-            "store_branch_city": city, "store_branch_state": state,
-            "store_branch_phone_number": phone,
-            "store_branch_operating_days": days,
+            "store_branch_id":              f"BRANCH{i:02d}",
+            "store_branch_city":            city,
+            "store_branch_state":           state,
+            "store_branch_phone_number":    phone,
+            "store_branch_operating_days":  days,
             "store_branch_operating_hours": hours,
         }
         for i, (city, state, phone, days, hours) in enumerate(STORE_BRANCHES, 1)
@@ -178,8 +181,7 @@ def build_shipping_options() -> pd.DataFrame:
     ])
 
 
-
-# Transaction builders
+# ── Transaction builders ───────────────────────────────────────────────────────
 
 def build_offline_transactions(
     n: int,
@@ -196,14 +198,14 @@ def build_offline_transactions(
     emp_idx    = rng.choice(len(employees_df), size=n)
 
     quantities   = rng.choice([1, 1, 1, 2, 2, 3], size=n)
-    discounts    = rng.choice(DISCOUNT_VALUES, size=n, p=_DISC_W)  
+    discounts    = rng.choice(DISCOUNT_VALUES, size=n, p=_DISC_W)
     sale_amounts = calc_sale_amounts(quantities, products_df["product_unit_price"].values[prod_idx], discounts)
     tx_dates     = generate_dates(n, START_DATE, END_DATE, rng)
 
     df = pd.DataFrame({
         "transaction_id":              make_transaction_ids(n, "OFF", start=tx_id_start),
         "transaction_dt":              pd.to_datetime(tx_dates).strftime("%Y-%m-%d"),
-        "transaction_shipped_dt":      None,   
+        "transaction_shipped_dt":      None,
         "transaction_delivery_dt":     None,
         "transaction_payment_method":  weighted_choice(OFFLINE_PAYMENT_METHODS, OFFLINE_PAYMENT_WEIGHTS, n, rng),
         "transaction_currency_paid":   weighted_choice(OFFLINE_CURRENCIES,      OFFLINE_CURR_WEIGHTS,    n, rng),
@@ -232,7 +234,9 @@ def build_offline_transactions(
         "store_branch_operating_hours",
     ], emp_idx)
 
-    df["shipping_id"] = df["shipping_method"] = df["shipping_carrier"] = None
+    df["shipping_id"]      = None
+    df["shipping_method"]  = None
+    df["shipping_carrier"] = None
 
     assert df["transaction_id"].is_unique, "Duplicate offline transaction IDs!"
     return df
@@ -264,11 +268,10 @@ def build_online_transactions(
     shipped_dates  = add_calendar_days(tx_ts, 1, 3, rng)
     delivery_dates = add_calendar_days(shipped_dates, 2, 10, rng).dt.strftime("%Y-%m-%d")
 
-
-    mask_no_ship   = pd.Series(ship_status).isin(["Pending", "Processing", "Cancelled"])
-    shipped_arr    = shipped_dates.dt.strftime("%Y-%m-%d").copy()
+    mask_no_ship  = pd.Series(ship_status).isin(["Pending", "Processing", "Cancelled"])
+    shipped_arr   = shipped_dates.dt.strftime("%Y-%m-%d").copy()
     shipped_arr[mask_no_ship.values]  = None
-    delivery_arr   = delivery_dates.copy()
+    delivery_arr  = delivery_dates.copy()
     delivery_arr[mask_no_ship.values] = None
 
     df = pd.DataFrame({
@@ -303,42 +306,21 @@ def build_online_transactions(
         "shipping_id", "shipping_method", "shipping_carrier",
     ], ship_idx)
 
-    df["store_branch_id"] = df["store_branch_city"] = df["store_branch_state"] = None
-    df["store_branch_phone_number"] = df["store_branch_operating_days"] = None
+    df["store_branch_id"]              = None
+    df["store_branch_city"]            = None
+    df["store_branch_state"]           = None
+    df["store_branch_phone_number"]    = None
+    df["store_branch_operating_days"]  = None
     df["store_branch_operating_hours"] = None
 
     assert df["transaction_id"].is_unique, "Duplicate online transaction IDs!"
     return df
 
 
-# Reference state  
-
-def save_reference_state(
-    ref_dir: Path,
-    customers_df: pd.DataFrame,
-    products_df: pd.DataFrame,
-    store_branches_df: pd.DataFrame,
-    employees_off_df: pd.DataFrame,
-    employees_onl_df: pd.DataFrame,
-    shipping_df: pd.DataFrame,
-    counters: dict,
-) -> None:
-    customers_df.to_parquet(     ref_dir / "customers.parquet",      index=False)
-    products_df.to_parquet(      ref_dir / "products.parquet",        index=False)
-    store_branches_df.to_parquet(ref_dir / "store_branches.parquet",  index=False)
-    employees_off_df.to_parquet( ref_dir / "employees_off.parquet",   index=False)
-    employees_onl_df.to_parquet( ref_dir / "employees_onl.parquet",   index=False)
-    shipping_df.to_parquet(      ref_dir / "shipping.parquet",        index=False)
-    with open(ref_dir / "state.json", "w") as fh:
-        json.dump(counters, fh, indent=2)
-    print(f"  ✓ Reference state saved to {ref_dir}/")
-
-
-
-# Main
+# ── Main ───────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    print(" Initial Load   ")
+    print(" Initial Load ")
 
     rng      = np.random.default_rng(SEED)
     batch_ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -367,27 +349,15 @@ def main() -> None:
     offline_df = add_batch_metadata(offline_df, LOAD_TYPE, batch_ts)
     online_df  = add_batch_metadata(online_df,  LOAD_TYPE, batch_ts)
 
-    print("\n Saving Parquet files locally...")
-    off_file = OUTPUT_DIR / f"offline_initial_{batch_ts}.parquet"
-    onl_file = OUTPUT_DIR / f"online_initial_{batch_ts}.parquet"
-    save_parquet(offline_df, off_file)
-    save_parquet(online_df,  onl_file)
-
-    print("\n Uploading to cloud storage...")
+    print("\n Uploading transactions to cloud storage...")
     off_key = f"offline/initial/offline_initial_{batch_ts}.parquet"
     onl_key = f"online/initial/online_initial_{batch_ts}.parquet"
-    print(f"  Uploaded → {cloud.upload(str(off_file), off_key)}")
-    print(f"  Uploaded → {cloud.upload(str(onl_file), onl_key)}")
+    print(f"  Uploaded → {upload_df(cloud, offline_df, off_key)}")
+    print(f"  Uploaded → {upload_df(cloud, online_df,  onl_key)}")
 
-    print("\n Saving reference state...")
-    save_reference_state(
-        ref_dir=REF_DIR,
-        customers_df=customers_df,
-        products_df=products_df,
-        store_branches_df=store_branches_df,
-        employees_off_df=employees_off_df,
-        employees_onl_df=employees_onl_df,
-        shipping_df=shipping_df,
+    print("\n Uploading reference state to cloud storage...")
+    upload_reference_state(
+        cloud=cloud,
         counters={
             "last_customer_id": N_CUSTOMERS,
             "last_product_id":  len(products_df),
@@ -396,14 +366,20 @@ def main() -> None:
             "initial_off_key":  off_key,
             "initial_onl_key":  onl_key,
         },
+        customers_df=customers_df,
+        products_df=products_df,
+        store_branches_df=store_branches_df,
+        employees_off_df=employees_off_df,
+        employees_onl_df=employees_onl_df,
+        shipping_df=shipping_df,
     )
 
-    print("\n── Summary ──────────────────────────────────────")
+    print("\n── Summary ──────────────────────────────────────────────────────")
     print(f"  Batch ID    : {batch_ts}")
     print(f"  Offline rows: {len(offline_df):,}  |  Revenue: ${offline_df['transaction_sale_amount'].sum():,.2f}")
     print(f"  Online rows : {len(online_df):,}   |  Revenue: ${online_df['transaction_sale_amount'].sum():,.2f}")
     print(f"  Date range  : {START_DATE} → {END_DATE}")
-    print("\nInitial load complete.\n")
+    print("\nInitial load complete. No local files written.\n")
 
 
 if __name__ == "__main__":

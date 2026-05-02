@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import json
 import os
 import sys
 from datetime import datetime, timezone
@@ -18,7 +17,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from vintage_data import (
-    PRODUCT_CATALOG, FIRST_NAMES, LAST_NAMES, EMAIL_DOMAINS,
+    FIRST_NAMES, LAST_NAMES, EMAIL_DOMAINS,
     US_CITIES, INTL_CITIES, CUSTOMER_COUNTRIES,
     OFFLINE_PAYMENT_METHODS, OFFLINE_PAYMENT_WEIGHTS,
     ONLINE_PAYMENT_METHODS,  ONLINE_PAYMENT_WEIGHTS,
@@ -34,12 +33,13 @@ from helpers import (
     make_transaction_ids, make_entity_ids,
     make_emails, make_phones, make_salaries,
     calc_sale_amounts, weighted_choice,
-    attach_entity_cols, add_batch_metadata, save_parquet,
+    attach_entity_cols, add_batch_metadata,
+    upload_df, upload_reference_state, download_reference_state,
 )
 from cloud_storage import get_cloud_client
 
 
-# Configuration
+# ── Configuration ──────────────────────────────────────────────────────────────
 
 SEED_INCR  = int(os.environ.get("SEED_INCREMENTAL", 99))
 N_OFFLINE  = 250_000
@@ -55,67 +55,22 @@ SCD2_EMPLOYEE_RAISES          = 40
 NEW_CUSTOMERS                 = 1_500
 NEW_PRODUCTS                  = 15
 
-REF_DIR    = Path(os.environ.get("DATA_REF_DIR",         "data/reference"))
-OUTPUT_DIR = Path(os.environ.get("DATA_INCREMENTAL_DIR", "data/incremental"))
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
 LOAD_TYPE = "INCREMENTAL"
 
-# Normalize discount weights once at module level 
+# Normalize discount weights once at module level
 _DISC_W = np.array(DISCOUNT_WEIGHTS, dtype=float)
 _DISC_W /= _DISC_W.sum()
 
 
-
-# Reference state helpers  
-
-def load_reference_state(ref_dir: Path) -> tuple[dict, dict]:
-    state_path = ref_dir / "state.json"
-    if not state_path.exists():
-        raise FileNotFoundError(
-            f"{state_path} not found. Run generate_initial_load.py first."
-        )
-    with open(state_path) as fh:
-        counters = json.load(fh)
-
-    dataframes = {
-        "customers_df":      pd.read_parquet(ref_dir / "customers.parquet"),
-        "products_df":       pd.read_parquet(ref_dir / "products.parquet"),
-        "store_branches_df": pd.read_parquet(ref_dir / "store_branches.parquet"),
-        "employees_off_df":  pd.read_parquet(ref_dir / "employees_off.parquet"),
-        "employees_onl_df":  pd.read_parquet(ref_dir / "employees_onl.parquet"),
-        "shipping_df":       pd.read_parquet(ref_dir / "shipping.parquet"),
-    }
-    return dataframes, counters
-
-
-def save_reference_state(ref_dir: Path, dataframes: dict, counters: dict) -> None:
-    mapping = {
-        "customers_df":      "customers.parquet",
-        "products_df":       "products.parquet",
-        "store_branches_df": "store_branches.parquet",
-        "employees_off_df":  "employees_off.parquet",
-        "employees_onl_df":  "employees_onl.parquet",
-        "shipping_df":       "shipping.parquet",
-    }
-    for key, filename in mapping.items():
-        dataframes[key].to_parquet(ref_dir / filename, index=False)
-    with open(ref_dir / "state.json", "w") as fh:
-        json.dump(counters, fh, indent=2)
-    print(f"  ✓ Reference state updated in {ref_dir}/")
-
-
-
-# SCD2 change scenarios
+# ── SCD2 change scenarios ──────────────────────────────────────────────────────
 
 def apply_customer_scd2_changes(
     df: pd.DataFrame,
     rng: np.random.Generator,
 ) -> tuple[pd.DataFrame, dict]:
-    df      = df.copy().reset_index(drop=True)  
+    df      = df.copy().reset_index(drop=True)
     n       = len(df)
     summary = {}
-
 
     city_col    = df.columns.get_loc("customer_city")
     country_col = df.columns.get_loc("customer_country")
@@ -162,7 +117,7 @@ def apply_employee_offline_scd2(
     rng: np.random.Generator,
 ) -> tuple[pd.DataFrame, list]:
     """Simulate promotions for offline employees."""
-    df = df.copy().reset_index(drop=True) 
+    df = df.copy().reset_index(drop=True)
     promo_map = {
         "Stock Associate":        "Sales Associate",
         "Cashier":                "Sales Associate",
@@ -185,8 +140,8 @@ def apply_employee_offline_scd2(
         for idx, nt, ch in zip(promo_idx, new_titles, changed)
     ])
 
-    title_col  = df.columns.get_loc("employee_title")
-    salary_col = df.columns.get_loc("employee_salary")
+    title_col   = df.columns.get_loc("employee_title")
+    salary_col  = df.columns.get_loc("employee_salary")
     changed_idx = promo_idx[changed]
     df.iloc[changed_idx, title_col]  = new_titles[changed]
     df.iloc[changed_idx, salary_col] = new_salaries[changed]
@@ -205,7 +160,7 @@ def apply_employee_online_scd2(
     rng: np.random.Generator,
 ) -> tuple[pd.DataFrame, list]:
     """Salary raises for online employees — fully vectorized."""
-    df = df.copy().reset_index(drop=True)  
+    df = df.copy().reset_index(drop=True)
 
     raise_idx    = rng.choice(len(df), size=SCD2_EMPLOYEE_RAISES, replace=False)
     old_salaries = df["employee_salary"].values[raise_idx].astype(float)
@@ -223,8 +178,7 @@ def apply_employee_online_scd2(
     return df, changes
 
 
-
-# New entity builders
+# ── New entity builders ────────────────────────────────────────────────────────
 
 def add_new_customers(
     df: pd.DataFrame,
@@ -280,21 +234,23 @@ def add_new_products(
         sup_id  = rng.choice(existing_sup_ids)
         sup_row = df[df["supplier_id"] == sup_id].iloc[0]
         new_rows.append({
-            "product_id": f"PROD{last_id + i:03d}", "product_category": category,
-            "product_name": name, "product_unit_cost": cost,
-            "product_unit_price": price, "product_warranty_period": warranty,
-            "supplier_id": sup_id,
-            "supplier_name": sup_row["supplier_name"],
-            "supplier_email": sup_row["supplier_email"],
-            "supplier_number": sup_row["supplier_number"],
+            "product_id":               f"PROD{last_id + i:03d}",
+            "product_category":         category,
+            "product_name":             name,
+            "product_unit_cost":        cost,
+            "product_unit_price":       price,
+            "product_warranty_period":  warranty,
+            "supplier_id":              sup_id,
+            "supplier_name":            sup_row["supplier_name"],
+            "supplier_email":           sup_row["supplier_email"],
+            "supplier_number":          sup_row["supplier_number"],
             "supplier_primary_contact": sup_row["supplier_primary_contact"],
-            "supplier_location": sup_row["supplier_location"],
+            "supplier_location":        sup_row["supplier_location"],
         })
     return pd.concat([df, pd.DataFrame(new_rows)], ignore_index=True)
 
 
-
-# Transaction builders  (incremental)
+# ── Transaction builders ───────────────────────────────────────────────────────
 
 def build_offline_incr(
     n: int,
@@ -311,7 +267,7 @@ def build_offline_incr(
     emp_idx    = rng.choice(len(employees_df), size=n)
 
     quantities   = rng.choice([1, 1, 1, 2, 2, 3], size=n)
-    discounts    = rng.choice(DISCOUNT_VALUES, size=n, p=_DISC_W)  # FIX: normalized weights
+    discounts    = rng.choice(DISCOUNT_VALUES, size=n, p=_DISC_W)
     sale_amounts = calc_sale_amounts(quantities, products_df["product_unit_price"].values[prod_idx], discounts)
     tx_dates     = generate_dates(n, START_DATE, END_DATE, rng)
 
@@ -345,7 +301,10 @@ def build_offline_incr(
         "store_branch_phone_number", "store_branch_operating_days",
         "store_branch_operating_hours",
     ], emp_idx)
-    df["shipping_id"] = df["shipping_method"] = df["shipping_carrier"] = None
+
+    df["shipping_id"]      = None
+    df["shipping_method"]  = None
+    df["shipping_carrier"] = None
 
     assert df["transaction_id"].is_unique, "Duplicate offline transaction IDs!"
     return df
@@ -368,7 +327,7 @@ def build_online_incr(
     ship_idx   = rng.choice(len(shipping_df),  size=n)
 
     quantities   = rng.choice([1, 1, 1, 2, 2, 3], size=n)
-    discounts    = rng.choice(DISCOUNT_VALUES, size=n, p=_DISC_W)  
+    discounts    = rng.choice(DISCOUNT_VALUES, size=n, p=_DISC_W)
     sale_amounts = calc_sale_amounts(quantities, products_df["product_unit_price"].values[prod_idx], discounts)
     ship_status  = weighted_choice(ONLINE_SHIPMENT_STATUSES, ONLINE_SHIPMENT_WEIGHTS, n, rng)
     tx_dates     = generate_dates(n, START_DATE, END_DATE, rng)
@@ -377,10 +336,10 @@ def build_online_incr(
     shipped_dates  = add_calendar_days(tx_ts, 1, 3, rng)
     delivery_dates = add_calendar_days(shipped_dates, 2, 10, rng).dt.strftime("%Y-%m-%d")
 
-    mask_no_ship   = pd.Series(ship_status).isin(["Pending", "Processing", "Cancelled"])
-    shipped_arr    = shipped_dates.dt.strftime("%Y-%m-%d").copy()
+    mask_no_ship  = pd.Series(ship_status).isin(["Pending", "Processing", "Cancelled"])
+    shipped_arr   = shipped_dates.dt.strftime("%Y-%m-%d").copy()
     shipped_arr[mask_no_ship.values]  = None
-    delivery_arr   = delivery_dates.copy()
+    delivery_arr  = delivery_dates.copy()
     delivery_arr[mask_no_ship.values] = None
 
     df = pd.DataFrame({
@@ -413,16 +372,20 @@ def build_online_incr(
     attach_entity_cols(df, shipping_df, [
         "shipping_id", "shipping_method", "shipping_carrier",
     ], ship_idx)
-    df["store_branch_id"] = df["store_branch_city"] = df["store_branch_state"] = None
-    df["store_branch_phone_number"] = df["store_branch_operating_days"] = None
+
+    df["store_branch_id"]              = None
+    df["store_branch_city"]            = None
+    df["store_branch_state"]           = None
+    df["store_branch_phone_number"]    = None
+    df["store_branch_operating_days"]  = None
     df["store_branch_operating_hours"] = None
 
     assert df["transaction_id"].is_unique, "Duplicate online transaction IDs!"
     return df
 
 
+# ── Main ───────────────────────────────────────────────────────────────────────
 
-# Main
 def main() -> None:
     print(" Incremental Load ")
 
@@ -430,8 +393,8 @@ def main() -> None:
     batch_ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     cloud    = get_cloud_client()
 
-    print("Loading reference state...")
-    dataframes, counters  = load_reference_state(REF_DIR)
+    print(" Loading reference state from cloud...")
+    dataframes, counters  = download_reference_state(cloud)
     customers_df          = dataframes["customers_df"]
     products_df           = dataframes["products_df"]
     store_branches_df     = dataframes["store_branches_df"]
@@ -466,29 +429,15 @@ def main() -> None:
     offline_df = add_batch_metadata(offline_df, LOAD_TYPE, batch_ts)
     online_df  = add_batch_metadata(online_df,  LOAD_TYPE, batch_ts)
 
-    print("\n Saving Parquet files...")
-    off_file = OUTPUT_DIR / f"offline_incremental_{batch_ts}.parquet"
-    onl_file = OUTPUT_DIR / f"online_incremental_{batch_ts}.parquet"
-    save_parquet(offline_df, off_file)
-    save_parquet(online_df,  onl_file)
-
-    print("\n Uploading to cloud storage...")
+    print("\n Uploading transactions to cloud storage...")
     off_key = f"offline/incremental/offline_incremental_{batch_ts}.parquet"
     onl_key = f"online/incremental/online_incremental_{batch_ts}.parquet"
-    print(f"  Uploaded → {cloud.upload(str(off_file), off_key)}")
-    print(f"  Uploaded → {cloud.upload(str(onl_file), onl_key)}")
+    print(f"  Uploaded → {upload_df(cloud, offline_df, off_key)}")
+    print(f"  Uploaded → {upload_df(cloud, online_df,  onl_key)}")
 
-    print("\n Updating reference state...")
-    save_reference_state(
-        ref_dir=REF_DIR,
-        dataframes={
-            "customers_df":      customers_df,
-            "products_df":       products_df,
-            "store_branches_df": store_branches_df,
-            "employees_off_df":  employees_off_df,
-            "employees_onl_df":  employees_onl_df,
-            "shipping_df":       shipping_df,
-        },
+    print("\n Updating reference state in cloud storage...")
+    upload_reference_state(
+        cloud=cloud,
         counters={
             **counters,
             "last_customer_id": last_cust_id  + NEW_CUSTOMERS,
@@ -496,9 +445,15 @@ def main() -> None:
             "last_off_tx_id":   last_off_tx_id + N_OFFLINE,
             "last_onl_tx_id":   last_onl_tx_id + N_ONLINE,
         },
+        customers_df=customers_df,
+        products_df=products_df,
+        store_branches_df=store_branches_df,
+        employees_off_df=employees_off_df,
+        employees_onl_df=employees_onl_df,
+        shipping_df=shipping_df,
     )
 
-    print("\n── SCD2 Changes Summary ─────────────────────────────────")
+    print("\n── SCD2 Changes Summary ─────────────────────────────────────────")
     print(f"  Customers city changed    : {SCD2_CUSTOMER_CITY_CHANGES}")
     print(f"  Customers contact changed : {SCD2_CUSTOMER_CONTACT_CHANGES}")
     print(f"  Offline employees promoted: {SCD2_EMPLOYEE_PROMOTIONS}")
@@ -510,7 +465,7 @@ def main() -> None:
     print(f"\n  Offline TX IDs: OFF{last_off_tx_id+1:07d} → OFF{last_off_tx_id+N_OFFLINE:07d}")
     print(f"  Online  TX IDs: ONL{last_onl_tx_id+1:07d} → ONL{last_onl_tx_id+N_ONLINE:07d}")
     print(f"  Batch ID      : {batch_ts}")
-    print("\nIncremental load complete.\n")
+    print("\nIncremental load complete. No local files written.\n")
 
 
 if __name__ == "__main__":
