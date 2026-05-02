@@ -6,14 +6,16 @@ draft 3 pipelines and logging - fix major bugs, create following pipelines setup
 
 draft 4 second system checkout - last step before moving on from dwh system chekc pipline work, code performance, coding standarts, naming standarts , comments on script.
 
-draft 5 documentation - renew model documentation, create visual diagrams, user manual, setup guide
+draft 5 power bi - modify initial report desired result- report ready for deployment for stakeholders
 
-draft 6 power bi - modify initial report desired result- report ready for deployment for stakeholders
+draft 6 DWH bug correction - after loading into power bi some bugs may become more visible recheck database, correct bugs.
 
-draft 7 LLM - language model to convert natural language to sql train/test model 
+draft 7 documentation - renew model documentation, create visual diagrams, user manual, setup guide
 
-draft 8 documentation - document llm creation create user guide make disclaimers for accuracy
+draft 8 LLM - language model to convert natural language to sql train/test model, train model, create apis 
 
-draft 9 - crearte custom visual for llm inside seperate power bi sheet
+draft 9 documentation - document llm training user guide make disclaimers for accuracy
 
-draft 10 - perform final bug control, update user manual
+draft 10 - crearte custom visual for llm inside seperate power bi sheet
+
+draft 11 - perform final bug control, update user manual
