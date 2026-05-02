@@ -68,7 +68,8 @@ BEGIN
         ON CONFLICT (customer_src_id, source_system, source_entity, start_dt) 
         DO NOTHING;
 
-        v_inserted := v_inserted + 1;
+        GET DIAGNOSTICS v_rows = ROW_COUNT;  
+        v_inserted := v_inserted + v_rows;    
     END LOOP;
 
      CALL bl_cn.log_success(v_log_id, v_inserted, v_updated);

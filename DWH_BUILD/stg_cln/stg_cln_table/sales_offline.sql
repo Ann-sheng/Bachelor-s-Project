@@ -73,7 +73,9 @@ CREATE TABLE IF NOT EXISTS stg_cln.sales_offline (
                 COALESCE(employee_lastname,  '') ||
                 COALESCE(employee_title,     '') ||
                 COALESCE(employee_email,     '') ||
-                COALESCE(employee_salary::TEXT, '')
+                COALESCE(employee_phone_number,     '') ||
+                COALESCE(employee_salary::TEXT, '') ||
+                COALESCE(store_branch_id,       '') 
             )
         ) STORED
 );

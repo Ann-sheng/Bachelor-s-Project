@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS src.sales_online (
 
     -- Metadata
     src_insert_dt                TIMESTAMP DEFAULT NOW(),
-    src_filename                 VARCHAR(255) DEFAULT 'Online_Sales_Dataset.csv'
+    src_filename                 VARCHAR(255) DEFAULT 'Online_Sales_Dataset'
 );
 
 

@@ -47,7 +47,7 @@ WITH unified AS (
 ),
 
 latest AS (
-    SELECT DISTINCT ON (customer_id, source_system)
+    SELECT DISTINCT ON (customer_id, source_system, source_entity)
         *
     FROM unified
     WHERE customer_id IS NOT NULL

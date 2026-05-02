@@ -121,13 +121,15 @@ BEGIN
            ON c.customer_src_id = t.customer_src_id
           AND c.source_system   = t.source_system
           AND c.source_entity   = t.source_entity
-          AND t.transaction_dt BETWEEN c.start_dt AND c.end_dt
+          AND t.transaction_dt >= c.start_dt
+          AND t.transaction_dt <  c.end_dt
 
     LEFT JOIN bl_3nf.ce_employees_scd e
            ON e.employee_src_id = t.employee_src_id
           AND e.source_system   = t.source_system
           AND e.source_entity   = t.source_entity
-          AND t.transaction_dt BETWEEN e.start_dt AND e.end_dt
+          AND t.transaction_dt >= e.start_dt
+          AND t.transaction_dt <  e.end_dt
 
     WHERE NOT EXISTS (
         SELECT 1

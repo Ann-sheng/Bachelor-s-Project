@@ -17,20 +17,46 @@ BEGIN
     DELETE FROM stg_cln.reject_sales WHERE source_system = 'ONLINE';
 
     INSERT INTO stg_cln.sales_online (
-        customer_id, customer_firstname, customer_lastname,
-        customer_country, customer_city, customer_phone_number, customer_email,
-        product_id, product_category, product_name,
-        product_unit_cost, product_unit_price, product_warranty_period,
-        transaction_id, transaction_dt,
-        transaction_quantity_sold, transaction_discount_pct,
-        transaction_sale_amount, transaction_payment_method,
-        transaction_currency_paid, transaction_sales_channel,
-        employee_id, employee_firstname, employee_lastname, employee_title,
-        employee_email, employee_phone_number, employee_salary,
-        supplier_id, supplier_name, supplier_email,
-        supplier_number, supplier_primary_contact, supplier_location,
-        shipping_id, shipping_method, shipping_carrier,
-        shipped_dt, delivery_dt, shipment_status
+        customer_id,
+        customer_firstname, 
+        customer_lastname,
+        customer_country, 
+        customer_city, 
+        customer_phone_number, 
+        customer_email,
+        product_id, 
+        product_category, 
+        product_name,
+        product_unit_cost, 
+        product_unit_price, 
+        product_warranty_period,
+        transaction_id, 
+        transaction_dt,
+        transaction_quantity_sold, 
+        transaction_discount_pct,
+        transaction_sale_amount, 
+        transaction_payment_method,
+        transaction_currency_paid, 
+        transaction_sales_channel,
+        employee_id, 
+        employee_firstname, 
+        employee_lastname, 
+        employee_title,
+        employee_email, 
+        employee_phone_number, 
+        employee_salary,
+        supplier_id, 
+        supplier_name, 
+        supplier_email,
+        supplier_number, 
+        supplier_primary_contact, 
+        supplier_location,
+        shipping_id, 
+        shipping_method, 
+        shipping_carrier,
+        shipped_dt, 
+        delivery_dt, 
+        shipment_status
     )
     SELECT
         TRIM(customer_id),
@@ -110,8 +136,8 @@ BEGIN
         OR product_id  IS NULL OR TRIM(product_id)     = ''
         OR transaction_id IS NULL OR TRIM(transaction_id) = ''
         OR transaction_date IS NULL OR transaction_date NOT LIKE '____-__-__'
-        OR NULLIF(REGEXP_REPLACE(quantity_sold,'[^0-9]','','g'),'')::INTEGER <= 0
-        OR NULLIF(REGEXP_REPLACE(sales_amount,'[^0-9.]','','g'),'')::NUMERIC  <= 0
+        OR COALESCE(NULLIF(REGEXP_REPLACE(quantity_sold,'[^0-9]','','g'),'')::INTEGER, -1) <= 0
+        OR COALESCE(NULLIF(REGEXP_REPLACE(sales_amount,'[^0-9.]','','g'),'')::NUMERIC, -1)  <= 0
         OR COALESCE(NULLIF(REGEXP_REPLACE(discount_applied,'[^0-9.]','','g'),'')::NUMERIC, 0)
            NOT BETWEEN 0 AND 100;
 

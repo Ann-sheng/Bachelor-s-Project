@@ -12,7 +12,7 @@ RETURNS TABLE (
 LANGUAGE sql STABLE AS $$
 
 (
-    SELECT DISTINCT ON (supplier_id, src_system)
+    SELECT DISTINCT ON (supplier_id)
         COALESCE(supplier_id,   'n. a.')::VARCHAR(15),
         COALESCE(supplier_name, 'n. a.')::VARCHAR(100),
         supplier_email,
@@ -28,7 +28,7 @@ LANGUAGE sql STABLE AS $$
 UNION ALL
 
 (
-    SELECT DISTINCT ON (supplier_id, src_system)
+    SELECT DISTINCT ON (supplier_id)
         COALESCE(supplier_id,   'n. a.')::VARCHAR(15),
         COALESCE(supplier_name, 'n. a.')::VARCHAR(100),
         supplier_email,

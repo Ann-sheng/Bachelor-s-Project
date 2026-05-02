@@ -13,7 +13,7 @@ RETURNS TABLE (
 LANGUAGE sql STABLE AS $$
 
 (
-    SELECT DISTINCT ON (p.product_id, p.src_system)
+    SELECT DISTINCT ON (p.product_id)
         COALESCE(p.product_id,       'n. a.')::VARCHAR(15),
         COALESCE(s.supplier_id,      -1)::BIGINT,
         COALESCE(p.product_category, 'n. a.')::VARCHAR(100),
@@ -34,7 +34,7 @@ LANGUAGE sql STABLE AS $$
 UNION ALL
 
 (
-    SELECT DISTINCT ON (p.product_id, p.src_system)
+    SELECT DISTINCT ON (p.product_id)
         COALESCE(p.product_id,       'n. a.')::VARCHAR(15),
         COALESCE(s.supplier_id,      -1)::BIGINT,
         COALESCE(p.product_category, 'n. a.')::VARCHAR(100),

@@ -111,5 +111,3 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$;
 
-
-CALL bl_dm.load_fct_transactions_dd();
