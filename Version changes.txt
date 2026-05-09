@@ -10,9 +10,9 @@ draft 5 power bi - modify initial report desired result- report ready for deploy
 
 draft 6 DWH bug correction - after loading into power bi some bugs may become more visible recheck database, correct bugs.
 
-draft 7 documentation - renew model documentation, create visual diagrams, user manual, setup guide
+draft 7 project structure - optimize existing structure to seperate functionalities
 
-draft 8 LLM - language model to convert natural language to sql train/test model, train model, create apis 
+draft 8 LLM - install model, create apis, start training 
 
 draft 9 documentation - document llm training user guide make disclaimers for accuracy
 
