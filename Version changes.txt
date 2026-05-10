@@ -12,10 +12,14 @@ draft 6 DWH bug correction - after loading into power bi some bugs may become mo
 
 draft 7 project structure - optimize existing structure to seperate functionalities
 
-draft 8 LLM - install model, create apis, start training 
+draft 8 LLM - install model, create api, Environment + running model locally
 
-draft 9 documentation - document llm training user guide make disclaimers for accuracy
+draft 9 evaluation - Documented baseline accuracy score , Evaluation script to reuse after fine-tuning.
 
-draft 10 - crearte custom visual for llm inside seperate power bi sheet
+draft 10 fine tuning - Fine-tuned model running locally. decument Before/after accuracy comparison 
 
-draft 11 - perform final bug control, update user manual
+draft 11 power bi - crearte custom visual for llm inside seperate power bi sheet, connect with api
+
+draft 12 documentation - create documents such as readme, arcitecture, user manual, etc
+
+draft 13 bug control - perform final evaluation, bug control, add nice to have features.
