@@ -49,8 +49,9 @@ DO $$ BEGIN
             NOSUPERUSER
             CREATEROLE
             CREATEDB
-            CONNECTION LIMIT 5;
-        RAISE NOTICE 'User dba_admin created. Set password with: \password dba_admin';
+            CONNECTION LIMIT 5
+            PASSWORD 'dba_admin_password';
+        RAISE NOTICE 'User dba_admin created with password.';
     ELSE
         RAISE NOTICE 'User dba_admin already exists — skipping creation.';
     END IF;
@@ -63,8 +64,9 @@ DO $$ BEGIN
             NOSUPERUSER
             NOCREATEROLE
             NOCREATEDB
-            CONNECTION LIMIT 3;
-        RAISE NOTICE 'User svc_etl created. Set password with: \password svc_etl';
+            CONNECTION LIMIT 4
+            PASSWORD 'svc_etl_password';
+        RAISE NOTICE 'User svc_etl created with password.';
     ELSE
         RAISE NOTICE 'User svc_etl already exists — skipping creation.';
     END IF;
@@ -77,8 +79,9 @@ DO $$ BEGIN
             NOSUPERUSER
             NOCREATEROLE
             NOCREATEDB
-            CONNECTION LIMIT 10;
-        RAISE NOTICE 'User analyst_user created. Set password with: \password analyst_user';
+            CONNECTION LIMIT 10
+            PASSWORD 'analyst_user_password';
+        RAISE NOTICE 'User analyst_user created with password.';
     ELSE
         RAISE NOTICE 'User analyst_user already exists — skipping creation.';
     END IF;
@@ -91,13 +94,29 @@ DO $$ BEGIN
             NOSUPERUSER
             NOCREATEROLE
             NOCREATEDB
-            CONNECTION LIMIT 20;
-        RAISE NOTICE 'User svc_bi_tool created. Set password with: \password svc_bi_tool';
+            CONNECTION LIMIT 20
+            PASSWORD 'svc_bi_tool_password';
+        RAISE NOTICE 'User svc_bi_tool created with password.';
     ELSE
         RAISE NOTICE 'User svc_bi_tool already exists — skipping creation.';
     END IF;
 END $$;
 
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'svc_nlsql') THEN
+        CREATE USER svc_nlsql
+            LOGIN
+            NOSUPERUSER
+            NOCREATEROLE
+            NOCREATEDB
+            CONNECTION LIMIT 5
+            PASSWORD 'svc_nlsql_password';
+        RAISE NOTICE 'User svc_nlsql created with password.';
+    ELSE
+        RAISE NOTICE 'User svc_nlsql already exists — skipping creation.';
+    END IF;
+END $$;
 
 
 -- Assign group roles to users
@@ -105,3 +124,4 @@ GRANT dwh_admin    TO dba_admin;
 GRANT dwh_etl      TO svc_etl;
 GRANT dwh_analyst  TO analyst_user;
 GRANT dwh_reporter TO svc_bi_tool;
+GRANT dwh_reporter TO svc_nlsql;

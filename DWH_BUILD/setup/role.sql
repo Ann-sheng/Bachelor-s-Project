@@ -18,3 +18,9 @@ ALTER ROLE svc_bi_tool IN DATABASE "dnd_sales"
 -- ETL: no statement timeout (long loads expected), but cap lock waits.
 ALTER ROLE svc_etl IN DATABASE "dnd_sales"
     SET lock_timeout      = '2min';
+
+-- Prevent long-running queries from holding locks indefinitely
+ALTER ROLE svc_nlsql IN DATABASE "dnd_sales"
+    SET lock_timeout      = '1min';
+ALTER ROLE svc_nlsql IN DATABASE "dnd_sales"
+    SET statement_timeout = '5min';
