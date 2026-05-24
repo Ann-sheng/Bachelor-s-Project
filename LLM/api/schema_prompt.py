@@ -1,6 +1,6 @@
 """
-schema_prompt.py
-Imported by llm_api.py — update this file whenever the DM schema changes.
+### Answer with a SQL query only (SELECT only, using bl_dm schema, no explanation):
+"
 
 Design notes:
 - Technical audit columns (ta_insert_dt, ta_update_dt, source_system,

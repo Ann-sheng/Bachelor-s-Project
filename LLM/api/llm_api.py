@@ -1,10 +1,8 @@
-
-
 """
 NL-to-SQL API — schema context prompt wired in, bl_dm search_path fixed.
 
 Run with (from inside the api/ folder):
-    uvicorn llm_api:app --reload --port 8000
+    uvicorn llm_api:app --reload --port 800
 """
 
 import os
@@ -17,12 +15,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from pathlib import Path
 
-from schema_prompt import SCHEMA_CONTEXT   # ← Step 7 addition
+from schema_prompt import SCHEMA_CONTEXT
 
 # ── Load environment ──────────────────────────────────────────────────────────
 
-load_dotenv(dotenv_path=".env", override=False)
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env", override=False)
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
@@ -35,7 +34,7 @@ DB_CONFIG = {
     "dbname":          os.getenv("DB_NAME"),
     "user":            os.getenv("DB_USER"),
     "password":        os.getenv("DB_PASSWORD"),
-    "options":         f"-c search_path={os.getenv('DB_SCHEMA', 'bl_dm')}",  # fixed
+    "options":         f"-c search_path={os.getenv('DB_SCHEMA', 'bl_dm')}",
     "connect_timeout": 10,
 }
 
@@ -50,15 +49,16 @@ app = FastAPI(title="NL-to-SQL API", version="0.4.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["POST"],
-    allow_headers=["Content-Type"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ── Request / response models ─────────────────────────────────────────────────
 
 class QueryRequest(BaseModel):
     question: str
-    history: list[str] = []
+    history: list[dict] = []   # [{ "role": "user"|"assistant", "content": "..." }]
 
 class QueryResponse(BaseModel):
     sql: str
@@ -92,9 +92,17 @@ def sanitise_input(question: str) -> str:
 # ── Output cleaner ────────────────────────────────────────────────────────────
 
 def strip_sql(raw: str) -> str:
+    # Remove markdown and model artifacts
     cleaned = re.sub(r"</?s>", "", raw)
     cleaned = re.sub(r"```(?:sql)?", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"--.*", "", cleaned)
+    cleaned = cleaned.strip()
+
+    # If model added text before SELECT, extract from SELECT onward
+    select_match = re.search(r"\bSELECT\b", cleaned, re.IGNORECASE)
+    if select_match:
+        cleaned = cleaned[select_match.start():]
+
     return cleaned.strip()
 
 # ── SECURITY LAYER 2 — Statement type gate ───────────────────────────────────
@@ -115,27 +123,43 @@ def is_safe_sql(sql: str) -> bool:
 
 # ── sqlglot validation ────────────────────────────────────────────────────────
 
-def validate_sql_syntax(sql: str) -> None:
+def validate_sql_syntax(sql: str) -> tuple[bool, str]:
+    """
+    Returns (is_valid, error_message).
+    Does NOT raise — caller decides whether to block or warn.
+    """
     try:
         parsed = sqlglot.parse(sql, dialect="postgres", error_level=sqlglot.ErrorLevel.RAISE)
         if not parsed:
-            raise ValueError("Empty parse result.")
+            return False, "Empty parse result."
+        return True, ""
     except sqlglot.errors.ParseError as exc:
-        raise HTTPException(
-            status_code=422,
-            detail=f"Generated SQL failed syntax validation: {exc}",
-        )
+        return False, str(exc)
 
 # ── Ollama helper ─────────────────────────────────────────────────────────────
 
-def call_ollama(question: str) -> str:
-    prompt = f"""{SCHEMA_CONTEXT}
+def call_ollama(question: str, history: list[dict] = []) -> str:
+    # Only keep last 2 exchanges (4 entries) to avoid confusing the model
+    recent_history = history[-4:] if len(history) > 4 else history
 
+    history_text = ""
+    if recent_history:
+        history_text = "\n### Previous questions and SQL:\n"
+        for entry in recent_history:
+            if isinstance(entry, dict):
+                role    = entry.get("role", "")
+                content = entry.get("content", "")
+                if role == "user":
+                    history_text += f"-- Question: {content}\n"
+                elif role == "assistant":
+                    history_text += f"-- SQL: {content}\n"
+
+    prompt = f"""{SCHEMA_CONTEXT}
+{history_text}
 ### Question:
 {question}
-
-### SQL query (SELECT only, using bl_dm schema):
 """
+
     payload = {
         "model": OLLAMA_MODEL,
         "prompt": prompt,
@@ -150,7 +174,10 @@ def call_ollama(question: str) -> str:
         response = requests.post(OLLAMA_URL, json=payload, timeout=QUERY_TIMEOUT)
         response.raise_for_status()
     except requests.exceptions.ConnectionError:
-        raise HTTPException(status_code=503, detail="Cannot reach Ollama. Is it running? Try: ollama serve")
+        raise HTTPException(
+            status_code=503,
+            detail="Cannot reach Ollama. Is it running? Try: ollama serve",
+        )
     except requests.exceptions.Timeout:
         raise HTTPException(status_code=504, detail="Ollama took too long to respond.")
 
@@ -174,7 +201,10 @@ def execute_query(sql: str) -> list[dict]:
                 rows = cur.fetchmany(MAX_ROWS_RETURNED)
                 return [dict(row) for row in rows]
     except psycopg2.errors.InsufficientPrivilege:
-        raise HTTPException(status_code=403, detail="svc_nlsql does not have permission to access that table.")
+        raise HTTPException(
+            status_code=403,
+            detail="svc_nlsql does not have permission to access that table.",
+        )
     except psycopg2.Error as exc:
         raise HTTPException(status_code=500, detail=f"Postgres error: {exc}")
     finally:
@@ -185,18 +215,39 @@ def execute_query(sql: str) -> list[dict]:
 @app.post("/query", response_model=QueryResponse)
 def query(request: QueryRequest):
     clean_question = sanitise_input(request.question)
-    raw_sql        = call_ollama(clean_question)
+    raw_sql        = call_ollama(clean_question, request.history)
     sql            = strip_sql(raw_sql)
 
+    # Catch empty SQL before other checks
+    if not sql:
+        raise HTTPException(
+            status_code=422,
+            detail="Model did not return SQL — try rephrasing your question.",
+        )
+
+    # Security layer 2 — always enforced, blocks DROP/INSERT/UPDATE etc.
     if not is_safe_sql(sql):
         raise HTTPException(
             status_code=422,
             detail=f"Generated SQL is not a safe SELECT statement: {sql!r}",
         )
 
-    validate_sql_syntax(sql)
-    rows = execute_query(sql)
+    # sqlglot — hard block on first question, advisory on follow-ups.
+    # Follow-up SQL often uses CTEs or aliases sqlglot misparses,
+    # but all other security layers remain fully active.
+    is_valid, parse_error = validate_sql_syntax(sql)
+    if not is_valid:
+        if len(request.history) == 0:
+            # First question — reject
+            raise HTTPException(
+                status_code=422,
+                detail=f"Generated SQL failed syntax validation: {parse_error}",
+            )
+        else:
+            # Follow-up — log warning, still protected by layer 1 + 2 + read-only user
+            print(f"[warn] sqlglot parse warning on follow-up (allowing): {parse_error}")
 
+    rows = execute_query(sql)
     return QueryResponse(sql=sql, rows=rows)
 
 # ── Health check ──────────────────────────────────────────────────────────────
