@@ -1,0 +1,26 @@
+{
+  "visual": {
+    "name": "sqlChatVisual",
+    "displayName": "SqlChatVisual",
+    "guid": "sqlChatVisual17C34E6E05D34ED98671C13491311288",
+    "visualClassName": "Visual",
+    "version": "1.0.0.0",
+    "description": "SQL Chat Visual",
+    "supportUrl": "https://github.com/Ann-sheng/Bachelor-s-Project",
+    "gitHubUrl": "https://github.com/Ann-sheng/Bachelor-s-Project"
+  },
+  "apiVersion": "5.3.0",
+  "author": {
+    "name": "Ana",
+    "email": "ana@example.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": null,
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": null,
+  "stringResources": [],
+  "version": "1.0.0.0"
+}

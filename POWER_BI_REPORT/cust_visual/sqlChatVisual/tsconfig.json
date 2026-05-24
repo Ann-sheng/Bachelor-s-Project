@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "lib": ["ES6", "DOM"],
+    "jsx": "react",
+    "strict": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "sourceMap": true
+  },
+  "files": [
+    "src/visual.ts"
+  ],
+  "exclude": ["node_modules"]
+}
