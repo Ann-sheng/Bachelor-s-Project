@@ -44,7 +44,7 @@ DB_NAME     = os.getenv("DB_NAME", "dnd_sales")
 DB_USER     = os.getenv("DB_USER", "svc_nlsql")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_SCHEMA   = os.getenv("DB_SCHEMA", "bl_dm")
-API_URL     = "http://localhost:8000/query"
+API_URL     = "http://localhost:800/query"
 PAIRS_FILE  = _here / "test_pairs.json"
 
 # ---------------------------------------------------------------------------
