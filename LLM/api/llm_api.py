@@ -44,7 +44,7 @@ MAX_ROWS_RETURNED   = 500
 
 # ── App setup ─────────────────────────────────────────────────────────────────
 
-app = FastAPI(title="NL-to-SQL API", version="0.4.0")
+app = FastAPI(title="NL-to-SQL API", version="0.6.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -92,18 +92,21 @@ def sanitise_input(question: str) -> str:
 # ── Output cleaner ────────────────────────────────────────────────────────────
 
 def strip_sql(raw: str) -> str:
-    # Remove markdown and model artifacts
-    cleaned = re.sub(r"</?s>", "", raw)
-    cleaned = re.sub(r"```(?:sql)?", "", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"--.*", "", cleaned)
-    cleaned = cleaned.strip()
+    text = re.sub(r'```sql\s*', '', raw, flags=re.IGNORECASE)
+    text = text.replace('```', '')
+    
+    # Cut at first occurrence of separator tokens
+    for sep in ['\n---', '\n###', '\nQuestion:', '\n\n\n', '### Input', '### SQL']:
+        idx = text.find(sep)
+        if idx != -1:
+            text = text[:idx]
+    
+    # Take only up to the first semicolon if present
+    if ';' in text:
+        text = text.split(';')[0]
+    
+    return text.strip()
 
-    # If model added text before SELECT, extract from SELECT onward
-    select_match = re.search(r"\bSELECT\b", cleaned, re.IGNORECASE)
-    if select_match:
-        cleaned = cleaned[select_match.start():]
-
-    return cleaned.strip()
 
 # ── SECURITY LAYER 2 — Statement type gate ───────────────────────────────────
 
@@ -142,23 +145,41 @@ def call_ollama(question: str, history: list[dict] = []) -> str:
     # Only keep last 2 exchanges (4 entries) to avoid confusing the model
     recent_history = history[-4:] if len(history) > 4 else history
 
+    # Use SQL comments (not ### headers) so sqlcoder doesn't treat history
+    # as a new section that ends the Input block.
     history_text = ""
     if recent_history:
-        history_text = "\n### Previous questions and SQL:\n"
+        history_text = "\n-- Recent context (for reference only):\n"
         for entry in recent_history:
             if isinstance(entry, dict):
                 role    = entry.get("role", "")
                 content = entry.get("content", "")
                 if role == "user":
-                    history_text += f"-- Question: {content}\n"
+                    history_text += f"-- Previous question: {content}\n"
                 elif role == "assistant":
-                    history_text += f"-- SQL: {content}\n"
+                    history_text += f"-- Previous SQL: {content}\n"
 
-    prompt = f"""{SCHEMA_CONTEXT}
+    # SQLCoder 7B uses a specific prompt format it was fine-tuned on.
+    # Deviating from ### Instructions / ### Input / ### Response causes
+    # the model to emit its own section headers instead of SQL.
+    prompt = f"""### Instructions:
+Your task is to convert a question into a SQL query, given a Postgres database schema.
+Adhere to these rules:
+- Output ONLY the SQL query. No explanation, no preamble, no markdown.
+- Always qualify table names with the bl_dm schema.
+- Always use table aliases and qualify all column references.
+- Carefully read the schema notes before writing any query.
+
+### Input:
+{SCHEMA_CONTEXT}
 {history_text}
-### Question:
-{question}
+Question: {question}
+
+### Response:
 """
+
+    # Debug: estimate tokens (~4 chars per token for English+SQL)
+    print(f"[debug] prompt size: {len(prompt)} chars, ~{len(prompt) // 4} tokens")
 
     payload = {
         "model": OLLAMA_MODEL,
@@ -166,7 +187,9 @@ def call_ollama(question: str, history: list[dict] = []) -> str:
         "stream": False,
         "options": {
             "temperature": 0,
-            "stop": [";", "\n\n"],
+            "num_ctx": 4096,        # critical: default 2048 truncates schema
+            "num_predict": 512,     # cap output to prevent runaway generation
+            "stop": [";", "###", "```"],   # removed "\n\n" — was truncating multi-line SQL
         },
     }
 
@@ -233,18 +256,14 @@ def query(request: QueryRequest):
         )
 
     # sqlglot — hard block on first question, advisory on follow-ups.
-    # Follow-up SQL often uses CTEs or aliases sqlglot misparses,
-    # but all other security layers remain fully active.
     is_valid, parse_error = validate_sql_syntax(sql)
     if not is_valid:
         if len(request.history) == 0:
-            # First question — reject
             raise HTTPException(
                 status_code=422,
                 detail=f"Generated SQL failed syntax validation: {parse_error}",
             )
         else:
-            # Follow-up — log warning, still protected by layer 1 + 2 + read-only user
             print(f"[warn] sqlglot parse warning on follow-up (allowing): {parse_error}")
 
     rows = execute_query(sql)
