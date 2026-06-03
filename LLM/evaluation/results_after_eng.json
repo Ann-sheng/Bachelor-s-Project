@@ -1,6 +1,6 @@
 {
   "meta": {
-    "timestamp": "2026-05-13T15:06:01.864952",
+    "timestamp": "2026-06-01T19:25:01.530855",
     "total_pairs": 50,
     "complete": true
   },
@@ -15,7 +15,7 @@
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 227.69
+      "api_time_s": 240.96
     },
     {
       "id": 2,
@@ -27,43 +27,43 @@
       "exact_match": true,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 10.47
+      "api_time_s": 9.38
     },
     {
       "id": 3,
       "category": "simple_aggregation",
       "question": "What is the average discount percentage across all transactions?",
       "gold_sql": "SELECT AVG(transaction_discount_pct) AS avg_discount_pct FROM bl_dm.fct_transactions_dd;",
-      "generated_sql": "SELECT AVG(transaction_discount_pct) AS average_discount_percentage FROM bl_dm.fct_transactions_dd",
+      "generated_sql": "SELECT AVG(f.transaction_discount_pct) AS average_discount_percentage FROM bl_dm.fct_transactions_dd f",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 12.06
+      "api_time_s": 12.04
     },
     {
       "id": 4,
       "category": "simple_aggregation",
       "question": "What is the total gross profit across all transactions?",
       "gold_sql": "SELECT SUM(transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd;",
-      "generated_sql": "SELECT SUM(f.transaction_gross_profit) AS total_profit FROM bl_dm.fct_transactions_dd f",
+      "generated_sql": "SELECT SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 11.99
+      "api_time_s": 12.78
     },
     {
       "id": 5,
       "category": "simple_aggregation",
       "question": "What is the average sale amount per transaction?",
       "gold_sql": "SELECT AVG(transaction_sale_amount) AS avg_sale_amount FROM bl_dm.fct_transactions_dd;",
-      "generated_sql": "SELECT AVG(transaction_sale_amount) AS average_sale_amount FROM fct_transactions_dd",
+      "generated_sql": "SELECT AVG(transaction_sale_amount) AS average_sale_amount FROM bl_dm.fct_transactions_dd",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 10.95
+      "api_time_s": 12.09
     },
     {
       "id": 6,
@@ -75,31 +75,31 @@
       "exact_match": true,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 17.8
+      "api_time_s": 18.02
     },
     {
       "id": 7,
       "category": "date",
       "question": "What is the total revenue broken down by year?",
       "gold_sql": "SELECT d.year, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY d.year ORDER BY d.year;",
-      "generated_sql": "SELECT d.year, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY d.year ORDER BY d.year",
-      "api_error": null,
-      "exact_match": true,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 19.38
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: function date_trunc(unknown, integer) does not exist\\nLINE 1: SELECT date_trunc('year', event_date_key) AS YEAR, SUM(trans...\\n               ^\\nHINT:  No function matches t",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: function date_trunc(unknown, integer) does not exist\\nLINE 1: SELECT date_trunc('year', event_date_key) AS YEAR, SUM(trans...\\n               ^\\nHINT:  No function matches t",
+      "api_time_s": 15.4
     },
     {
       "id": 8,
       "category": "date",
       "question": "What is the total revenue in Q1 2024?",
       "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2024 AND d.quarter = 1;",
-      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2024 AND d.quarter = 1",
+      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2024 AND d.month_num = 1",
       "api_error": null,
-      "exact_match": true,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 18.95
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "row_mismatch | gold_rows=1 generated_rows=1",
+      "api_time_s": 18.45
     },
     {
       "id": 9,
@@ -111,43 +111,43 @@
       "exact_match": false,
       "exec_match": false,
       "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: function date_trunc(unknown, integer) does not exist\\nLINE 1: SELECT date_trunc('month', event_date_key) AS MONTH, SUM(tra...\\n               ^\\nHINT:  No function matches t",
-      "api_time_s": 17.83
+      "api_time_s": 21.55
     },
     {
       "id": 10,
       "category": "date",
       "question": "Which month in 2023 had the highest total gross profit?",
       "gold_sql": "SELECT d.month_name, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2023 GROUP BY d.month_num, d.month_name ORDER BY total_gross_profit DESC LIMIT 1;",
-      "generated_sql": "SELECT dim_dates.month_name, SUM(fct_transactions_dd.transaction_gross_profit) AS total_profit FROM fct_transactions_dd JOIN dim_dates ON fct_transactions_dd.event_date_key = dim_dates.date_key WHERE EXTRACT(YEAR FROM dim_dates.full_date) = 2023 GROUP BY dim_dates.month_name ORDER BY total_profit DESC LIMIT 1",
-      "api_error": null,
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: function date_part(unknown, integer) does not exist\\nLINE 1: ...im_dates d ON f.event_date_key = d.date_key WHERE date_part(...\\n                                            ",
       "exact_match": false,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 28.73
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: function date_part(unknown, integer) does not exist\\nLINE 1: ...im_dates d ON f.event_date_key = d.date_key WHERE date_part(...\\n                                            ",
+      "api_time_s": 24.61
     },
     {
       "id": 11,
       "category": "product",
       "question": "What is the total revenue by product category?",
       "gold_sql": "SELECT p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category ORDER BY total_revenue DESC;",
-      "generated_sql": "SELECT p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category ORDER BY total_revenue DESC",
-      "api_error": null,
-      "exact_match": true,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 22.05
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: column reference \\\"product_surr_id\\\" is ambiguous\\nLINE 1: ... ON event_date_key = date_key JOIN dm_products ON product_su...\\n                                              ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column reference \\\"product_surr_id\\\" is ambiguous\\nLINE 1: ... ON event_date_key = date_key JOIN dm_products ON product_su...\\n                                              ",
+      "api_time_s": 23.41
     },
     {
       "id": 12,
       "category": "product",
       "question": "What are the top 5 products by total revenue?",
       "gold_sql": "SELECT p.product_name, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_name ORDER BY total_revenue DESC LIMIT 5;",
-      "generated_sql": "SELECT p.product_name, SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_name ORDER BY total_spent DESC NULLS LAST LIMIT 5",
+      "generated_sql": "SELECT p.product_name, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_name ORDER BY total_revenue DESC NULLS LAST LIMIT 5",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 23.84
+      "api_time_s": 22.64
     },
     {
       "id": 13,
@@ -159,7 +159,7 @@
       "exact_match": true,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 19.76
+      "api_time_s": 18.72
     },
     {
       "id": 14,
@@ -171,127 +171,127 @@
       "exact_match": false,
       "exec_match": false,
       "exec_detail": "row_mismatch | gold_rows=10 generated_rows=10",
-      "api_time_s": 20.98
+      "api_time_s": 19.95
     },
     {
       "id": 15,
       "category": "product",
       "question": "What is the total quantity sold by product category?",
       "gold_sql": "SELECT p.product_category, SUM(f.transaction_quantity_sold) AS total_quantity_sold FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category ORDER BY total_quantity_sold DESC;",
-      "generated_sql": "SELECT p.product_category, SUM(f.transaction_quantity_sold) AS total_quantity_sold FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category",
+      "generated_sql": "SELECT p.product_category, SUM(f.transaction_quantity_sold) AS total_quantity_sold FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category ORDER BY total_quantity_sold DESC NULLS LAST",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 21.79
+      "api_time_s": 23.07
     },
     {
       "id": 16,
       "category": "customer_scd2",
       "question": "Who are the top 5 customers by total spending?",
       "gold_sql": "SELECT c.customer_firstname, c.customer_lastname, SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_src_id, c.customer_firstname, c.customer_lastname ORDER BY total_spent DESC LIMIT 5;",
-      "generated_sql": "SELECT c.customer_firstname, c.customer_lastname, SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_src_id, c.customer_firstname, c.customer_lastname ORDER BY total_spent DESC NULLS LAST LIMIT 5",
+      "generated_sql": "SELECT c.customer_firstname, c.customer_lastname, SUM(f.transaction_sale_amount) AS total_spending FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id AND c.is_active = TRUE GROUP BY c.customer_src_id, c.customer_firstname, c.customer_lastname ORDER BY total_spending DESC LIMIT 5",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 31.01
+      "api_time_s": 28.5
     },
     {
       "id": 17,
       "category": "customer_scd2",
       "question": "What is the total revenue by customer country?",
       "gold_sql": "SELECT c.customer_country, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_country ORDER BY total_revenue DESC;",
-      "generated_sql": "SELECT c.customer_country, SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_country ORDER BY total_spent DESC NULLS LAST",
+      "generated_sql": "SELECT c.customer_country, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_country ORDER BY total_revenue DESC NULLS LAST",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 25.64
+      "api_time_s": 23.79
     },
     {
       "id": 18,
       "category": "customer_scd2",
       "question": "How many transactions were made by customers from each country?",
       "gold_sql": "SELECT c.customer_country, COUNT(*) AS transaction_count FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_country ORDER BY transaction_count DESC;",
-      "generated_sql": "SELECT c.customer_country, COUNT(f.transaction_src_id) AS num_transactions FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY customer_country",
+      "generated_sql": "SELECT c.customer_country, COUNT(*) AS transaction_count FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY customer_country",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 23.97
+      "api_time_s": 20.16
     },
     {
       "id": 19,
       "category": "customer_scd2",
       "question": "What is the total revenue from customers in the United States?",
       "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE AND c.customer_country = 'United States';",
-      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.customer_country = 'United States' AND is_active = TRUE",
+      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.customer_country = 'United States'",
       "api_error": null,
       "exact_match": false,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 22.26
+      "exec_match": false,
+      "exec_detail": "row_mismatch | gold_rows=1 generated_rows=1",
+      "api_time_s": 18.91
     },
     {
       "id": 20,
       "category": "customer_scd2",
       "question": "How many unique customers made at least one purchase?",
       "gold_sql": "SELECT COUNT(DISTINCT c.customer_src_id) AS unique_customers FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE;",
-      "generated_sql": "SELECT COUNT(DISTINCT c.customer_surr_id) AS num_customers FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE",
+      "generated_sql": "SELECT COUNT(DISTINCT c.customer_src_id) AS number_of_customers FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 21.22
+      "api_time_s": 18.71
     },
     {
       "id": 21,
       "category": "employee_scd2",
       "question": "What is the total revenue generated by each employee title?",
       "gold_sql": "SELECT e.employee_title, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_title ORDER BY total_revenue DESC;",
-      "generated_sql": "SELECT v.employee_title, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public v ON f.employee_surr_id = v.employee_surr_id WHERE v.is_active = TRUE GROUP BY v.employee_title ORDER BY total_revenue DESC",
+      "generated_sql": "SELECT e.employee_title, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.v_employees_public e JOIN bl_dm.fct_transactions_dd f ON e.employee_surr_id = f.employee_surr_id GROUP BY e.employee_title ORDER BY total_revenue DESC",
       "api_error": null,
       "exact_match": false,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 25.72
+      "exec_match": false,
+      "exec_detail": "row_mismatch | gold_rows=20 generated_rows=20",
+      "api_time_s": 22.7
     },
     {
       "id": 22,
       "category": "employee_scd2",
       "question": "Who are the top 10 employees by total sales?",
-      "gold_sql": "SELECT e.employee_firstname, e.employee_lastname, e.employee_title, SUM(f.transaction_sale_amount) AS total_sales FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_src_id, e.employee_firstname, e.employee_lastname, e.employee_title ORDER BY total_sales DESC LIMIT 10;",
-      "generated_sql": "SELECT v.employee_firstname, v.employee_lastname, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public v ON f.employee_surr_id = v.employee_surr_id WHERE v.is_active = TRUE GROUP BY v.employee_firstname, v.employee_lastname ORDER BY total_revenue DESC NULLS LAST LIMIT 10",
+      "gold_sql": "SELECT e.employee_firstname, e.employee_lastname, e.employee_title, SUM(f.transaction_sale_amount) AS total_sales FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_surr_id, e.employee_firstname, e.employee_lastname, e.employee_title ORDER BY total_sales DESC LIMIT 10;",
+      "generated_sql": "SELECT e.employee_firstname, e.employee_lastname, SUM(f.transaction_sale_amount) AS total_sales FROM bl_dm.v_employees_public e JOIN bl_dm.fct_transactions_dd f ON e.employee_surr_id = f.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_firstname, e.employee_lastname ORDER BY total_sales DESC NULLS LAST LIMIT 10",
       "api_error": null,
       "exact_match": false,
       "exec_match": false,
       "exec_detail": "row_mismatch | gold_rows=10 generated_rows=10",
-      "api_time_s": 31.41
+      "api_time_s": 28.18
     },
     {
       "id": 23,
       "category": "employee_scd2",
       "question": "What is the total revenue handled by Store Managers?",
       "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE AND e.employee_title = 'Store Manager';",
-      "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: column sb.store_branch_name does not exist\\nLINE 1: ...re_branch_surr_id = sb.store_branch_surr_id WHERE sb.store_b...\\n                                                     ",
+      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_src_id WHERE e.employee_title ilike '%Store%Manager%'",
+      "api_error": null,
       "exact_match": false,
-      "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column sb.store_branch_name does not exist\\nLINE 1: ...re_branch_surr_id = sb.store_branch_surr_id WHERE sb.store_b...\\n                                                     ",
-      "api_time_s": 25.85
+      "exec_match": true,
+      "exec_detail": "rows_match",
+      "api_time_s": 18.02
     },
     {
       "id": 24,
       "category": "employee_scd2",
       "question": "How many transactions did each employee title handle?",
       "gold_sql": "SELECT e.employee_title, COUNT(*) AS transaction_count FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_title ORDER BY transaction_count DESC;",
-      "generated_sql": "SELECT v.employee_firstname, v.employee_lastname, COUNT(f.transaction_src_id) AS total_transactions FROM bl_dm.v_employees_public v JOIN bl_dm.fct_transactions_dd f ON v.employee_surr_id = f.employee_surr_id WHERE is_active = TRUE GROUP BY v.employee_firstname, v.employee_lastname ORDER BY total_transactions DESC NULLS LAST",
+      "generated_sql": "SELECT e.employee_firstname, e.employee_lastname, COUNT(f.transaction_src_id) AS num_transactions FROM bl_dm.v_employees_public e JOIN bl_dm.fct_transactions_dd f ON e.employee_surr_id = f.employee_surr_id GROUP BY e.employee_firstname, e.employee_lastname",
       "api_error": null,
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "row_mismatch | gold_rows=20 generated_rows=192",
-      "api_time_s": 28.82
+      "exec_detail": "row_mismatch | gold_rows=20 generated_rows=226",
+      "api_time_s": 20.88
     },
     {
       "id": 25,
@@ -303,7 +303,7 @@
       "exact_match": true,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 24.94
+      "api_time_s": 20.06
     },
     {
       "id": 26,
@@ -315,55 +315,55 @@
       "exact_match": false,
       "exec_match": false,
       "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column s.store_branch_name does not exist\\nLINE 1: SELECT s.store_branch_name, SUM(f.transaction_gross_profit) ...\\n               ^\\nHINT:  Perhaps you meant to reference t",
-      "api_time_s": 30.07
+      "api_time_s": 21.09
     },
     {
       "id": 27,
       "category": "store",
       "question": "What is the total revenue from stores in California?",
       "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id WHERE s.store_branch_state = 'Ca';",
-      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches sb ON f.store_branch_surr_id = sb.store_branch_surr_id WHERE sb.store_branch_state = 'California'",
+      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches sb ON f.store_branch_surr_id = sb.store_branch_surr_id WHERE sb.store_branch_state = 'Ca'",
       "api_error": null,
       "exact_match": false,
-      "exec_match": false,
-      "exec_detail": "row_mismatch | gold_rows=1 generated_rows=1",
-      "api_time_s": 20.29
+      "exec_match": true,
+      "exec_detail": "rows_match",
+      "api_time_s": 17.85
     },
     {
       "id": 28,
       "category": "store",
       "question": "What is the average transaction value by store state?",
       "gold_sql": "SELECT s.store_branch_state, AVG(f.transaction_sale_amount) AS avg_transaction_value FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY s.store_branch_state ORDER BY avg_transaction_value DESC;",
-      "generated_sql": "SELECT s.store_branch_state, AVG(f.transaction_sale_amount) AS avg_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY s.store_branch_state",
+      "generated_sql": "SELECT s.store_branch_state, AVG(f.transaction_sale_amount) AS avg_transaction_value FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY s.store_branch_state",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 23.58
+      "api_time_s": 17.95
     },
     {
       "id": 29,
       "category": "junk",
       "question": "What is the total revenue by payment method?",
       "gold_sql": "SELECT j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_payment_method ORDER BY total_revenue DESC;",
-      "generated_sql": "SELECT j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE j.junk_payment_method ILIKE '%cash%' GROUP BY j.junk_payment_method ORDER BY total_spent DESC",
+      "generated_sql": "SELECT j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_payment_method ORDER BY total_revenue DESC",
       "api_error": null,
-      "exact_match": false,
-      "exec_match": false,
-      "exec_detail": "row_mismatch | gold_rows=8 generated_rows=1",
-      "api_time_s": 27.68
+      "exact_match": true,
+      "exec_match": true,
+      "exec_detail": "rows_match",
+      "api_time_s": 19.93
     },
     {
       "id": 30,
       "category": "junk",
       "question": "What is the total revenue by sales channel?",
       "gold_sql": "SELECT j.junk_sales_channel, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_sales_channel ORDER BY total_revenue DESC;",
-      "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: column f.transaction_sales_channel does not exist\\nLINE 1: SELECT f.transaction_sales_channel, SUM(f.transaction_sale_a...\\n               ^\\n\"}",
-      "exact_match": false,
-      "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column f.transaction_sales_channel does not exist\\nLINE 1: SELECT f.transaction_sales_channel, SUM(f.transaction_sale_a...\\n               ^\\n\"}",
-      "api_time_s": 16.96
+      "generated_sql": "SELECT j.junk_sales_channel, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_sales_channel ORDER BY total_revenue DESC",
+      "api_error": null,
+      "exact_match": true,
+      "exec_match": true,
+      "exec_detail": "rows_match",
+      "api_time_s": 20.37
     },
     {
       "id": 31,
@@ -375,7 +375,7 @@
       "exact_match": true,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 20.78
+      "api_time_s": 17.13
     },
     {
       "id": 32,
@@ -383,59 +383,59 @@
       "question": "How many transactions have a shipment status of Returned?",
       "gold_sql": "SELECT COUNT(*) AS returned_transactions FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE j.junk_shipment_status = 'Returned';",
       "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: missing FROM-clause entry for table \\\"f\\\"\\nLINE 1: ....fct_transactions_dd JOIN bl_dm.dm_shippings s ON f.shipping...\\n                                                      ",
+      "api_error": "http_500: {\"detail\":\"Postgres error: column \\\"junk_shipment_status\\\" does not exist\\nLINE 1: ...transactions FROM bl_dm.fct_transactions_dd WHERE junk_shipm...\\n                                                 ",
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: missing FROM-clause entry for table \\\"f\\\"\\nLINE 1: ....fct_transactions_dd JOIN bl_dm.dm_shippings s ON f.shipping...\\n                                                      ",
-      "api_time_s": 18.3
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column \\\"junk_shipment_status\\\" does not exist\\nLINE 1: ...transactions FROM bl_dm.fct_transactions_dd WHERE junk_shipm...\\n                                                 ",
+      "api_time_s": 11.04
     },
     {
       "id": 33,
       "category": "junk",
       "question": "What is the total revenue from the In-Store sales channel?",
       "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE j.junk_sales_channel = 'In-Store';",
-      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE j.junk_payment_method = 'In-Store'",
+      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE junk_payment_method ILIKE '%Cash%'",
       "api_error": null,
       "exact_match": false,
       "exec_match": false,
       "exec_detail": "row_mismatch | gold_rows=1 generated_rows=1",
-      "api_time_s": 20.43
+      "api_time_s": 17.98
     },
     {
       "id": 34,
       "category": "junk",
       "question": "What is the total revenue by currency?",
       "gold_sql": "SELECT j.junk_currency_paid, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_currency_paid ORDER BY total_revenue DESC;",
-      "generated_sql": "SELECT c.customer_country, SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_country ORDER BY total_spent DESC NULLS LAST",
+      "generated_sql": "SELECT j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_payment_method ORDER BY total_revenue DESC",
       "api_error": null,
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "row_mismatch | gold_rows=5 generated_rows=9",
-      "api_time_s": 23.5
+      "exec_detail": "row_mismatch | gold_rows=5 generated_rows=8",
+      "api_time_s": 19.6
     },
     {
       "id": 35,
       "category": "shipping",
       "question": "What is the total revenue by shipping method?",
       "gold_sql": "SELECT sh.shipping_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id GROUP BY sh.shipping_method ORDER BY total_revenue DESC;",
-      "generated_sql": "SELECT s.shipping_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings s ON f.shipping_surr_id = s.shipping_surr_id GROUP BY s.shipping_method ORDER BY total_revenue DESC",
+      "generated_sql": "SELECT j.junk_shipment_status, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_shipment_status ORDER BY total_revenue DESC",
       "api_error": null,
       "exact_match": false,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 21.36
+      "exec_match": false,
+      "exec_detail": "row_mismatch | gold_rows=14 generated_rows=7",
+      "api_time_s": 19.69
     },
     {
       "id": 36,
       "category": "shipping",
       "question": "What is the total revenue for Express Shipping orders?",
       "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id WHERE sh.shipping_method = 'Express Shipping';",
-      "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: column s.shipment_method does not exist\\nLINE 1: ...s ON f.shipping_surr_id = s.shipping_src_id WHERE s.shipment...\\n                                                        ",
+      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE junk_shipment_status = 'Delivered' AND junk_payment_method = 'Credit Card'",
+      "api_error": null,
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column s.shipment_method does not exist\\nLINE 1: ...s ON f.shipping_surr_id = s.shipping_src_id WHERE s.shipment...\\n                                                        ",
-      "api_time_s": 18.51
+      "exec_detail": "row_mismatch | gold_rows=1 generated_rows=1",
+      "api_time_s": 18.64
     },
     {
       "id": 37,
@@ -443,23 +443,23 @@
       "question": "What is the total revenue by shipping carrier?",
       "gold_sql": "SELECT sh.shipping_carrier, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id GROUP BY sh.shipping_carrier ORDER BY total_revenue DESC;",
       "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: column s.is_active does not exist\\nLINE 1: ... ON f.shipping_surr_id = s.shipping_surr_id WHERE s.is_activ...\\n                                                             ^",
+      "api_error": "http_500: {\"detail\":\"Postgres error: column j.junk_shipment_carrier does not exist\\nLINE 1: SELECT j.junk_shipment_carrier, SUM(f.transaction_sale_amoun...\\n               ^\\n\"}",
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column s.is_active does not exist\\nLINE 1: ... ON f.shipping_surr_id = s.shipping_surr_id WHERE s.is_activ...\\n                                                             ^",
-      "api_time_s": 23.56
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column j.junk_shipment_carrier does not exist\\nLINE 1: SELECT j.junk_shipment_carrier, SUM(f.transaction_sale_amoun...\\n               ^\\n\"}",
+      "api_time_s": 19.71
     },
     {
       "id": 38,
       "category": "multi_join",
       "question": "What is the total revenue by product category for each year?",
       "gold_sql": "SELECT d.year, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY d.year, p.product_category ORDER BY d.year, total_revenue DESC;",
-      "generated_sql": "SELECT d.year, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY d.year, p.product_category ORDER BY d.year, total_revenue DESC",
-      "api_error": null,
-      "exact_match": true,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 28.1
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: column reference \\\"product_surr_id\\\" is ambiguous\\nLINE 1: ... ON event_date_key = date_key JOIN dm_products ON product_su...\\n                                              ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column reference \\\"product_surr_id\\\" is ambiguous\\nLINE 1: ... ON event_date_key = date_key JOIN dm_products ON product_su...\\n                                              ",
+      "api_time_s": 20.85
     },
     {
       "id": 39,
@@ -467,83 +467,83 @@
       "question": "Who are the top 5 customers from the United States by total revenue in 2023?",
       "gold_sql": "SELECT c.customer_firstname, c.customer_lastname, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE c.is_active = TRUE AND c.customer_country = 'United States' AND d.year = 2023 GROUP BY c.customer_src_id, c.customer_firstname, c.customer_lastname ORDER BY total_revenue DESC LIMIT 5;",
       "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: function pg_catalog.extract(unknown, integer) does not exist\\nLINE 1: ...ntry = 'United States' AND c.is_active = TRUE AND EXTRACT(YE...\\n                                   ",
+      "api_error": "http_500: {\"detail\":\"Postgres error: missing FROM-clause entry for table \\\"d\\\"\\nLINE 1: ...active = TRUE WHERE c.customer_country = 'US' AND d.year = 2...\\n                                                      ",
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: function pg_catalog.extract(unknown, integer) does not exist\\nLINE 1: ...ntry = 'United States' AND c.is_active = TRUE AND EXTRACT(YE...\\n                                   ",
-      "api_time_s": 35.15
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: missing FROM-clause entry for table \\\"d\\\"\\nLINE 1: ...active = TRUE WHERE c.customer_country = 'US' AND d.year = 2...\\n                                                      ",
+      "api_time_s": 29.92
     },
     {
       "id": 40,
       "category": "multi_join",
       "question": "What is the total revenue by sales channel and product category?",
       "gold_sql": "SELECT j.junk_sales_channel, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY j.junk_sales_channel, p.product_category ORDER BY j.junk_sales_channel, total_revenue DESC;",
-      "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: column f.transaction_sales_channel does not exist\\nLINE 1: SELECT f.transaction_sales_channel, p.product_category, SUM(...\\n               ^\\n\"}",
+      "generated_sql": "SELECT j.junk_sales_channel, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY j.junk_sales_channel, p.product_category ORDER BY total_revenue DESC",
+      "api_error": null,
       "exact_match": false,
-      "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column f.transaction_sales_channel does not exist\\nLINE 1: SELECT f.transaction_sales_channel, p.product_category, SUM(...\\n               ^\\n\"}",
-      "api_time_s": 24.0
+      "exec_match": true,
+      "exec_detail": "rows_match",
+      "api_time_s": 27.81
     },
     {
       "id": 41,
       "category": "multi_join",
       "question": "What is the total revenue by store state for each year?",
       "gold_sql": "SELECT d.year, s.store_branch_state, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY d.year, s.store_branch_state ORDER BY d.year, total_revenue DESC;",
-      "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"bl_dm.store_branches\\\" does not exist\\nLINE 1: ...dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.stor...\\n                                               ",
+      "generated_sql": "SELECT s.store_branch_state, d.year, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY s.store_branch_state, d.year ORDER BY total_revenue DESC",
+      "api_error": null,
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"bl_dm.store_branches\\\" does not exist\\nLINE 1: ...dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.stor...\\n                                               ",
-      "api_time_s": 27.17
+      "exec_detail": "row_mismatch | gold_rows=55 generated_rows=55",
+      "api_time_s": 25.43
     },
     {
       "id": 42,
       "category": "multi_join",
       "question": "What is the total revenue generated by each employee working in stores in New York?",
-      "gold_sql": "SELECT e.employee_firstname, e.employee_lastname, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_employees_scd e ON f.employee_surr_id = e.employee_surr_id JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id WHERE e.is_active = TRUE AND s.store_branch_state = 'Ny' GROUP BY e.employee_src_id, e.employee_firstname, e.employee_lastname ORDER BY total_revenue DESC;",
-      "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: column v.employee_city does not exist\\nLINE 1: ... ON f.employee_surr_id = v.employee_surr_id WHERE v.employee...\\n                                                          ",
+      "gold_sql": "SELECT e.employee_firstname, e.employee_lastname, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE AND e.employee_store_branch_state = 'Ny' GROUP BY e.employee_surr_id, e.employee_firstname, e.employee_lastname ORDER BY total_revenue DESC;",
+      "generated_sql": "SELECT e.employee_firstname, e.employee_lastname, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.v_employees_public e JOIN bl_dm.fct_transactions_dd f ON e.employee_surr_id = f.employee_surr_id WHERE e.is_active = TRUE AND employee_store_branch_state = 'Ny' AND employee_store_branch_city = 'New York' GROUP BY e.employee_firstname, e.employee_lastname ORDER BY total_revenue DESC NULLS LAST",
+      "api_error": null,
       "exact_match": false,
-      "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: column v.employee_city does not exist\\nLINE 1: ... ON f.employee_surr_id = v.employee_surr_id WHERE v.employee...\\n                                                          ",
-      "api_time_s": 27.66
+      "exec_match": true,
+      "exec_detail": "rows_match",
+      "api_time_s": 29.07
     },
     {
       "id": 43,
       "category": "multi_join",
       "question": "What is the total revenue by payment method for each year?",
       "gold_sql": "SELECT d.year, j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY d.year, j.junk_payment_method ORDER BY d.year, total_revenue DESC;",
-      "generated_sql": "SELECT d.year, j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY d.year, j.junk_payment_method ORDER BY d.year, total_revenue DESC",
+      "generated_sql": "SELECT j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue, d.year FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY j.junk_payment_method, d.year ORDER BY total_revenue DESC",
       "api_error": null,
-      "exact_match": true,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 29.57
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "row_mismatch | gold_rows=40 generated_rows=40",
+      "api_time_s": 25.84
     },
     {
       "id": 44,
       "category": "multi_join",
       "question": "What is the total revenue by shipping method and product category?",
       "gold_sql": "SELECT sh.shipping_method, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY sh.shipping_method, p.product_category ORDER BY sh.shipping_method, total_revenue DESC;",
-      "generated_sql": "SELECT s.shipping_method, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_shippings s ON f.shipping_surr_id = s.shipping_surr_id JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY s.shipping_method, p.product_category ORDER BY total_revenue DESC",
+      "generated_sql": "SELECT j.junk_shipment_status, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY j.junk_shipment_status, p.product_category ORDER BY total_revenue DESC",
       "api_error": null,
       "exact_match": false,
-      "exec_match": true,
-      "exec_detail": "rows_match",
-      "api_time_s": 33.61
+      "exec_match": false,
+      "exec_detail": "row_mismatch | gold_rows=140 generated_rows=70",
+      "api_time_s": 25.91
     },
     {
       "id": 45,
       "category": "profit_margin",
       "question": "What is the total gross profit by store state in 2024?",
       "gold_sql": "SELECT s.store_branch_state, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id WHERE d.year = 2024 GROUP BY s.store_branch_state ORDER BY total_gross_profit DESC;",
-      "generated_sql": "SELECT s.store_branch_state, SUM(f.transaction_gross_profit) AS total_profit\nFROM bl_dm.fct_transactions_dd f\nJOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key\nJOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id\nWHERE d.year = 2024\nGROUP BY s.store_branch_state\nORDER BY total_profit DESC",
+      "generated_sql": "SELECT s.store_branch_state, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id WHERE d.year = 2024 GROUP BY s.store_branch_state ORDER BY total_gross_profit DESC NULLS LAST",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 29.5
+      "api_time_s": 26.49
     },
     {
       "id": 46,
@@ -555,19 +555,19 @@
       "exact_match": false,
       "exec_match": false,
       "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: function date_trunc(unknown, integer) does not exist\\nLINE 1: SELECT date_trunc('year', event_date_key) AS YEAR, SUM(trans...\\n               ^\\nHINT:  No function matches t",
-      "api_time_s": 17.21
+      "api_time_s": 15.27
     },
     {
       "id": 47,
       "category": "profit_margin",
       "question": "Which product has the highest average profit margin?",
       "gold_sql": "SELECT p.product_name, AVG(f.transaction_profit_margin) AS avg_profit_margin FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_surr_id, p.product_name ORDER BY avg_profit_margin DESC LIMIT 1;",
-      "generated_sql": "SELECT p.product_name, AVG(f.transaction_gross_profit) AS avg_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_name ORDER BY avg_profit DESC NULLS LAST LIMIT 1",
+      "generated_sql": "SELECT p.product_name, AVG(f.transaction_gross_profit) AS avg_profit_margin FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_name ORDER BY avg_profit_margin DESC LIMIT 1",
       "api_error": null,
       "exact_match": false,
       "exec_match": false,
       "exec_detail": "row_mismatch | gold_rows=1 generated_rows=1",
-      "api_time_s": 22.18
+      "api_time_s": 19.32
     },
     {
       "id": 48,
@@ -575,42 +575,42 @@
       "question": "How many transactions were placed on weekends?",
       "gold_sql": "SELECT COUNT(*) AS weekend_transactions FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.is_weekend = TRUE;",
       "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: missing FROM-clause entry for table \\\"dim_dates\\\"\\nLINE 1: ...transactions FROM bl_dm.fct_transactions_dd WHERE dim_dates....\\n                                              ",
+      "api_error": "http_500: {\"detail\":\"Postgres error: function date_trunc(unknown, integer) does not exist\\nLINE 1: ... bl_dm.fct_transactions_dd WHERE EXTRACT(dow FROM date_trunc...\\n                                           ",
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: missing FROM-clause entry for table \\\"dim_dates\\\"\\nLINE 1: ...transactions FROM bl_dm.fct_transactions_dd WHERE dim_dates....\\n                                              ",
-      "api_time_s": 11.86
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: function date_trunc(unknown, integer) does not exist\\nLINE 1: ... bl_dm.fct_transactions_dd WHERE EXTRACT(dow FROM date_trunc...\\n                                           ",
+      "api_time_s": 13.21
     },
     {
       "id": 49,
       "category": "edge_case",
       "question": "What is the total revenue from transactions placed on weekends versus weekdays?",
       "gold_sql": "SELECT d.is_weekend, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY d.is_weekend ORDER BY d.is_weekend;",
-      "generated_sql": null,
-      "api_error": "http_500: {\"detail\":\"Postgres error: function date_part(unknown, integer) does not exist\\nLINE 1: SELECT date_part('dow', event_date_key) AS day_of_week, SUM(...\\n               ^\\nHINT:  No function matches th",
+      "generated_sql": "SELECT SUM(CASE WHEN d.is_weekend = TRUE THEN f.transaction_sale_amount ELSE 0 END) AS weekend_revenue, SUM(CASE WHEN d.is_weekend = FALSE THEN f.transaction_sale_amount ELSE 0 END) AS weekday_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key",
+      "api_error": null,
       "exact_match": false,
       "exec_match": false,
-      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: function date_part(unknown, integer) does not exist\\nLINE 1: SELECT date_part('dow', event_date_key) AS day_of_week, SUM(...\\n               ^\\nHINT:  No function matches th",
-      "api_time_s": 18.67
+      "exec_detail": "row_mismatch | gold_rows=2 generated_rows=1",
+      "api_time_s": 22.31
     },
     {
       "id": 50,
       "category": "edge_case",
       "question": "What is the total revenue from transactions where the discount was greater than 20%?",
       "gold_sql": "SELECT SUM(transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd WHERE transaction_discount_pct > 20;",
-      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f WHERE transaction_discount_pct > 20",
+      "generated_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f WHERE f.transaction_discount_pct > 20",
       "api_error": null,
       "exact_match": false,
       "exec_match": true,
       "exec_detail": "rows_match",
-      "api_time_s": 14.23
+      "api_time_s": 12.84
     }
   ],
   "summary": {
-    "exact_match_score": 0.2,
-    "execution_match_score": 0.56,
-    "exact_match_count": "10/50",
-    "exec_match_count": "28/50",
+    "exact_match_score": 0.14,
+    "execution_match_score": 0.48,
+    "exact_match_count": "7/50",
+    "exec_match_count": "24/50",
     "breakdown_by_category": {
       "simple_aggregation": {
         "n": 5,
@@ -619,18 +619,18 @@
       },
       "date": {
         "n": 5,
-        "exact_match": 0.6,
-        "exec_match": 0.8
+        "exact_match": 0.2,
+        "exec_match": 0.2
       },
       "product": {
         "n": 5,
-        "exact_match": 0.4,
-        "exec_match": 0.8
+        "exact_match": 0.2,
+        "exec_match": 0.6
       },
       "customer_scd2": {
         "n": 5,
         "exact_match": 0.0,
-        "exec_match": 1.0
+        "exec_match": 0.8
       },
       "employee_scd2": {
         "n": 4,
@@ -640,22 +640,22 @@
       "store": {
         "n": 4,
         "exact_match": 0.25,
-        "exec_match": 0.5
+        "exec_match": 0.75
       },
       "junk": {
         "n": 6,
-        "exact_match": 0.1667,
-        "exec_match": 0.1667
+        "exact_match": 0.5,
+        "exec_match": 0.5
       },
       "shipping": {
         "n": 3,
         "exact_match": 0.0,
-        "exec_match": 0.3333
+        "exec_match": 0.0
       },
       "multi_join": {
         "n": 7,
-        "exact_match": 0.2857,
-        "exec_match": 0.4286
+        "exact_match": 0.0,
+        "exec_match": 0.2857
       },
       "profit_margin": {
         "n": 3,
