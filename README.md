@@ -505,8 +505,11 @@ This project is released under the **MIT License**. See [LICENSE](LICENSE) for t
 
 ---
 
-## Contributing
+## Author
 
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+Ana Shengelia
 
+Bachelor's Thesis Project
+BSc Computer Science
+Caucasus University
 
