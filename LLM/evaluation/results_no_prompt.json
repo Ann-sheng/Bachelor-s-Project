@@ -1,0 +1,672 @@
+{
+  "meta": {
+    "timestamp": "2026-06-04T19:28:19.622705",
+    "total_pairs": 50,
+    "complete": true
+  },
+  "results": [
+    {
+      "id": 1,
+      "category": "simple_aggregation",
+      "question": "What is the total revenue across all transactions?",
+      "gold_sql": "SELECT SUM(transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transaction\\\" does not exist\\nLINE 1: SELECT SUM(t.revenue) AS total_revenue FROM transaction t\\n                                                    ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transaction\\\" does not exist\\nLINE 1: SELECT SUM(t.revenue) AS total_revenue FROM transaction t\\n                                                    ^\\n\"}",
+      "api_time_s": 20.86
+    },
+    {
+      "id": 2,
+      "category": "simple_aggregation",
+      "question": "How many transactions are in the database?",
+      "gold_sql": "SELECT COUNT(*) AS total_transactions FROM bl_dm.fct_transactions_dd;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transaction\\\" does not exist\\nLINE 1: SELECT COUNT(t.id) AS number_of_transactions FROM transactio...\\n                                                          ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transaction\\\" does not exist\\nLINE 1: SELECT COUNT(t.id) AS number_of_transactions FROM transactio...\\n                                                          ^",
+      "api_time_s": 6.98
+    },
+    {
+      "id": 3,
+      "category": "simple_aggregation",
+      "question": "What is the average discount percentage across all transactions?",
+      "gold_sql": "SELECT AVG(transaction_discount_pct) AS avg_discount_pct FROM bl_dm.fct_transactions_dd;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ...t_percentage) AS average_discount_percentage FROM transactio...\\n                                                       ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ...t_percentage) AS average_discount_percentage FROM transactio...\\n                                                       ",
+      "api_time_s": 7.95
+    },
+    {
+      "id": 4,
+      "category": "simple_aggregation",
+      "question": "What is the total gross profit across all transactions?",
+      "gold_sql": "SELECT SUM(transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ...CT SUM(t.gross_profit) AS total_gross_profit FROM transactio...\\n                                                       ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ...CT SUM(t.gross_profit) AS total_gross_profit FROM transactio...\\n                                                       ",
+      "api_time_s": 7.63
+    },
+    {
+      "id": 5,
+      "category": "simple_aggregation",
+      "question": "What is the average sale amount per transaction?",
+      "gold_sql": "SELECT AVG(transaction_sale_amount) AS avg_sale_amount FROM bl_dm.fct_transactions_dd;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: SELECT AVG(s.amount) AS average_sale_amount FROM sales s\\n                                                         ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: SELECT AVG(s.amount) AS average_sale_amount FROM sales s\\n                                                         ^\\n\"}",
+      "api_time_s": 6.79
+    },
+    {
+      "id": 6,
+      "category": "date",
+      "question": "What is the total revenue in 2023?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2023;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o WH...\\n                                                         ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o WH...\\n                                                         ^\\n\"}",
+      "api_time_s": 8.97
+    },
+    {
+      "id": 7,
+      "category": "date",
+      "question": "What is the total revenue broken down by year?",
+      "gold_sql": "SELECT d.year, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY d.year ORDER BY d.year;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...S YEAR, SUM(o.total_amount) AS total_revenue FROM orders o G...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...S YEAR, SUM(o.total_amount) AS total_revenue FROM orders o G...\\n                                                             ",
+      "api_time_s": 9.22
+    },
+    {
+      "id": 8,
+      "category": "date",
+      "question": "What is the total revenue in Q1 2024?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2024 AND d.quarter = 1;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.price) AS total_revenue FROM orders o WHERE EXT...\\n                                                  ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.price) AS total_revenue FROM orders o WHERE EXT...\\n                                                  ^\\n\"}",
+      "api_time_s": 10.38
+    },
+    {
+      "id": 9,
+      "category": "date",
+      "question": "What is the total revenue for each month in 2022?",
+      "gold_sql": "SELECT d.month_num, d.month_name, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2022 GROUP BY d.month_num, d.month_name ORDER BY d.month_num;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ... MONTH, SUM(o.total_amount) AS total_revenue FROM orders o W...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ... MONTH, SUM(o.total_amount) AS total_revenue FROM orders o W...\\n                                                             ",
+      "api_time_s": 11.76
+    },
+    {
+      "id": 10,
+      "category": "date",
+      "question": "Which month in 2023 had the highest total gross profit?",
+      "gold_sql": "SELECT d.month_name, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2023 GROUP BY d.month_num, d.month_name ORDER BY total_gross_profit DESC LIMIT 1;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...(o.total_gross_profit) AS total_gross_profit FROM orders o W...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...(o.total_gross_profit) AS total_gross_profit FROM orders o W...\\n                                                             ",
+      "api_time_s": 14.83
+    },
+    {
+      "id": 11,
+      "category": "product",
+      "question": "What is the total revenue by product category?",
+      "gold_sql": "SELECT p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ... p.category, SUM(s.revenue) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ... p.category, SUM(s.revenue) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "api_time_s": 9.81
+    },
+    {
+      "id": 12,
+      "category": "product",
+      "question": "What are the top 5 products by total revenue?",
+      "gold_sql": "SELECT p.product_name, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_name ORDER BY total_revenue DESC LIMIT 5;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ... p.name, SUM(oi.unit_price) AS total_revenue FROM products p...\\n                                                           ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ... p.name, SUM(oi.unit_price) AS total_revenue FROM products p...\\n                                                           ",
+      "api_time_s": 13.38
+    },
+    {
+      "id": 13,
+      "category": "product",
+      "question": "What is the total revenue for the Footwear category?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id WHERE p.product_category = 'Footwear';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "api_time_s": 9.89
+    },
+    {
+      "id": 14,
+      "category": "product",
+      "question": "What is the average profit margin by product category?",
+      "gold_sql": "SELECT p.product_category, AVG(f.transaction_profit_margin) AS avg_profit_margin FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category ORDER BY avg_profit_margin DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ...y, AVG(p.profit_margin) AS avg_profit_margin FROM products p...\\n                                                           ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ...y, AVG(p.profit_margin) AS avg_profit_margin FROM products p...\\n                                                           ",
+      "api_time_s": 8.06
+    },
+    {
+      "id": 15,
+      "category": "product",
+      "question": "What is the total quantity sold by product category?",
+      "gold_sql": "SELECT p.product_category, SUM(f.transaction_quantity_sold) AS total_quantity_sold FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_category ORDER BY total_quantity_sold DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ...ory_name, SUM(ps.quantity) AS total_quantity FROM products p...\\n                                                           ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ...ory_name, SUM(ps.quantity) AS total_quantity FROM products p...\\n                                                           ",
+      "api_time_s": 11.12
+    },
+    {
+      "id": 16,
+      "category": "customer_scd2",
+      "question": "Who are the top 5 customers by total spending?",
+      "gold_sql": "SELECT c.customer_firstname, c.customer_lastname, SUM(f.transaction_sale_amount) AS total_spent FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_src_id, c.customer_firstname, c.customer_lastname ORDER BY total_spent DESC LIMIT 5;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...mer_name, SUM(o.total_amount) AS total_spent FROM orders o G...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...mer_name, SUM(o.total_amount) AS total_spent FROM orders o G...\\n                                                             ",
+      "api_time_s": 9.37
+    },
+    {
+      "id": 17,
+      "category": "customer_scd2",
+      "question": "What is the total revenue by customer country?",
+      "gold_sql": "SELECT c.customer_country, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_country ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...i.unit_price * oi.quantity) AS total_revenue FROM orders o J...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...i.unit_price * oi.quantity) AS total_revenue FROM orders o J...\\n                                                             ",
+      "api_time_s": 12.61
+    },
+    {
+      "id": 18,
+      "category": "customer_scd2",
+      "question": "How many transactions were made by customers from each country?",
+      "gold_sql": "SELECT c.customer_country, COUNT(*) AS transaction_count FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE GROUP BY c.customer_country ORDER BY transaction_count DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"customer\\\" does not exist\\nLINE 1: ...untry, COUNT(t.id) AS number_of_transactions FROM customer c...\\n                                                           ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"customer\\\" does not exist\\nLINE 1: ...untry, COUNT(t.id) AS number_of_transactions FROM customer c...\\n                                                           ",
+      "api_time_s": 12.0
+    },
+    {
+      "id": 19,
+      "category": "customer_scd2",
+      "question": "What is the total revenue from customers in the United States?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE AND c.customer_country = 'United States';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "api_time_s": 9.48
+    },
+    {
+      "id": 20,
+      "category": "customer_scd2",
+      "question": "How many unique customers made at least one purchase?",
+      "gold_sql": "SELECT COUNT(DISTINCT c.customer_src_id) AS unique_customers FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id WHERE c.is_active = TRUE;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...NT(DISTINCT o.customer_id) AS unique_customers FROM orders o\\n                                                               ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...NT(DISTINCT o.customer_id) AS unique_customers FROM orders o\\n                                                               ^",
+      "api_time_s": 7.49
+    },
+    {
+      "id": 21,
+      "category": "employee_scd2",
+      "question": "What is the total revenue generated by each employee title?",
+      "gold_sql": "SELECT e.employee_title, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_title ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...ECT e.title, SUM(s.revenue) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...ECT e.title, SUM(s.revenue) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "api_time_s": 9.29
+    },
+    {
+      "id": 22,
+      "category": "employee_scd2",
+      "question": "Who are the top 10 employees by total sales?",
+      "gold_sql": "SELECT e.employee_firstname, e.employee_lastname, e.employee_title, SUM(f.transaction_sale_amount) AS total_sales FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_surr_id, e.employee_firstname, e.employee_lastname, e.employee_title ORDER BY total_sales DESC LIMIT 10;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...e.last_name, SUM(od.quantity) AS total_sales FROM orders o J...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...e.last_name, SUM(od.quantity) AS total_sales FROM orders o J...\\n                                                             ",
+      "api_time_s": 13.36
+    },
+    {
+      "id": 23,
+      "category": "employee_scd2",
+      "question": "What is the total revenue handled by Store Managers?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE AND e.employee_title = 'Store Manager';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "api_time_s": 9.51
+    },
+    {
+      "id": 24,
+      "category": "employee_scd2",
+      "question": "How many transactions did each employee title handle?",
+      "gold_sql": "SELECT e.employee_title, COUNT(*) AS transaction_count FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_title ORDER BY transaction_count DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ...(t.transaction_id) AS number_of_transactions FROM transactio...\\n                                                       ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ...(t.transaction_id) AS number_of_transactions FROM transactio...\\n                                                       ",
+      "api_time_s": 8.24
+    },
+    {
+      "id": 25,
+      "category": "store",
+      "question": "What is the total revenue by store branch state?",
+      "gold_sql": "SELECT s.store_branch_state, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY s.store_branch_state ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...ranch_state, SUM(s.revenue) AS total_revenue FROM sales s GR...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...ranch_state, SUM(s.revenue) AS total_revenue FROM sales s GR...\\n                                                             ^",
+      "api_time_s": 9.25
+    },
+    {
+      "id": 26,
+      "category": "store",
+      "question": "Which store branch generated the highest total gross profit?",
+      "gold_sql": "SELECT s.store_branch_city, s.store_branch_state, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY s.store_branch_surr_id, s.store_branch_city, s.store_branch_state ORDER BY total_gross_profit DESC LIMIT 1;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...price - sp.cost_price) AS total_gross_profit FROM sales s JO...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...price - sp.cost_price) AS total_gross_profit FROM sales s JO...\\n                                                             ^",
+      "api_time_s": 13.9
+    },
+    {
+      "id": 27,
+      "category": "store",
+      "question": "What is the total revenue from stores in California?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id WHERE s.store_branch_state = 'Ca';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"stores\\\" does not exist\\nLINE 1: SELECT SUM(s.revenue) AS total_revenue FROM stores s WHERE s...\\n                                                    ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"stores\\\" does not exist\\nLINE 1: SELECT SUM(s.revenue) AS total_revenue FROM stores s WHERE s...\\n                                                    ^\\n\"}",
+      "api_time_s": 8.14
+    },
+    {
+      "id": 28,
+      "category": "store",
+      "question": "What is the average transaction value by store state?",
+      "gold_sql": "SELECT s.store_branch_state, AVG(f.transaction_sale_amount) AS avg_transaction_value FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY s.store_branch_state ORDER BY avg_transaction_value DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ... AVG(t.amount) AS average_transaction_amount FROM transactio...\\n                                                       ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ... AVG(t.amount) AS average_transaction_amount FROM transactio...\\n                                                       ",
+      "api_time_s": 10.38
+    },
+    {
+      "id": 29,
+      "category": "junk",
+      "question": "What is the total revenue by payment method?",
+      "gold_sql": "SELECT j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_payment_method ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"payments\\\" does not exist\\nLINE 1: ...yment_method, SUM(p.amount) AS total_revenue FROM payments p...\\n                                                           ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"payments\\\" does not exist\\nLINE 1: ...yment_method, SUM(p.amount) AS total_revenue FROM payments p...\\n                                                           ",
+      "api_time_s": 8.41
+    },
+    {
+      "id": 30,
+      "category": "junk",
+      "question": "What is the total revenue by sales channel?",
+      "gold_sql": "SELECT j.junk_sales_channel, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_sales_channel ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...T s.channel, SUM(s.revenue) AS total_revenue FROM Sales s GR...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...T s.channel, SUM(s.revenue) AS total_revenue FROM Sales s GR...\\n                                                             ^",
+      "api_time_s": 8.02
+    },
+    {
+      "id": 31,
+      "category": "junk",
+      "question": "What is the total revenue from Credit Card payments?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE j.junk_payment_method = 'Credit Card';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o JO...\\n                                                         ^\\n\"}",
+      "api_time_s": 10.02
+    },
+    {
+      "id": 32,
+      "category": "junk",
+      "question": "How many transactions have a shipment status of Returned?",
+      "gold_sql": "SELECT COUNT(*) AS returned_transactions FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE j.junk_shipment_status = 'Returned';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: SELECT COUNT(*) FROM transactions t WHERE t.shipment_status ...\\n                             ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: SELECT COUNT(*) FROM transactions t WHERE t.shipment_status ...\\n                             ^\\n\"}",
+      "api_time_s": 7.08
+    },
+    {
+      "id": 33,
+      "category": "junk",
+      "question": "What is the total revenue from the In-Store sales channel?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id WHERE j.junk_sales_channel = 'In-Store';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: SELECT SUM(s.revenue) AS total_revenue FROM sales s WHERE s....\\n                                                    ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: SELECT SUM(s.revenue) AS total_revenue FROM sales s WHERE s....\\n                                                    ^\\n\"}",
+      "api_time_s": 7.85
+    },
+    {
+      "id": 34,
+      "category": "junk",
+      "question": "What is the total revenue by currency?",
+      "gold_sql": "SELECT j.junk_currency_paid, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY j.junk_currency_paid ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...currency_code, SUM(s.price) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...currency_code, SUM(s.price) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "api_time_s": 11.92
+    },
+    {
+      "id": 35,
+      "category": "shipping",
+      "question": "What is the total revenue by shipping method?",
+      "gold_sql": "SELECT sh.shipping_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id GROUP BY sh.shipping_method ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...method, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...method, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "api_time_s": 10.78
+    },
+    {
+      "id": 36,
+      "category": "shipping",
+      "question": "What is the total revenue for Express Shipping orders?",
+      "gold_sql": "SELECT SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id WHERE sh.shipping_method = 'Express Shipping';",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o WH...\\n                                                         ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: SELECT SUM(o.total_amount) AS total_revenue FROM orders o WH...\\n                                                         ^\\n\"}",
+      "api_time_s": 8.06
+    },
+    {
+      "id": 37,
+      "category": "shipping",
+      "question": "What is the total revenue by shipping carrier?",
+      "gold_sql": "SELECT sh.shipping_carrier, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id GROUP BY sh.shipping_carrier ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...carrier, SUM(o.order_total) AS total_revenue FROM orders o J...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...carrier, SUM(o.order_total) AS total_revenue FROM orders o J...\\n                                                             ",
+      "api_time_s": 11.05
+    },
+    {
+      "id": 38,
+      "category": "multi_join",
+      "question": "What is the total revenue by product category for each year?",
+      "gold_sql": "SELECT d.year, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY d.year, p.product_category ORDER BY d.year, total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...tegory, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...tegory, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "api_time_s": 12.83
+    },
+    {
+      "id": 39,
+      "category": "multi_join",
+      "question": "Who are the top 5 customers from the United States by total revenue in 2023?",
+      "gold_sql": "SELECT c.customer_firstname, c.customer_lastname, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_customers_scd c ON f.customer_surr_id = c.customer_surr_id JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE c.is_active = TRUE AND c.customer_country = 'United States' AND d.year = 2023 GROUP BY c.customer_src_id, c.customer_firstname, c.customer_lastname ORDER BY total_revenue DESC LIMIT 5;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...r_name, SUM(o.total_amount) AS total_revenue FROM orders o W...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...r_name, SUM(o.total_amount) AS total_revenue FROM orders o W...\\n                                                             ",
+      "api_time_s": 14.15
+    },
+    {
+      "id": 40,
+      "category": "multi_join",
+      "question": "What is the total revenue by sales channel and product category?",
+      "gold_sql": "SELECT j.junk_sales_channel, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY j.junk_sales_channel, p.product_category ORDER BY j.junk_sales_channel, total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...ct_category, SUM(s.revenue) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...ct_category, SUM(s.revenue) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "api_time_s": 16.23
+    },
+    {
+      "id": 41,
+      "category": "multi_join",
+      "question": "What is the total revenue by store state for each year?",
+      "gold_sql": "SELECT d.year, s.store_branch_state, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id GROUP BY d.year, s.store_branch_state ORDER BY d.year, total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ....state, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ....state, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "api_time_s": 15.16
+    },
+    {
+      "id": 42,
+      "category": "multi_join",
+      "question": "What is the total revenue generated by each employee working in stores in New York?",
+      "gold_sql": "SELECT e.employee_firstname, e.employee_lastname, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE AND e.employee_store_branch_state = 'Ny' GROUP BY e.employee_surr_id, e.employee_firstname, e.employee_lastname ORDER BY total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"employees\\\" does not exist\\nLINE 1: ...e.last_name, SUM(s.revenue) AS total_revenue FROM employees ...\\n                                                          ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"employees\\\" does not exist\\nLINE 1: ...e.last_name, SUM(s.revenue) AS total_revenue FROM employees ...\\n                                                          ",
+      "api_time_s": 12.94
+    },
+    {
+      "id": 43,
+      "category": "multi_join",
+      "question": "What is the total revenue by payment method for each year?",
+      "gold_sql": "SELECT d.year, j.junk_payment_method, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_junk_transactions j ON f.junk_surr_id = j.junk_surr_id GROUP BY d.year, j.junk_payment_method ORDER BY d.year, total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...method, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...method, SUM(o.total_amount) AS total_revenue FROM orders o J...\\n                                                             ",
+      "api_time_s": 12.78
+    },
+    {
+      "id": 44,
+      "category": "multi_join",
+      "question": "What is the total revenue by shipping method and product category?",
+      "gold_sql": "SELECT sh.shipping_method, p.product_category, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_shippings sh ON f.shipping_surr_id = sh.shipping_surr_id JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY sh.shipping_method, p.product_category ORDER BY sh.shipping_method, total_revenue DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...duct_category, SUM(s.price) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales\\\" does not exist\\nLINE 1: ...duct_category, SUM(s.price) AS total_revenue FROM sales s JO...\\n                                                             ^",
+      "api_time_s": 11.97
+    },
+    {
+      "id": 45,
+      "category": "profit_margin",
+      "question": "What is the total gross profit by store state in 2024?",
+      "gold_sql": "SELECT s.store_branch_state, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key JOIN bl_dm.dm_store_branches s ON f.store_branch_surr_id = s.store_branch_surr_id WHERE d.year = 2024 GROUP BY s.store_branch_state ORDER BY total_gross_profit DESC;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"sales_profit\\\" does not exist\\nLINE 1: ..., SUM(sp.gross_profit) AS total_gross_profit FROM sales_prof...\\n                                                       ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"sales_profit\\\" does not exist\\nLINE 1: ..., SUM(sp.gross_profit) AS total_gross_profit FROM sales_prof...\\n                                                       ",
+      "api_time_s": 12.5
+    },
+    {
+      "id": 46,
+      "category": "profit_margin",
+      "question": "What is the total revenue and total gross profit for each year?",
+      "gold_sql": "SELECT d.year, SUM(f.transaction_sale_amount) AS total_revenue, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY d.year ORDER BY d.year;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...(o.total_gross_profit) AS total_gross_profit FROM orders o G...\\n                                                             ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"orders\\\" does not exist\\nLINE 1: ...(o.total_gross_profit) AS total_gross_profit FROM orders o G...\\n                                                             ",
+      "api_time_s": 11.77
+    },
+    {
+      "id": 47,
+      "category": "profit_margin",
+      "question": "Which product has the highest average profit margin?",
+      "gold_sql": "SELECT p.product_name, AVG(f.transaction_profit_margin) AS avg_profit_margin FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dm_products p ON f.product_surr_id = p.product_surr_id GROUP BY p.product_surr_id, p.product_name ORDER BY avg_profit_margin DESC LIMIT 1;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ...e, AVG(l.profit_margin) AS avg_profit_margin FROM products p...\\n                                                           ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"products\\\" does not exist\\nLINE 1: ...e, AVG(l.profit_margin) AS avg_profit_margin FROM products p...\\n                                                           ",
+      "api_time_s": 11.52
+    },
+    {
+      "id": 48,
+      "category": "edge_case",
+      "question": "How many transactions were placed on weekends?",
+      "gold_sql": "SELECT COUNT(*) AS weekend_transactions FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.is_weekend = TRUE;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: SELECT COUNT(*) FROM transactions t WHERE EXTRACT(dow FROM t...\\n                             ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: SELECT COUNT(*) FROM transactions t WHERE EXTRACT(dow FROM t...\\n                             ^\\n\"}",
+      "api_time_s": 8.14
+    },
+    {
+      "id": 49,
+      "category": "edge_case",
+      "question": "What is the total revenue from transactions placed on weekends versus weekdays?",
+      "gold_sql": "SELECT d.is_weekend, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY d.is_weekend ORDER BY d.is_weekend;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ... day_of_week, SUM(t.amount) AS total_revenue FROM transactio...\\n                                                       ",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: ... day_of_week, SUM(t.amount) AS total_revenue FROM transactio...\\n                                                       ",
+      "api_time_s": 10.64
+    },
+    {
+      "id": 50,
+      "category": "edge_case",
+      "question": "What is the total revenue from transactions where the discount was greater than 20%?",
+      "gold_sql": "SELECT SUM(transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd WHERE transaction_discount_pct > 20;",
+      "generated_sql": null,
+      "api_error": "http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: SELECT SUM(t.revenue) AS total_revenue FROM transactions t W...\\n                                                    ^\\n\"}",
+      "exact_match": false,
+      "exec_match": false,
+      "exec_detail": "skipped: http_500: {\"detail\":\"Postgres error: relation \\\"transactions\\\" does not exist\\nLINE 1: SELECT SUM(t.revenue) AS total_revenue FROM transactions t W...\\n                                                    ^\\n\"}",
+      "api_time_s": 9.8
+    }
+  ],
+  "summary": {
+    "exact_match_score": 0.0,
+    "execution_match_score": 0.0,
+    "exact_match_count": "0/50",
+    "exec_match_count": "0/50",
+    "breakdown_by_category": {
+      "simple_aggregation": {
+        "n": 5,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "date": {
+        "n": 5,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "product": {
+        "n": 5,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "customer_scd2": {
+        "n": 5,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "employee_scd2": {
+        "n": 4,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "store": {
+        "n": 4,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "junk": {
+        "n": 6,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "shipping": {
+        "n": 3,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "multi_join": {
+        "n": 7,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "profit_margin": {
+        "n": 3,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      },
+      "edge_case": {
+        "n": 3,
+        "exact_match": 0.0,
+        "exec_match": 0.0
+      }
+    }
+  }
+}
