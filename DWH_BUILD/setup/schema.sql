@@ -1,6 +1,6 @@
 
 --Create schemas for the database
-CREATE SCHEMA IF NOT EXISTS sa_audit;
+
 CREATE SCHEMA IF NOT EXISTS src;
 CREATE SCHEMA IF NOT EXISTS stg_cln;
 CREATE SCHEMA IF NOT EXISTS bl_3nf;

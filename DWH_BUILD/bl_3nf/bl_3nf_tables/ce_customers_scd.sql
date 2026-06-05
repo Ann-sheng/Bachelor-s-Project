@@ -1,5 +1,5 @@
 
--- PURPOSE : Customer entity - SCD Type 2
+--  Customer entity - SCD Type 2
 
 CREATE TABLE IF NOT EXISTS bl_3nf.ce_customers_scd (
     customer_id           BIGINT      PRIMARY KEY

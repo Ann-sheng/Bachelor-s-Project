@@ -43,7 +43,7 @@ BEGIN
     UPDATE bl_cn.etl_run
     SET run_status = 'SUCCESS', run_end = NOW()
     WHERE run_id = v_run_id;
-
+    -- Log successful completion
     CALL bl_cn.log_success(v_log_id, 0);
 
     RAISE NOTICE '=== BL_DM LAYER COMPLETE (run_id=%) ===', v_run_id;

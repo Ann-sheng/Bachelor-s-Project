@@ -1,6 +1,5 @@
-
---  SCD Type 2 load for CE_EMPLOYEES_SCD
-
+-- SCD Type 2 load procedure for CE_EMPLOYEES_SCD
+-- Maintains historical tracking of employee changes by expiring old records and inserting new versions
 
 CREATE OR REPLACE PROCEDURE bl_3nf.load_ce_employees_scd()
 LANGUAGE plpgsql AS $$
@@ -14,9 +13,11 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_3nf.load_ce_employees_scd', 'BL_3NF');
 
+    -- Process all new or changed employee records
     FOR rec IN
         SELECT * FROM bl_3nf.fn_get_new_employees_scd()
     LOOP
+        -- Expire current active record
         UPDATE bl_3nf.ce_employees_scd
         SET    end_dt    = CURRENT_DATE,
                is_active = FALSE
@@ -28,6 +29,7 @@ BEGIN
         GET DIAGNOSTICS v_rows = ROW_COUNT;
         v_updated := v_updated + v_rows;
 
+        -- Insert new employee version
         INSERT INTO bl_3nf.ce_employees_scd (
             employee_id,
             employee_src_id,
@@ -73,12 +75,13 @@ BEGIN
         v_inserted := v_inserted + v_rows;    
     END LOOP;
 
-      CALL bl_cn.log_success(v_log_id, v_inserted, v_updated);
+    -- Log successful execution with insert/update counts
+    CALL bl_cn.log_success(v_log_id, v_inserted, v_updated);
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
 END;
 $$;
-

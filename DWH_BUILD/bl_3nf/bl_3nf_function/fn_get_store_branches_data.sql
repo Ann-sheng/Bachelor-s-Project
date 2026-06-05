@@ -1,5 +1,5 @@
 
--- PURPOSE : Extract deduplicated store branch records from stg_cln, Offline source only
+--  Extract deduplicated store branch records from stg_cln, Offline source only
 
 CREATE OR REPLACE FUNCTION bl_3nf.fn_get_store_branches_data()
 RETURNS TABLE (

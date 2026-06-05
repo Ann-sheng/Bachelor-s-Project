@@ -19,33 +19,41 @@ from pathlib import Path
 
 from schema_prompt import SCHEMA_CONTEXT
 
-# ── Load environment ──────────────────────────────────────────────────────────
 
+# ── Environment loading ───────────────────────────────────────────────────────
+# Loads .env from project root so DB + model config can be externalized.
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env", override=False)
 
-# ── Config ────────────────────────────────────────────────────────────────────
 
+# ── Configuration ──────────────────────────────────────────────────────────────
+# Ollama LLM endpoint + model used for SQL generation
 OLLAMA_URL   = os.getenv("OLLAMA_URL",   "http://localhost:11434/api/generate")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "sqlcoder")
 
+# PostgreSQL connection config (read-only user expected)
 DB_CONFIG = {
     "host":            os.getenv("DB_HOST", "localhost"),
     "port":            int(os.getenv("DB_PORT", 5432)),
     "dbname":          os.getenv("DB_NAME"),
     "user":            os.getenv("DB_USER"),
     "password":        os.getenv("DB_PASSWORD"),
+
+    # Forces schema context (important for multi-schema safety)
     "options":         f"-c search_path={os.getenv('DB_SCHEMA', 'bl_dm')}",
+
     "connect_timeout": 10,
 }
 
+# Safety limits
 MAX_QUESTION_LENGTH = int(os.getenv("MAX_QUESTION_LENGTH", 500))
 QUERY_TIMEOUT       = int(os.getenv("QUERY_TIMEOUT_SECONDS", 300))
 MAX_ROWS_RETURNED   = 500
 
-# ── App setup ─────────────────────────────────────────────────────────────────
 
+# ── FastAPI setup ──────────────────────────────────────────────────────────────
 app = FastAPI(title="NL-to-SQL API", version="0.6.0")
 
+# Allow Power BI / frontend clients to call API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -54,61 +62,72 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Request / response models ─────────────────────────────────────────────────
 
+# ── Request / Response schemas ────────────────────────────────────────────────
 class QueryRequest(BaseModel):
     question: str
-    history: list[dict] = []   # [{ "role": "user"|"assistant", "content": "..." }]
+    history: list[dict] = []   # conversation memory for better SQL generation
+
 
 class QueryResponse(BaseModel):
     sql: str
     rows: list = []
 
-# ── SECURITY LAYER 3 — Input sanitisation ────────────────────────────────────
+
+# ── SECURITY LAYER 3: Input sanitisation ──────────────────────────────────────
+# Blocks obvious SQL injection attempts at the natural-language stage.
 
 INJECTION_PATTERNS = [
     r";\s*(drop|delete|truncate|update|insert|alter|create)",
-    r"--",
-    r"/\*.*\*/",
+    r"--",          # SQL comment injection
+    r"/\*.*\*/",    # block comments
 ]
 
 def sanitise_input(question: str) -> str:
     question = question.strip()
+
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
+
     if len(question) > MAX_QUESTION_LENGTH:
         raise HTTPException(
             status_code=400,
             detail=f"Question too long ({len(question)} chars). Maximum is {MAX_QUESTION_LENGTH}.",
         )
+
+    # Block injection-like patterns early
     for pattern in INJECTION_PATTERNS:
         if re.search(pattern, question, re.IGNORECASE):
             raise HTTPException(
                 status_code=400,
                 detail="Question contains disallowed characters or patterns.",
             )
+
     return question
 
-# ── Output cleaner ────────────────────────────────────────────────────────────
+
+# ── SQL output cleaner ────────────────────────────────────────────────────────
+# Removes markdown/code fences + model artefacts before execution.
 
 def strip_sql(raw: str) -> str:
     text = re.sub(r'```sql\s*', '', raw, flags=re.IGNORECASE)
     text = text.replace('```', '')
-    
-    # Cut at first occurrence of separator tokens
+
+    # Stop generation artifacts / prompt leakage
     for sep in ['\n---', '\n###', '\nQuestion:', '\n\n\n', '### Input', '### SQL']:
         idx = text.find(sep)
         if idx != -1:
             text = text[:idx]
-    
-    # Take only up to the first semicolon if present
+
+    # Hard cutoff at first semicolon (prevents multi-statement execution)
     if ';' in text:
         text = text.split(';')[0]
-    
+
     return text.strip()
 
 
-# ── SECURITY LAYER 2 — Statement type gate ───────────────────────────────────
+# ── SECURITY LAYER 2: SQL statement gate ──────────────────────────────────────
+# Ensures only SELECT queries are allowed.
 
 FORBIDDEN_KEYWORDS = [
     "drop", "insert", "update", "delete",
@@ -117,15 +136,21 @@ FORBIDDEN_KEYWORDS = [
 ]
 
 def is_safe_sql(sql: str) -> bool:
+    """Quick keyword + structure safety check."""
     sql_lower = sql.lower()
+
+    # Must be a SELECT query
     if not sql_lower.strip().startswith("select"):
         return False
+
+    # Block dangerous keywords anywhere in query
     if any(kw in sql_lower for kw in FORBIDDEN_KEYWORDS):
         return False
+
     return True
 
-# ── sqlglot validation ────────────────────────────────────────────────────────
 
+# ── SQL syntax validation (sqlglot) ───────────────────────────────────────────
 def validate_sql_syntax(sql: str) -> tuple[bool, str]:
     """
     Returns (is_valid, error_message).
@@ -139,14 +164,17 @@ def validate_sql_syntax(sql: str) -> tuple[bool, str]:
     except sqlglot.errors.ParseError as exc:
         return False, str(exc)
 
-# ── Ollama helper ─────────────────────────────────────────────────────────────
 
+# ── LLM CALL (Ollama) ─────────────────────────────────────────────────────────
 def call_ollama(question: str, history: list[dict] = []) -> str:
-    # Only keep last 2 exchanges (4 entries) to avoid confusing the model
+    """
+    Sends prompt to Ollama SQLCoder model with schema + chat history context.
+    """
+
+    # Keep only last 2 turns to avoid prompt bloat
     recent_history = history[-4:] if len(history) > 4 else history
 
-    # Use SQL comments (not ### headers) so sqlcoder doesn't treat history
-    # as a new section that ends the Input block.
+    # Convert history into SQL-style comments so model doesn't treat it as structure
     history_text = ""
     if recent_history:
         history_text = "\n-- Recent context (for reference only):\n"
@@ -159,9 +187,7 @@ def call_ollama(question: str, history: list[dict] = []) -> str:
                 elif role == "assistant":
                     history_text += f"-- Previous SQL: {content}\n"
 
-    # SQLCoder 7B uses a specific prompt format it was fine-tuned on.
-    # Deviating from ### Instructions / ### Input / ### Response causes
-    # the model to emit its own section headers instead of SQL.
+    # Core prompt format expected by SQLCoder fine-tuned model
     prompt = f"""### Instructions:
 Your task is to convert a question into a SQL query, given a Postgres database schema.
 Adhere to these rules:
@@ -178,7 +204,7 @@ Question: {question}
 ### Response:
 """
 
-    # Debug: estimate tokens (~4 chars per token for English+SQL)
+    # Debug: estimate tokens 
     print(f"[debug] prompt size: {len(prompt)} chars, ~{len(prompt) // 4} tokens")
 
     payload = {
@@ -187,31 +213,38 @@ Question: {question}
         "stream": False,
         "options": {
             "temperature": 0,
-            "num_ctx": 4096,        # critical: default 2048 truncates schema
-            "num_predict": 512,     # cap output to prevent runaway generation
-            "stop": [";", "###", "```"],   # removed "\n\n" — was truncating multi-line SQL
+            "num_ctx": 4096,      # increases schema + history capacity
+            "num_predict": 512,   # limits output length
+            "stop": [";", "###", "```"],  # prevents multi-statement + prompt leakage
         },
     }
 
     try:
         response = requests.post(OLLAMA_URL, json=payload, timeout=QUERY_TIMEOUT)
         response.raise_for_status()
+
     except requests.exceptions.ConnectionError:
         raise HTTPException(
             status_code=503,
             detail="Cannot reach Ollama. Is it running? Try: ollama serve",
         )
+
     except requests.exceptions.Timeout:
         raise HTTPException(status_code=504, detail="Ollama took too long to respond.")
 
     raw = response.json().get("response", "").strip()
+
     if not raw:
         raise HTTPException(status_code=500, detail="Ollama returned an empty response.")
+
     return raw
 
 # ── SECURITY LAYER 1 — Postgres execution ────────────────────────────────────
 
+# ── DATABASE EXECUTION LAYER ──────────────────────────────────────────────────
 def execute_query(sql: str) -> list[dict]:
+    """Executes validated SQL against Postgres (read-only expected user)."""
+
     try:
         conn = psycopg2.connect(**DB_CONFIG)
     except psycopg2.OperationalError as exc:
@@ -221,42 +254,52 @@ def execute_query(sql: str) -> list[dict]:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 cur.execute(sql)
+
+                # Limit returned dataset size for safety/performance
                 rows = cur.fetchmany(MAX_ROWS_RETURNED)
                 return [dict(row) for row in rows]
+
     except psycopg2.errors.InsufficientPrivilege:
         raise HTTPException(
             status_code=403,
             detail="svc_nlsql does not have permission to access that table.",
         )
+
     except psycopg2.Error as exc:
         raise HTTPException(status_code=500, detail=f"Postgres error: {exc}")
+
     finally:
         conn.close()
 
-# ── Endpoint ──────────────────────────────────────────────────────────────────
 
+# ── API ENDPOINT ──────────────────────────────────────────────────────────────
 @app.post("/query", response_model=QueryResponse)
 def query(request: QueryRequest):
-    clean_question = sanitise_input(request.question)
-    raw_sql        = call_ollama(clean_question, request.history)
-    sql            = strip_sql(raw_sql)
 
-    # Catch empty SQL before other checks
+    # Step 1: sanitize input
+    clean_question = sanitise_input(request.question)
+
+    # Step 2: generate SQL via LLM
+    raw_sql = call_ollama(clean_question, request.history)
+    sql = strip_sql(raw_sql)
+
+    # Step 3: validate output exists
     if not sql:
         raise HTTPException(
             status_code=422,
             detail="Model did not return SQL — try rephrasing your question.",
         )
 
-    # Security layer 2 — always enforced, blocks DROP/INSERT/UPDATE etc.
+    # Step 4: enforce SELECT-only policy
     if not is_safe_sql(sql):
         raise HTTPException(
             status_code=422,
             detail=f"Generated SQL is not a safe SELECT statement: {sql!r}",
         )
 
-    # sqlglot — hard block on first question, advisory on follow-ups.
+    # Step 5: syntax validation (strict on first query, relaxed on follow-ups)
     is_valid, parse_error = validate_sql_syntax(sql)
+
     if not is_valid:
         if len(request.history) == 0:
             raise HTTPException(
@@ -266,13 +309,16 @@ def query(request: QueryRequest):
         else:
             print(f"[warn] sqlglot parse warning on follow-up (allowing): {parse_error}")
 
+    # Step 6: execute query
     rows = execute_query(sql)
+
     return QueryResponse(sql=sql, rows=rows)
 
-# ── Health check ──────────────────────────────────────────────────────────────
 
+# ── HEALTH CHECK ──────────────────────────────────────────────────────────────
 @app.get("/health")
 def health():
+    """Checks DB connectivity + config sanity."""
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         conn.close()
@@ -281,8 +327,13 @@ def health():
         db_status = f"unreachable — {exc}"
 
     return {
-        "status":          "ok",
-        "database":        db_status,
-        "schema":          os.getenv("DB_SCHEMA", "bl_dm"),
-        "security_layers": ["input_sanitisation", "statement_gate", "sqlglot", "read_only_user"],
+        "status": "ok",
+        "database": db_status,
+        "schema": os.getenv("DB_SCHEMA", "bl_dm"),
+        "security_layers": [
+            "input_sanitisation",
+            "statement_gate",
+            "sqlglot",
+            "read_only_user",
+        ],
     }

@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+# Ensures generator helpers are importable from project structure
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from dotenv import load_dotenv
@@ -28,6 +29,7 @@ from vintage_data import (
     DISCOUNT_VALUES,          DISCOUNT_WEIGHTS,
     OFFLINE_SALARY_RANGES,    ONLINE_SALARY_RANGES,
 )
+
 from helpers import (
     generate_dates, add_calendar_days,
     make_transaction_ids, make_entity_ids,
@@ -36,18 +38,21 @@ from helpers import (
     attach_entity_cols, add_batch_metadata,
     upload_df, upload_reference_state, download_reference_state,
 )
+
 from cloud_storage import get_cloud_client
 
 
 # ── Configuration ──────────────────────────────────────────────────────────────
+# These constants define the size and behavior of the incremental dataset.
+# Changing them directly affects data volume and SCD2 simulation intensity.
 
 SEED_INCR  = int(os.environ.get("SEED_INCREMENTAL", 99))
-N_OFFLINE  = 250_000
-N_ONLINE   = 250_000
+N_OFFLINE  = 250_000   # number of offline transactions generated per run
+N_ONLINE   = 250_000   # number of online transactions generated per run
 START_DATE = "2024-01-01"
 END_DATE   = "2024-06-30"
 
-# SCD2 change volumes
+# SCD2 change volumes (simulate slowly changing dimensions behavior)
 SCD2_CUSTOMER_CITY_CHANGES    = 400
 SCD2_CUSTOMER_CONTACT_CHANGES = 200
 SCD2_EMPLOYEE_PROMOTIONS      = 80
@@ -57,12 +62,14 @@ NEW_PRODUCTS                  = 15
 
 LOAD_TYPE = "INCREMENTAL"
 
-# Normalize discount weights once at module level
+# Normalize discount weights once at module level to avoid repeated recomputation
 _DISC_W = np.array(DISCOUNT_WEIGHTS, dtype=float)
 _DISC_W /= _DISC_W.sum()
 
 
 # ── SCD2 change scenarios ──────────────────────────────────────────────────────
+# These functions intentionally mutate historical reference state to simulate
+# Slowly Changing Dimension (Type 2) behavior in downstream ETL.
 
 def apply_customer_scd2_changes(
     df: pd.DataFrame,
@@ -76,20 +83,30 @@ def apply_customer_scd2_changes(
     country_col = df.columns.get_loc("customer_country")
     id_col      = df.columns.get_loc("customer_id")
 
+    # --- CITY CHANGES (SCD2 TYPE SIMULATION) ---
     city_idx = rng.choice(n, size=SCD2_CUSTOMER_CITY_CHANGES, replace=False)
     changed_cities = []
+
     for row_pos in city_idx.tolist():
         country  = df.iloc[row_pos, country_col]
         pool     = US_CITIES if country == "United States" else INTL_CITIES.get(country, US_CITIES)
+
+        # ensure actual change (avoid reassigning same city)
         choices  = [c for c in pool if c != df.iloc[row_pos, city_col]] or pool
+
         old_city = df.iloc[row_pos, city_col]
         new_city = rng.choice(choices)
+
         df.iloc[row_pos, city_col] = new_city
         changed_cities.append((df.iloc[row_pos, id_col], old_city, new_city))
+
+    # store sample only for logging/debug (not full history)
     summary["city_changes"] = changed_cities[:5]
 
+    # --- CONTACT CHANGES (EMAIL + PHONE) ---
     used_idx    = set(city_idx.tolist())
     avail_idx   = np.array([i for i in range(n) if i not in used_idx])
+
     contact_idx = rng.choice(avail_idx, size=SCD2_CUSTOMER_CONTACT_CHANGES, replace=False)
 
     fn       = df["customer_firstname"].values[contact_idx]
@@ -97,14 +114,17 @@ def apply_customer_scd2_changes(
     seps     = rng.choice(["", ".", "_"], size=len(contact_idx))
     domains  = rng.choice(EMAIL_DOMAINS,  size=len(contact_idx))
     suffixes = rng.integers(1, 999,       size=len(contact_idx))
+
     new_emails = [
         f"{f.lower()}{s}{l.lower()}{sfx}@{d}"
         for f, l, s, sfx, d in zip(fn, ln, seps, suffixes, domains)
     ]
+
     new_phones = make_phones(len(contact_idx), rng)
 
     email_col = df.columns.get_loc("customer_email")
     phone_col = df.columns.get_loc("customer_phone_number")
+
     df.iloc[contact_idx, email_col] = new_emails
     df.iloc[contact_idx, phone_col] = new_phones
 
@@ -116,8 +136,9 @@ def apply_employee_offline_scd2(
     df: pd.DataFrame,
     rng: np.random.Generator,
 ) -> tuple[pd.DataFrame, list]:
-    """Simulate promotions for offline employees."""
+    """Simulate promotions for offline employees (SCD2-like attribute evolution)."""
     df = df.copy().reset_index(drop=True)
+
     promo_map = {
         "Stock Associate":        "Sales Associate",
         "Cashier":                "Sales Associate",
@@ -132,6 +153,7 @@ def apply_employee_offline_scd2(
     promo_idx  = rng.choice(len(df), size=SCD2_EMPLOYEE_PROMOTIONS, replace=False)
     old_titles = df["employee_title"].values[promo_idx]
     new_titles = np.array([promo_map.get(t, t) for t in old_titles])
+
     changed    = new_titles != old_titles
 
     new_salaries = np.array([
@@ -142,11 +164,15 @@ def apply_employee_offline_scd2(
 
     title_col   = df.columns.get_loc("employee_title")
     salary_col  = df.columns.get_loc("employee_salary")
+
     changed_idx = promo_idx[changed]
+
     df.iloc[changed_idx, title_col]  = new_titles[changed]
     df.iloc[changed_idx, salary_col] = new_salaries[changed]
 
     id_col = df.columns.get_loc("employee_id")
+
+    # return only changed promotions for audit/debug traceability
     changes = [
         (df.iloc[idx, id_col], old, new)
         for idx, old, new, ch in zip(promo_idx, old_titles, new_titles, changed)
@@ -159,11 +185,12 @@ def apply_employee_online_scd2(
     df: pd.DataFrame,
     rng: np.random.Generator,
 ) -> tuple[pd.DataFrame, list]:
-    """Salary raises for online employees — fully vectorized."""
+    """Simulate salary increases for online employees."""
     df = df.copy().reset_index(drop=True)
 
     raise_idx    = rng.choice(len(df), size=SCD2_EMPLOYEE_RAISES, replace=False)
     old_salaries = df["employee_salary"].values[raise_idx].astype(float)
+
     raise_pcts   = rng.choice([3, 5, 7, 10], size=SCD2_EMPLOYEE_RAISES).astype(float)
     new_salaries = (old_salaries * (1 + raise_pcts / 100) / 500).astype(int) * 500
 
@@ -171,6 +198,7 @@ def apply_employee_online_scd2(
     df.iloc[raise_idx, salary_col] = new_salaries
 
     id_col = df.columns.get_loc("employee_id")
+
     changes = [
         (df.iloc[idx, id_col], int(old), int(new))
         for idx, old, new in zip(raise_idx, old_salaries, new_salaries)
@@ -179,7 +207,9 @@ def apply_employee_online_scd2(
 
 
 # ── New entity builders ────────────────────────────────────────────────────────
+# These functions simulate growth of master data dimensions.
 
+# creates new SCD1-style customer rows appended to existing dataset
 def add_new_customers(
     df: pd.DataFrame,
     n: int,
@@ -205,7 +235,7 @@ def add_new_customers(
     df_new["customer_phone_number"] = make_phones(n, rng)
     return pd.concat([df, df_new], ignore_index=True)
 
-
+# introduces new product master records referencing existing suppliers
 def add_new_products(
     df: pd.DataFrame,
     last_id: int,
@@ -251,7 +281,9 @@ def add_new_products(
 
 
 # ── Transaction builders ───────────────────────────────────────────────────────
+# These functions simulate fact table generation for incremental load.
 
+    # generates offline sales transactions (store-based sales)
 def build_offline_incr(
     n: int,
     customers_df: pd.DataFrame,
@@ -309,7 +341,7 @@ def build_offline_incr(
     assert df["transaction_id"].is_unique, "Duplicate offline transaction IDs!"
     return df
 
-
+# generates online e-commerce transactions including shipping lifecycle
 def build_online_incr(
     n: int,
     customers_df: pd.DataFrame,
@@ -385,22 +417,27 @@ def build_online_incr(
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
+# Orchestrates full incremental dataset generation + upload to cloud storage.
 
 def main() -> None:
     print(" Incremental Load ")
 
     rng      = np.random.default_rng(SEED_INCR)
     batch_ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
     cloud    = get_cloud_client()
 
     print(" Loading reference state from cloud...")
     dataframes, counters  = download_reference_state(cloud)
+
     customers_df          = dataframes["customers_df"]
     products_df           = dataframes["products_df"]
     store_branches_df     = dataframes["store_branches_df"]
     employees_off_df      = dataframes["employees_off_df"]
     employees_onl_df      = dataframes["employees_onl_df"]
     shipping_df           = dataframes["shipping_df"]
+
+    # counters track surrogate key continuity across runs
     last_cust_id          = counters["last_customer_id"]
     last_prod_id          = counters["last_product_id"]
     last_off_tx_id        = counters["last_off_tx_id"]
@@ -414,13 +451,16 @@ def main() -> None:
     print("\n Adding new entities...")
     customers_df = add_new_customers(customers_df, NEW_CUSTOMERS, last_cust_id, rng)
     products_df  = add_new_products(products_df, last_prod_id, rng)
+
     print(f" DONE +{NEW_CUSTOMERS} new customers | +{NEW_PRODUCTS} new products")
 
     print(f"\n Generating transactions (date range: {START_DATE} → {END_DATE})...")
+
     offline_df = build_offline_incr(
         N_OFFLINE, customers_df, products_df, employees_off_df, rng,
         tx_id_start=last_off_tx_id + 1,
     )
+
     online_df = build_online_incr(
         N_ONLINE, customers_df, products_df, employees_onl_df, shipping_df, rng,
         tx_id_start=last_onl_tx_id + 1,
@@ -430,12 +470,15 @@ def main() -> None:
     online_df  = add_batch_metadata(online_df,  LOAD_TYPE, batch_ts)
 
     print("\n Uploading transactions to cloud storage...")
+
     off_key = f"offline/incremental/offline_incremental_{batch_ts}.parquet"
     onl_key = f"online/incremental/online_incremental_{batch_ts}.parquet"
+
     print(f"  Uploaded → {upload_df(cloud, offline_df, off_key)}")
     print(f"  Uploaded → {upload_df(cloud, online_df,  onl_key)}")
 
     print("\n Updating reference state in cloud storage...")
+
     upload_reference_state(
         cloud=cloud,
         counters={
@@ -454,17 +497,21 @@ def main() -> None:
     )
 
     print("\n── SCD2 Changes Summary ─────────────────────────────────────────")
+
     print(f"  Customers city changed    : {SCD2_CUSTOMER_CITY_CHANGES}")
     print(f"  Customers contact changed : {SCD2_CUSTOMER_CONTACT_CHANGES}")
     print(f"  Offline employees promoted: {SCD2_EMPLOYEE_PROMOTIONS}")
     print(f"  Online employees raised   : {SCD2_EMPLOYEE_RAISES}")
     print(f"  New customers             : {NEW_CUSTOMERS}")
     print(f"  New products              : {NEW_PRODUCTS}")
+
     print(f"\n  Sample city changes       : {cust_summary['city_changes'][:3]}")
     print(f"  Sample promotions         : {off_promos[:3]}")
+
     print(f"\n  Offline TX IDs: OFF{last_off_tx_id+1:07d} → OFF{last_off_tx_id+N_OFFLINE:07d}")
     print(f"  Online  TX IDs: ONL{last_onl_tx_id+1:07d} → ONL{last_onl_tx_id+N_ONLINE:07d}")
     print(f"  Batch ID      : {batch_ts}")
+
     print("\nIncremental load complete. No local files written.\n")
 
 

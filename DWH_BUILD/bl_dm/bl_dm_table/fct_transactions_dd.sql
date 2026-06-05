@@ -1,7 +1,7 @@
 
 
 --  Central fact table - one row per transaction, DD = Degenerate Dimension (transaction_src_id stored)
---           Gross profit and margin are DERIVED measures
+--  Gross profit and margin are DERIVED measures
 
 CREATE TABLE IF NOT EXISTS bl_dm.fct_transactions_dd (
     transaction_src_id          BIGINT          PRIMARY KEY,  

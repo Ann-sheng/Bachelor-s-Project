@@ -12,15 +12,14 @@ REVOKE ALL ON SCHEMA stg_cln  FROM PUBLIC;
 REVOKE ALL ON SCHEMA bl_3nf   FROM PUBLIC;
 REVOKE ALL ON SCHEMA bl_dm    FROM PUBLIC;
 REVOKE ALL ON SCHEMA bl_cn    FROM PUBLIC;
-REVOKE ALL ON SCHEMA sa_audit FROM PUBLIC;
 
 
 -- dwh_admin: full access on all schemas
-GRANT ALL ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn, sa_audit TO dwh_admin;
+GRANT ALL ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn,  TO dwh_admin;
 GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_admin;
 
 -- dwh_etl: pipeline execution
-GRANT USAGE   ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn, sa_audit TO dwh_etl;
+GRANT USAGE   ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn,  TO dwh_etl;
 GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_etl;
 
 -- dwh_analyst: DM + monitoring views
@@ -33,7 +32,7 @@ GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_reporter;
 
 -- Table-level grants on existing objects
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA src      TO dwh_etl;
-GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA sa_audit TO dwh_etl;
+GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA  TO dwh_etl;
 GRANT SELECT, INSERT, UPDATE, TRUNCATE, DELETE ON ALL TABLES IN SCHEMA stg_cln  TO dwh_etl;
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA bl_3nf   TO dwh_etl;
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA bl_dm    TO dwh_etl;
@@ -122,5 +121,3 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA bl_cn GRANT SELECT                 ON TABLES 
 ALTER DEFAULT PRIVILEGES IN SCHEMA bl_cn GRANT EXECUTE                ON ROUTINES TO dwh_etl;
 ALTER DEFAULT PRIVILEGES IN SCHEMA bl_cn GRANT ALL ON TABLES TO dwh_admin;
 ALTER DEFAULT PRIVILEGES IN SCHEMA bl_cn GRANT ALL ON  ROUTINES TO dwh_admin;
-ALTER DEFAULT PRIVILEGES IN SCHEMA sa_audit GRANT SELECT, INSERT, UPDATE ON TABLES TO dwh_etl;
-ALTER DEFAULT PRIVILEGES IN SCHEMA sa_audit GRANT ALL ON TABLES TO dwh_admin;

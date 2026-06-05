@@ -1,3 +1,6 @@
+-- Extracts latest product records from both offline and online sources
+-- Joins supplier information and standardizes product attributes
+
 CREATE OR REPLACE FUNCTION bl_3nf.fn_get_products_data()
 RETURNS TABLE (
     product_src_id          VARCHAR(15),
@@ -12,6 +15,7 @@ RETURNS TABLE (
 )
 LANGUAGE sql STABLE AS $$
 
+-- Offline product source
 (
     SELECT DISTINCT ON (p.product_id)
         COALESCE(p.product_id,       'n. a.')::VARCHAR(15),
@@ -33,6 +37,7 @@ LANGUAGE sql STABLE AS $$
 
 UNION ALL
 
+-- Online product source
 (
     SELECT DISTINCT ON (p.product_id)
         COALESCE(p.product_id,       'n. a.')::VARCHAR(15),

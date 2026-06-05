@@ -1,3 +1,6 @@
+-- Extracts new or changed customer records for SCD Type 2 processing
+-- Unifies offline and online sources and returns only latest changes per customer
+
 CREATE OR REPLACE FUNCTION bl_3nf.fn_get_new_customers_scd()
 RETURNS TABLE (
     customer_src_id       VARCHAR(15),
@@ -13,6 +16,7 @@ RETURNS TABLE (
 )
 LANGUAGE sql STABLE AS $$
 
+-- Combine customer data from both staging sources
 WITH unified AS (
 
     SELECT
@@ -46,6 +50,7 @@ WITH unified AS (
     FROM stg_cln.sales_online
 ),
 
+-- Keep only latest record per customer and source
 latest AS (
     SELECT DISTINCT ON (customer_id, source_system, source_entity)
         *
@@ -54,6 +59,7 @@ latest AS (
     ORDER BY customer_id, source_system, source_entity, stg_insert_dt DESC
 )
 
+-- Return only new or changed records compared to SCD table
 SELECT
     COALESCE(l.customer_id,        'n. a.')::VARCHAR(15),
     COALESCE(l.customer_firstname, 'n. a.')::VARCHAR(50),
@@ -67,12 +73,15 @@ SELECT
     l.source_entity::VARCHAR(50)
 FROM latest l
 WHERE
+    -- New customers not yet in SCD table
     NOT EXISTS (
         SELECT 1 FROM bl_3nf.ce_customers_scd c
         WHERE c.customer_src_id = l.customer_id
           AND c.source_system   = l.source_system
           AND c.source_entity   = l.source_entity
     )
+
+    -- Or existing customers with changed attributes (hash difference)
     OR EXISTS (
         SELECT 1 FROM bl_3nf.ce_customers_scd c
         WHERE c.customer_src_id = l.customer_id

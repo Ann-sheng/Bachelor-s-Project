@@ -1,6 +1,7 @@
 
 
---  All FAILED procedure runs + stalled STARTED runs
+-- View showing failed ETL runs and stalled (long-running) procedures
+-- Helps identify errors and processes that did not complete successfully
 
 
 CREATE OR REPLACE VIEW bl_cn.v_failed_runs AS

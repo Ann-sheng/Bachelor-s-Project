@@ -1,13 +1,13 @@
-# Core data
+# Core data processing stack
 numpy>=2.1.3
 pandas>=2.3.0
-pyarrow>=21.0.0
+pyarrow>=21.0.0   # parquet read/write support (used in ETL + staging loader)
 
-# Cloud storage
-boto3>=1.34.0            # AWS S3 + MinIO
+# Cloud storage (S3-compatible, also works with MinIO)
+boto3>=1.34.0
 
-# Database
-psycopg2-binary>=2.9.10  # PostgreSQL driver
+# PostgreSQL driver (used for ETL + staging COPY operations)
+psycopg2-binary>=2.9.10
 
-# Utilities
+# Environment variable management (.env loading for configs)
 python-dotenv>=1.0.1

@@ -1,5 +1,6 @@
 
---  Create permission group roles and login users.
+-- Create permission group roles and login users for the data warehouse security model.
+-- Includes role creation, user creation, and role-to-user assignments.
 
 
 -- Permission group roles  

@@ -1,4 +1,5 @@
--- SCD Type 1 load for CE_SUPPLIERS via MERGE
+-- SCD Type 1 load for CE_SUPPLIERS using MERGE
+-- Updates existing supplier records and inserts new ones from source data
 
 CREATE OR REPLACE PROCEDURE bl_3nf.load_ce_suppliers()
 LANGUAGE plpgsql AS $$
@@ -9,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_3nf.load_ce_suppliers', 'BL_3NF');
 
+    -- Merge supplier source data into target table
     MERGE INTO bl_3nf.ce_suppliers tgt
     USING bl_3nf.fn_get_suppliers_data() src
     ON (
@@ -16,6 +18,8 @@ BEGIN
         AND tgt.source_system   = src.source_system
         AND tgt.source_entity   = src.source_entity
     )
+
+    -- Update existing records if any supplier attributes changed
     WHEN MATCHED AND (
         tgt.supplier_name            IS DISTINCT FROM src.supplier_name            OR
         tgt.supplier_email           IS DISTINCT FROM src.supplier_email           OR
@@ -30,6 +34,7 @@ BEGIN
         supplier_location        = src.supplier_location,
         ta_update_dt             = NOW()
 
+    -- Insert new supplier records
     WHEN NOT MATCHED THEN INSERT (
         supplier_id,
         supplier_src_id,
@@ -57,9 +62,11 @@ BEGIN
 
     GET DIAGNOSTICS v_affected = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_affected);
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;

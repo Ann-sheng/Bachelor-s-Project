@@ -9,7 +9,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dm_employees_scd', 'BL_DM');
 
-    -- Step 1: close versions in DM that were closed in 3NF
+    --  close versions in DM that were closed in 3NF
     UPDATE bl_dm.dm_employees_scd d
     SET    end_dt    = e.end_dt,
            is_active = FALSE
@@ -23,7 +23,7 @@ BEGIN
     GET DIAGNOSTICS v_rows = ROW_COUNT;
     v_updated := v_updated + v_rows;
 
-    -- Step 2: insert new/changed versions not yet in DM
+    --  insert new/changed versions not yet in DM
     INSERT INTO bl_dm.dm_employees_scd (
         employee_surr_id,
         employee_src_id,
@@ -74,7 +74,8 @@ BEGIN
 
     GET DIAGNOSTICS v_rows = ROW_COUNT;
     v_inserted := v_inserted + v_rows;
-
+    
+    -- Log successful completion
     CALL bl_cn.log_success(v_log_id, v_inserted, v_updated);
 
     RAISE NOTICE '[load_dm_employees_scd] Inserted: %, Updated: %', v_inserted, v_updated;

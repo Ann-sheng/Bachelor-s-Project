@@ -1,3 +1,6 @@
+-- Load and synchronize product dimension from CE_PRODUCTS (SCD-style MERGE logic)
+-- Inserts new products and updates existing ones when attributes change
+
 CREATE OR REPLACE PROCEDURE bl_dm.load_dm_products()
 LANGUAGE plpgsql AS $$
 DECLARE
@@ -7,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dm_products', 'BL_DM');
 
+    -- Merge source product data into dimension table
     MERGE INTO bl_dm.dm_products tgt
     USING (
         SELECT
@@ -24,6 +28,8 @@ BEGIN
         AND tgt.source_system = 'BL_3NF'
         AND tgt.source_entity = 'CE_PRODUCTS'
     )
+
+    -- Update existing records when changes are detected
     WHEN MATCHED AND (
         tgt.product_category        IS DISTINCT FROM src.product_category        OR
         tgt.product_name            IS DISTINCT FROM src.product_name            OR
@@ -38,6 +44,7 @@ BEGIN
         product_warranty_period = src.product_warranty_period,
         ta_update_dt            = NOW()
 
+    -- Insert new product records
     WHEN NOT MATCHED THEN INSERT (
         product_surr_id,
         product_src_id,
@@ -62,16 +69,15 @@ BEGIN
 
     GET DIAGNOSTICS v_affected = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_affected);
 
     RAISE NOTICE '[load_dm_products] Rows affected: %', v_affected;
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
 END;
 $$;
-
-
-

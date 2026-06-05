@@ -1,5 +1,6 @@
 
-
+-- Ensures uniqueness of junk dimension attribute combinations
+-- Handles NULL values by normalizing them for uniqueness enforcement
 CREATE UNIQUE INDEX IF NOT EXISTS uq_dm_junk
     ON bl_dm.dm_junk_transactions (
         COALESCE(junk_payment_method,  'n. a.'),

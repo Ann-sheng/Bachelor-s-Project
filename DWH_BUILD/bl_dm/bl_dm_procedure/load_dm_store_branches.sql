@@ -1,6 +1,5 @@
-
-
---  SCD1 load from BL_3NF.CE_STORE_BRANCHES
+-- SCD Type 1 load for store branches from CE_STORE_BRANCHES (BL_3NF source)
+-- Updates existing records when changes occur and inserts new store branches
 
 CREATE OR REPLACE PROCEDURE bl_dm.load_dm_store_branches()
 LANGUAGE plpgsql AS $$
@@ -11,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dm_store_branches', 'BL_DM');
 
+    -- Merge source store branch data into dimension table
     MERGE INTO bl_dm.dm_store_branches tgt
     USING (
         SELECT
@@ -28,6 +28,8 @@ BEGIN
         AND tgt.source_system   = 'BL_3NF'
         AND tgt.source_entity   = 'CE_STORE_BRANCHES'
     )
+
+    -- Update existing records when attributes change
     WHEN MATCHED AND (
         tgt.store_branch_state           IS DISTINCT FROM src.store_branch_state           OR
         tgt.store_branch_city            IS DISTINCT FROM src.store_branch_city            OR
@@ -42,6 +44,7 @@ BEGIN
         store_branch_operating_hours = src.store_branch_operating_hours,
         ta_update_dt                 = NOW()
 
+    -- Insert new store branch records
     WHEN NOT MATCHED THEN INSERT (
         store_branch_surr_id,
         store_branch_src_id,
@@ -66,14 +69,15 @@ BEGIN
 
     GET DIAGNOSTICS v_affected = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_affected);
 
     RAISE NOTICE '[load_dm_store_branches] Rows affected: %', v_affected;
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
 END;
 $$;
-

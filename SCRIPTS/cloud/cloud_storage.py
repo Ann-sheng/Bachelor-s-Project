@@ -41,7 +41,7 @@ class CloudStorage(ABC):
         """Return human-readable URI for display / logging."""
 
 
-# AWS S3/MinIO project used MINIO because if budget constrain but script can run on AWS unchanged
+# AWS S3/MinIO project used MINIO  (budget constrain). script can run on AWS unchanged
 
 class S3Storage(CloudStorage):
 
@@ -50,11 +50,13 @@ class S3Storage(CloudStorage):
         is_minio  = (provider == "minio")
 
         if is_minio:
+            # MinIO configuration (S3-compatible local/cheap object storage)
             endpoint    = os.environ["MINIO_ENDPOINT"]
             access      = os.environ["MINIO_ACCESS_KEY"]
             secret      = os.environ["MINIO_SECRET_KEY"]
             self.bucket = os.environ["MINIO_BUCKET"]
 
+            # boto3 client configured for MinIO compatibility
             self._s3 = boto3.client(
                 "s3",
                 endpoint_url=endpoint,
@@ -66,9 +68,11 @@ class S3Storage(CloudStorage):
                 ),
             )
 
+            # used for logging + human-readable URIs
             self._uri_prefix = f"{endpoint}/{self.bucket}"
 
         else:
+            # AWS S3 configuration (production cloud option)
             self.bucket = os.environ["S3_BUCKET"]
 
             self._s3 = boto3.client(
@@ -80,10 +84,12 @@ class S3Storage(CloudStorage):
 
             self._uri_prefix = f"s3://{self.bucket}"
 
+        # only MinIO local setup auto-creates bucket if missing
         if is_minio:
             self._ensure_bucket()
 
     def _ensure_bucket(self) -> None:
+        # safety check: ensures local MinIO bucket exists before pipeline runs
         from botocore.exceptions import ClientError
 
         try:
@@ -97,20 +103,24 @@ class S3Storage(CloudStorage):
             else:
                 raise
 
-# file manipulation
+
+    # FILE OPERATIONS (PIPELINE CORE)
 
     def upload(self, local_path: str, remote_key: str) -> str:
+        # uploads file to object storage (used by generator stage → cloud layer)
         size_mb = Path(local_path).stat().st_size / 1e6
         log.info("Uploading %.1f MB → %s", size_mb, remote_key)
         self._s3.upload_file(local_path, self.bucket, remote_key)
         return self.get_uri(remote_key)
 
     def download(self, remote_key: str, local_path: str) -> str:
+        # downloads object from cloud (used by staging loader → parquet ingestion)
         Path(local_path).parent.mkdir(parents=True, exist_ok=True)
         self._s3.download_file(self.bucket, remote_key, local_path)
         return local_path
 
     def list_files(self, prefix: str = "") -> List[str]:
+        # paginated listing for large datasets in bucket
         keys = []
         kwargs = {"Bucket": self.bucket, "Prefix": prefix}
 
@@ -127,17 +137,20 @@ class S3Storage(CloudStorage):
         return keys
 
     def exists(self, remote_key: str) -> bool:
+        # lightweight existence check (used for idempotent loads / validation)
         from botocore.exceptions import ClientError
 
         try:
             self._s3.head_object(Bucket=self.bucket, Key=remote_key)
             return True
         except ClientError as e:
+            # only treat 404 as "not exists"
             if e.response["Error"]["Code"] in ("404", "NoSuchKey"):
                 return False
             raise
 
     def get_uri(self, remote_key: str) -> str:
+        # returns readable reference for logs / debugging pipelines
         return f"{self._uri_prefix}/{remote_key}"
 
 
@@ -145,14 +158,18 @@ class S3Storage(CloudStorage):
 
 def get_cloud_client() -> CloudStorage:
     provider = os.environ.get("CLOUD_PROVIDER", "minio").lower()
+
+    # abstraction layer: allows switching S3 <-> MinIO without pipeline changes
     mapping: dict = {
         "s3":    S3Storage,
         "minio": S3Storage,
     }
+
     if provider not in mapping:
         raise ValueError(
             f"Unknown CLOUD_PROVIDER='{provider}'. "
             f"Choose from: {list(mapping.keys())}"
         )
+
     log.info("Cloud provider: %s", provider)
     return mapping[provider]()

@@ -1,3 +1,6 @@
+-- Extracts deduplicated supplier records from both staging sources
+-- Returns latest version per supplier per source system
+
 CREATE OR REPLACE FUNCTION bl_3nf.fn_get_suppliers_data()
 RETURNS TABLE (
     supplier_src_id          VARCHAR(15),
@@ -11,6 +14,7 @@ RETURNS TABLE (
 )
 LANGUAGE sql STABLE AS $$
 
+-- Offline supplier source
 (
     SELECT DISTINCT ON (supplier_id)
         COALESCE(supplier_id,   'n. a.')::VARCHAR(15),
@@ -27,6 +31,7 @@ LANGUAGE sql STABLE AS $$
 
 UNION ALL
 
+-- Online supplier source
 (
     SELECT DISTINCT ON (supplier_id)
         COALESCE(supplier_id,   'n. a.')::VARCHAR(15),

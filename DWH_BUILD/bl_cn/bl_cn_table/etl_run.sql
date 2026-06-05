@@ -1,5 +1,5 @@
-
---  Pipeline-level run tracking
+-- Pipeline-level ETL run tracking table
+-- Stores overall pipeline execution status, timing, and metadata
 
 
 CREATE TABLE IF NOT EXISTS bl_cn.etl_run (

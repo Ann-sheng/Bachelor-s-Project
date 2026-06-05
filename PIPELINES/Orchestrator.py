@@ -24,12 +24,15 @@ PROJECT_ROOT   = PIPELINES_DIR.parent
 SCRIPTS_DIR    = PROJECT_ROOT / "SCRIPTS"
 DWH_BUILD_ROOT = PROJECT_ROOT / "DWH_BUILD"
 
+# Add script folders to import path so pipeline modules can be imported dynamically
 sys.path.insert(0, str(PIPELINES_DIR))                   
 sys.path.insert(0, str(SCRIPTS_DIR / "generator"))       
 sys.path.insert(0, str(SCRIPTS_DIR / "helper"))
 sys.path.insert(0, str(SCRIPTS_DIR / "cloud"))         
 sys.path.insert(0, str(SCRIPTS_DIR / "loader"))          
 
+
+# Logging configuration for orchestrator-level visibility across pipelines
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
@@ -45,17 +48,20 @@ log = logging.getLogger("orchestrator")
 # Pipeline wrappers
 
 def do_create_dwh(args):
+    # Runs full infrastructure (DDL) setup using Infrastructure_Setup module
     from Infrastructure_Setup import run as infra_run
     from dotenv import load_dotenv
     import os
 
     load_dotenv(dotenv_path=SCRIPTS_DIR / ".env")
 
+    # Load DB credentials for admin + application roles
     env = {k: os.environ.get(k) for k in ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]}
     env["ADMIN_USER"]     = os.environ.get("ADMIN_USER", "postgres")
     env["ADMIN_PASSWORD"] = os.environ.get("ADMIN_PASSWORD", "")
     env["ADMIN_DB"]       = os.environ.get("ADMIN_DB", "postgres")
 
+    # Ensure required environment variables exist before infrastructure execution
     missing = [k for k, v in env.items() if not v and k != "ADMIN_PASSWORD"]
     if missing:
         log.error("Missing env vars: %s", missing)
@@ -70,11 +76,13 @@ def do_create_dwh(args):
 
 
 def do_install_etl(args):
+    # Installs/replaces all ETL stored procedures in the database
     from procedure_runner import install_etl_procedures
     install_etl_procedures(DWH_BUILD_ROOT)
 
 
 def do_initial(args):
+    # Executes full initial pipeline (generate → stage → ETL)
     from Initial_Load import run as initial_run
     initial_run(
         skip_generate=getattr(args, "skip_generate", False),
@@ -83,6 +91,7 @@ def do_initial(args):
 
 
 def do_incremental(args):
+    # Executes incremental pipeline (generate → stage → ETL for delta data)
     from Incremental_Load import run as incremental_run
     incremental_run(
         skip_generate=getattr(args, "skip_generate", False),
@@ -90,7 +99,7 @@ def do_incremental(args):
     )
 
 
-# CLI
+# CLI entrypoint and pipeline dispatcher
 
 def main():
     parser = argparse.ArgumentParser(
@@ -100,32 +109,32 @@ def main():
 
     sub = parser.add_subparsers(dest="pipeline", required=True)
 
-    # -- create_dwh --
+    # ── create_dwh pipeline ────────────────────────────────────────────────
     p_dwh = sub.add_parser("create_dwh", help="Run infrastructure setup (DDL)")
     p_dwh.add_argument("--from-step", type=int, default=1)
     p_dwh.add_argument("--dry-run", action="store_true")
 
-    # -- install_etl --
+    # ── install_etl pipeline ───────────────────────────────────────────────
     sub.add_parser("install_etl", help="Install ETL procedures only")
 
-    # -- initial --
+    # ── initial load pipeline ──────────────────────────────────────────────
     p_init = sub.add_parser("initial", help="Initial load pipeline")
     p_init.add_argument("--skip-generate", action="store_true")
     p_init.add_argument("--skip-install", action="store_true")
 
-    # -- incremental --
+    # ── incremental load pipeline ──────────────────────────────────────────
     p_incr = sub.add_parser("incremental", help="Incremental load pipeline")
     p_incr.add_argument("--skip-generate", action="store_true")
     p_incr.add_argument("--skip-install", action="store_true")
 
-    # -- all --
+    # ── full run pipeline ───────────────────────────────────────────────────
     p_all = sub.add_parser("all", help="Run everything in order")
     p_all.add_argument("--skip-generate", action="store_true",
                        help="Skip data generation in both loads")
 
     args = parser.parse_args()
 
-    # ── Dispatch 
+    # Pipeline registry (maps CLI command → ordered execution steps)
     PIPELINE_MAP = {
         "create_dwh":  [("Create DWH",          do_create_dwh)],
         "install_etl": [("Install ETL Procs",   do_install_etl)],
@@ -141,21 +150,24 @@ def main():
 
     steps = PIPELINE_MAP[args.pipeline]
 
-    log.info("DWH PIPELINE ORCHESTRATOR ")
+    log.info("DWH PIPELINE ORCHESTRATOR")
     log.info("  Pipeline : %-37s ║", args.pipeline)
     log.info("  Started  : %-37s ║", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     log.info("  Steps    : %-37s ║", len(steps))
 
     total_t0 = time.perf_counter()
 
+    # Execute pipeline steps sequentially with timing and failure control
     for i, (name, func) in enumerate(steps, 1):
         log.info("")
         log.info("═══  [%d/%d]  %s  ═══", i, len(steps), name)
+
         t0 = time.perf_counter()
         try:
             func(args)
             elapsed = time.perf_counter() - t0
             log.info("═══  [%d/%d]  %s    (%.1fs)  ═══", i, len(steps), name, elapsed)
+
         except Exception:
             elapsed = time.perf_counter() - t0
             log.exception("═══  [%d/%d]  %s    FAILED  (%.1fs)  ═══", i, len(steps), name, elapsed)
@@ -163,6 +175,7 @@ def main():
             sys.exit(1)
 
     total = time.perf_counter() - total_t0
+
     log.info("")
     log.info("║    ALL PIPELINES COMPLETE  (%.1fs total)      ║", total)
 

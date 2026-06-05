@@ -1,5 +1,6 @@
 
--- Called in EXCEPTION handler of every load procedure, Updates log entry to FAILED with error text, Called BEFORE RAISE to ensure the update persists
+-- Updates an ETL log entry as FAILED and records the error message
+-- Used in exception handlers to ensure failures are captured in audit logs
 
 CREATE OR REPLACE PROCEDURE bl_cn.log_failure(
     p_log_id    BIGINT,

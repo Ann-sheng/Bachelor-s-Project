@@ -1,4 +1,4 @@
--- PURPOSE : Raw source table - offline sales.
+-- Raw source table - offline sales.
 
 CREATE TABLE IF NOT EXISTS src.sales_offline (
     -- Row-level audit

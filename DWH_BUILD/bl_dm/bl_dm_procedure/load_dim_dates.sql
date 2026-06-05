@@ -1,6 +1,5 @@
-
--- Populate DIM_DATES from transaction date range in BL_3NF
-
+-- Procedure to populate the DIM_DATES table based on transaction data in BL_3NF.
+-- Generates a continuous date range and derives calendar + fiscal attributes.
 
 CREATE OR REPLACE PROCEDURE bl_dm.load_dim_dates()
 LANGUAGE plpgsql AS $$
@@ -16,6 +15,8 @@ DECLARE
     v_err_msg       TEXT;
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dim_dates', 'BL_DM');
+
+    -- Determine date range from transaction data
     SELECT
         LEAST(
             MIN(transaction_dt),
@@ -42,14 +43,17 @@ BEGIN
 
     v_current_dt := v_start_date;
 
+    -- Loop through each date and populate dimension
     WHILE v_current_dt <= v_end_date LOOP
+
+            -- Determine fiscal year
             IF EXTRACT(MONTH FROM v_current_dt) >= 2 THEN
                 v_fiscal_year := EXTRACT(YEAR FROM v_current_dt)::INTEGER;
             ELSE
                 v_fiscal_year := (EXTRACT(YEAR FROM v_current_dt) - 1)::INTEGER;
             END IF;
 
-
+        -- Determine fiscal quarter
         CASE
             WHEN EXTRACT(MONTH FROM v_current_dt) IN (2,3,4)   THEN v_fiscal_qtr := 1;
             WHEN EXTRACT(MONTH FROM v_current_dt) IN (5,6,7)   THEN v_fiscal_qtr := 2;
@@ -93,15 +97,15 @@ BEGIN
         v_current_dt := v_current_dt + INTERVAL '1 day';
     END LOOP;
 
-
+    -- Log successful completion
     CALL bl_cn.log_success(v_log_id, v_total);
 
     RAISE NOTICE '[load_dim_dates] Inserted: % new date rows', v_total;
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log and rethrow errors
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
 END;
 $$;
-

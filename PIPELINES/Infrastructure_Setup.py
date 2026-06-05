@@ -21,7 +21,7 @@ import psycopg2
 from dotenv import load_dotenv
 
 
-# Logging
+# Logging configuration
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,7 +33,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("dwh_setup")
 
-
+# Execution plan (ordered dependency-safe SQL execution)
 
 PLAN = [
     # ── Bootstrap (postgres DB) ────────────────────────────────────────────
@@ -59,10 +59,6 @@ PLAN = [
     (13, "BL_CN: v_etl_summary view",        "bl_cn/bl_cn_view/v_etl_summary.sql",             "dwh"),
     (14, "BL_CN: v_failed_runs view",        "bl_cn/bl_cn_view/v_failed_runs.sql",             "dwh"),
     (15, "BL_CN: v_pipeline_runs view",      "bl_cn/bl_cn_view/v_pipeline_runs.sql",           "dwh"),
-
-    # ── SA_AUDIT ───────────────────────────────────────────────────────────
-    (16, "SA_AUDIT: file_load_log table",    "sa_audit/sa_audit_table/file_load_log.sql",      "dwh"),
-    (17, "SA_AUDIT: file_load_log indexes",  "sa_audit/sa_audit_index/file_load_log.sql",      "dwh"),
 
     # ── SRC — raw landing tables ───────────────────────────────────────────
     (18, "SRC: sales_offline table",         "src/src_table/sales_offline.sql",                "dwh"),
@@ -125,25 +121,27 @@ PLAN = [
 # DB connection helpers
 
 def _build_dsn(env: dict, dbname: str, role: str) -> dict:
+    # Builds connection parameters depending on whether we connect as admin or app user
     if role == "admin":
         return {
-            "host":     env["DB_HOST"],
-            "port":     int(env.get("DB_PORT", 5432)),
-            "dbname":   dbname,
-            "user":     env.get("ADMIN_USER", "postgres"),      
-            "password": env.get("ADMIN_PASSWORD", ""),          
+            "host": env["DB_HOST"],
+            "port": int(env.get("DB_PORT", 5432)),
+            "dbname": dbname,
+            "user": env.get("ADMIN_USER", "postgres"),
+            "password": env.get("ADMIN_PASSWORD", ""),
         }
     else:
         return {
-            "host":     env["DB_HOST"],
-            "port":     int(env.get("DB_PORT", 5432)),
-            "dbname":   dbname,
-            "user":     env["DB_USER"],
+            "host": env["DB_HOST"],
+            "port": int(env.get("DB_PORT", 5432)),
+            "dbname": dbname,
+            "user": env["DB_USER"],
             "password": env["DB_PASSWORD"],
         }
 
 
 def get_connection(env: dict, target: str):
+    # Returns connection either to postgres (bootstrap) or DWH database
     if target == "postgres":
         dbname = env.get("ADMIN_DB", "postgres")
         role = "admin"
@@ -156,17 +154,16 @@ def get_connection(env: dict, target: str):
     return conn
 
 
-
-# SQL execution, Checker
+# SQL execution helper
 
 def execute_file(conn: psycopg2.extensions.connection, path: Path) -> None:
+    # Executes a single SQL file against the given connection
     sql = path.read_text(encoding="utf-8")
     with conn.cursor() as cur:
         cur.execute(sql)
 
 
-
-# Main runner
+# Main execution runner
 
 def run(
     dwh_root: Path,
@@ -180,6 +177,7 @@ def run(
     failed  = 0
     skipped = 0
 
+    # Validate all required SQL files exist before starting execution
     missing = [
         (step, label, rel)
         for step, label, rel, _ in PLAN
@@ -193,20 +191,23 @@ def run(
 
     log.info("=" * 60)
     log.info("DWH Infrastructure Setup  —  %d steps  (root: %s)", total, dwh_root)
+
     if dry_run:
         log.info("DRY-RUN mode — no SQL will be executed")
     if from_step > 1:
         log.info("Resuming from step %d", from_step)
+
     log.info("=" * 60)
 
     connections: dict[str, Optional[psycopg2.extensions.connection]] = {
         "postgres": None,
-        "dwh":      None,
+        "dwh": None,
     }
 
     try:
         for step, label, rel_path, target in PLAN:
 
+            # Skip steps if resuming from failure point
             if step < from_step:
                 log.info("  [skip] step %02d — %s", step, label)
                 skipped += 1
@@ -218,8 +219,8 @@ def run(
                 log.info("  [dry ] step %02d — %s  (%s)", step, label, rel_path)
                 continue
 
+            # Lazily open DB connection per target type
             if connections[target] is None:
-                log.debug("Opening '%s' connection…", target)
                 connections[target] = get_connection(env, target)
 
             conn = connections[target]
@@ -230,7 +231,7 @@ def run(
                 elapsed = time.perf_counter() - t0
                 log.info("  [ ok ] step %02d — %-45s (%.2fs)", step, label, elapsed)
                 passed += 1
-            
+
             except psycopg2.errors.DuplicateDatabase:
                 elapsed = time.perf_counter() - t0
                 log.info("  [skip] step %02d — %-45s already exists (%.2fs)", step, label, elapsed)
@@ -243,16 +244,18 @@ def run(
                 log.error("         error: %s", exc)
                 failed += 1
 
+                # Interactive fallback: allow user to continue or stop
                 try:
                     answer = input("\nStep failed. Continue anyway? [y/N] ").strip().lower()
                 except EOFError:
-                    answer = "n" 
+                    answer = "n"
 
                 if answer != "y":
                     log.error("Aborting setup at step %d.", step)
                     break
 
     finally:
+        # Ensure all DB connections are closed properly
         for target, conn in connections.items():
             if conn is not None:
                 try:
@@ -260,8 +263,9 @@ def run(
                 except Exception:
                     pass
 
-    # Summary
+    # Summary report
     log.info("=" * 60)
+
     if dry_run:
         log.info("Dry run complete — %d steps would execute", total)
     else:
@@ -269,63 +273,59 @@ def run(
             "Setup complete — passed: %d  |  failed: %d  |  skipped: %d",
             passed, failed, skipped,
         )
+
         if failed:
             log.warning("Re-run with --from-step <N> to retry failed steps.")
+
     log.info("=" * 60)
 
     if failed:
         sys.exit(1)
 
 
-
-# Entry point
+# CLI entrypoint
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Execute DWH_BUILD SQL files in dependency order."
     )
-    parser.add_argument(
-        "--env",
-        default=".env",
-        help="Path to .env file (default: .env in current directory)",
-    )
-    parser.add_argument(
-        "--dwh-root",
-        default="DWH_BUILD",
-        help="Path to the DWH_BUILD root folder (default: ./DWH_BUILD)",
-    )
-    parser.add_argument(
-        "--from-step",
-        type=int,
-        default=1,
-        metavar="N",
-        help="Skip steps before N — useful for resuming after a failure",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Print the execution plan without connecting to the database",
-    )
+
+    parser.add_argument("--env", default=".env",
+                        help="Path to .env file")
+
+    parser.add_argument("--dwh-root", default="DWH_BUILD",
+                        help="Path to DWH_BUILD folder")
+
+    parser.add_argument("--from-step", type=int, default=1,
+                        help="Resume execution from step N")
+
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Print plan without executing SQL")
+
     args = parser.parse_args()
 
-    root_dir = Path(__file__).resolve().parent  
-    dwh_root = root_dir.parent / "DWH_BUILD"  
-    scripts_dir = root_dir.parent / "SCRIPTS"  
+    # Resolve project paths
+    root_dir = Path(__file__).resolve().parent
+    dwh_root = root_dir.parent / "DWH_BUILD"
+    scripts_dir = root_dir.parent / "SCRIPTS"
 
-    dotenv_path = scripts_dir / ".env" 
+    # Load environment variables from .env
+    dotenv_path = scripts_dir / ".env"
     load_dotenv(dotenv_path=dotenv_path)
 
     required_vars = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]
     env = {k: os.environ.get(k) for k in required_vars}
+
+    # Validate environment completeness
     missing_vars = [k for k, v in env.items() if not v]
     if missing_vars:
         log.error("Missing required env vars: %s", missing_vars)
         sys.exit(1)
 
     # Optional admin override — falls back to postgres defaults if absent
-    env["ADMIN_USER"]     = os.environ.get("ADMIN_USER", "postgres")
+    env["ADMIN_USER"] = os.environ.get("ADMIN_USER", "postgres")
     env["ADMIN_PASSWORD"] = os.environ.get("ADMIN_PASSWORD", "")
-    env["ADMIN_DB"]       = os.environ.get("ADMIN_DB", "postgres")
+    env["ADMIN_DB"] = os.environ.get("ADMIN_DB", "postgres")
 
     log.info("Bootstrap will connect as admin user: %s", env["ADMIN_USER"])
 

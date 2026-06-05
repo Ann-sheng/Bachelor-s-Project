@@ -1,4 +1,5 @@
--- INSERT-only load for CE_SHIPPINGS (no updates — shipping options are static)
+-- INSERT-only load for CE_SHIPPINGS (static reference data, no updates allowed)
+-- Inserts new shipping methods/carriers if they do not already exist
 
 CREATE OR REPLACE PROCEDURE bl_3nf.load_ce_shippings()
 LANGUAGE plpgsql AS $$
@@ -9,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_3nf.load_ce_shippings', 'BL_3NF');
 
+    -- Insert new shipping records only if they do not already exist
     INSERT INTO bl_3nf.ce_shippings (
         shipping_id,
         shipping_src_id,
@@ -38,9 +40,11 @@ BEGIN
 
     GET DIAGNOSTICS v_inserted = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_inserted);
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;

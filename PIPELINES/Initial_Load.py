@@ -7,6 +7,7 @@
         python initial_load.py --skip-install     
 """
 
+
 import argparse
 import logging
 import sys
@@ -25,23 +26,27 @@ sys.path.insert(0, str(SCRIPS / "loader"))
 
 log = logging.getLogger("pipeline.initial")
 
+# Root folder containing all DWH SQL definitions
 DWH_BUILD_ROOT = ROOT / "DWH_BUILD"
 
 
 
-# Pipeline steps
+# Pipeline steps (each step is a callable stage in the initial load process)
 
 def step_install_procedures():
+    # Creates/replaces all ETL SQL objects in database
     from procedure_runner import install_etl_procedures
     install_etl_procedures(DWH_BUILD_ROOT)
 
 
 def step_generate():
+    # Generates initial dataset and uploads it to cloud storage
     from generate_initial_load import main as generate_initial
     generate_initial()
 
 
 def step_load_staging():
+    # Pulls parquet files from cloud and loads into staging tables
     from staging_loader import main as load_staging
     try:
         load_staging(
@@ -51,11 +56,13 @@ def step_load_staging():
             force=False,
         )
     except SystemExit as e:
+        # Convert CLI exit code into exception for pipeline consistency
         if e.code != 0:
             raise RuntimeError("Staging loader failed (see logs above)") from e
 
 
 def step_run_etl():
+    # Executes full ETL chain: staging → 3NF → dimensional model
     from procedure_runner import run_etl_layers
     run_etl_layers(layers=["stg_cln", "bl_3nf", "bl_dm"])
 
@@ -67,23 +74,27 @@ STEPS = [
     ("Install ETL Procedures",  step_install_procedures),
     ("Generate Initial Data",   step_generate),
     ("Load Cloud → Staging",    step_load_staging),
-    ("Run ETL (stg→3nf→dm)",   step_run_etl),
+    ("Run ETL (stg→3nf→dm)",    step_run_etl),
 ]
 
 
 def run(skip_generate: bool = False, skip_install: bool = False):
     log.info("   PIPELINE: INITIAL LOAD  ")
 
+    # Tracks which steps should be skipped based on CLI flags
     skips = set()
+
     if skip_generate:
         skips.add("Generate Initial Data")
         log.info("  --skip-generate: generation step will be skipped")
+
     if skip_install:
         skips.add("Install ETL Procedures")
         log.info("  --skip-install: procedure install will be skipped")
 
     pipeline_t0 = time.perf_counter()
 
+    # Execute each pipeline step sequentially
     for i, (name, func) in enumerate(STEPS, 1):
         if name in skips:
             log.info("[%d/%d]   SKIP: %s", i, len(STEPS), name)
@@ -98,19 +109,21 @@ def run(skip_generate: bool = False, skip_install: bool = False):
             func()
             elapsed = time.perf_counter() - t0
             log.info("[%d/%d]   DONE: %s  (%.1fs)", i, len(STEPS), name, elapsed)
+
         except Exception:
             elapsed = time.perf_counter() - t0
             log.exception("[%d/%d]   FAILED: %s  (%.1fs)", i, len(STEPS), name, elapsed)
             raise
 
     total = time.perf_counter() - pipeline_t0
+
     log.info("═" * 55)
     log.info(" INITIAL LOAD PIPELINE COMPLETE  (%.1fs total)", total)
     log.info("═" * 55)
 
 
 
-# CLI
+# CLI entrypoint
 
 def main():
     logging.basicConfig(

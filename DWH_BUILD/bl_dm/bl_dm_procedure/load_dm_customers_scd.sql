@@ -67,7 +67,7 @@ BEGIN
 
     GET DIAGNOSTICS v_rows = ROW_COUNT;
     v_inserted := v_inserted + v_rows;
-
+    -- Log successful completion
     CALL bl_cn.log_success(v_log_id, v_inserted, v_updated);
 
     RAISE NOTICE '[load_dm_customers_scd] Inserted: %, Updated: %', v_inserted, v_updated;

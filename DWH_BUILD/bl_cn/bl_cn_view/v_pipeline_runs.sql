@@ -1,5 +1,7 @@
 
--- PURPOSE : Pipeline-level summary grouped by etl_run.run_id, Shows which procedures ran in each pipeline execution
+-- Provides pipeline-level execution summary grouped by ETL run
+-- Shows which procedures ran, their outcomes, and performance metrics per pipeline execution
+
 
 CREATE OR REPLACE VIEW bl_cn.v_pipeline_runs AS
 SELECT

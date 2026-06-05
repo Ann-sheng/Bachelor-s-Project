@@ -1,4 +1,5 @@
--- Incremental INSERT-only load for CE_TRANSACTIONS from both staging sources.
+-- Incremental INSERT-only load for CE_TRANSACTIONS from staging (offline + online sources)
+-- Performs key lookups to dimension tables and resolves SCD2 relationships
 
 CREATE OR REPLACE PROCEDURE bl_3nf.load_ce_transactions()
 LANGUAGE plpgsql AS $$
@@ -9,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_3nf.load_ce_transactions', 'BL_3NF');
 
+    -- Insert new transactions only (no updates allowed)
     INSERT INTO bl_3nf.ce_transactions (
         transaction_id,
         transaction_src_id,
@@ -54,7 +56,7 @@ BEGIN
         t.source_system,
         t.source_entity
     FROM (
-        -- Offline transactions
+        -- Offline transactions source
         SELECT
             transaction_id,
             transaction_dt,
@@ -78,7 +80,7 @@ BEGIN
 
         UNION ALL
 
-        -- Online transactions
+        -- Online transactions source
         SELECT
             transaction_id,
             transaction_dt,
@@ -101,6 +103,7 @@ BEGIN
         FROM stg_cln.sales_online
     ) t
 
+    -- Dimension lookups
     LEFT JOIN bl_3nf.ce_products p
            ON p.product_src_id = t.product_src_id
           AND p.source_system  = t.source_system
@@ -116,7 +119,7 @@ BEGIN
           AND sh.source_system   = t.source_system
           AND sh.source_entity   = t.source_entity
 
-    -- Point-in-time SCD2 join
+    -- SCD2 customer lookup (point-in-time match)
     LEFT JOIN bl_3nf.ce_customers_scd c
            ON c.customer_src_id = t.customer_src_id
           AND c.source_system   = t.source_system
@@ -124,6 +127,7 @@ BEGIN
           AND t.transaction_dt >= c.start_dt
           AND t.transaction_dt <  c.end_dt
 
+    -- SCD2 employee lookup (point-in-time match)
     LEFT JOIN bl_3nf.ce_employees_scd e
            ON e.employee_src_id = t.employee_src_id
           AND e.source_system   = t.source_system
@@ -131,6 +135,7 @@ BEGIN
           AND t.transaction_dt >= e.start_dt
           AND t.transaction_dt <  e.end_dt
 
+    -- Prevent duplicate inserts
     WHERE NOT EXISTS (
         SELECT 1
         FROM bl_3nf.ce_transactions x
@@ -141,9 +146,11 @@ BEGIN
 
     GET DIAGNOSTICS v_inserted = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_inserted);
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;

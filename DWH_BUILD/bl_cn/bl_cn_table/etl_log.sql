@@ -1,5 +1,6 @@
 
--- PURPOSE : Procedure-level execution log
+-- Procedure-level execution log table for tracking ETL runs, status, and metrics
+-- Stores start/end times, row counts, errors, and runtime duration per procedure
 
 CREATE TABLE IF NOT EXISTS bl_cn.etl_log (
     log_id           BIGINT      PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

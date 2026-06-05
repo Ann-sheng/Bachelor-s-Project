@@ -1,5 +1,6 @@
 
--- PURPOSE : Most recent execution status per procedure
+-- Shows the most recent execution result for each ETL procedure
+-- Useful for quick monitoring of latest pipeline status
 
 CREATE OR REPLACE VIEW bl_cn.v_latest_runs AS
 SELECT DISTINCT ON (procedure_name)

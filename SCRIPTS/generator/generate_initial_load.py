@@ -10,12 +10,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+# Add helper and cloud modules to path (local project structure)
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "helper"))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "cloud")) 
 
 from dotenv import load_dotenv
 load_dotenv()
 
+# Import static domain data (product catalog, employees, geography, etc.)
 from vintage_data import (
     PRODUCT_CATALOG, SUPPLIERS, STORE_BRANCHES,
     OFFLINE_EMPLOYEE_TITLES, ONLINE_EMPLOYEE_TITLES,
@@ -33,6 +35,8 @@ from vintage_data import (
     FIRST_NAMES, LAST_NAMES,  EMAIL_DOMAINS,
     OFFLINE_SALARY_RANGES,    ONLINE_SALARY_RANGES,
 )
+
+# Import helper utilities for synthetic data generation
 from helpers import (
     generate_dates, add_calendar_days,
     make_transaction_ids, make_entity_ids,
@@ -41,6 +45,7 @@ from helpers import (
     attach_entity_cols, add_batch_metadata,
     upload_df, upload_reference_state,
 )
+
 from cloud_storage import get_cloud_client
 
 
@@ -66,6 +71,7 @@ _DISC_W /= _DISC_W.sum()
 # ── Entity builders ────────────────────────────────────────────────────────────
 
 def build_suppliers() -> pd.DataFrame:
+    # Static supplier dimension table
     return pd.DataFrame([
         {
             "supplier_id":               f"SUPP{i:02d}",
@@ -80,12 +86,17 @@ def build_suppliers() -> pd.DataFrame:
 
 
 def build_products(suppliers_df: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
+    # Build product catalog and assign suppliers
     rows, prod_num = [], 1
     sup_ids = suppliers_df["supplier_id"].tolist()
+
     for category, items in PRODUCT_CATALOG.items():
         primary_sup_idx = prod_num % len(sup_ids)
+
         for name, cost, price, warranty in items:
+            # Randomly vary supplier assignment for realism
             sup_idx = primary_sup_idx if rng.random() > 0.2 else int(rng.integers(len(sup_ids)))
+
             rows.append({
                 "product_id":               f"PROD{prod_num:03d}",
                 "product_category":         category,
@@ -96,10 +107,13 @@ def build_products(suppliers_df: pd.DataFrame, rng: np.random.Generator) -> pd.D
                 "supplier_id":              sup_ids[sup_idx],
             })
             prod_num += 1
+
+    # Enrich with supplier attributes
     return pd.DataFrame(rows).merge(suppliers_df, on="supplier_id", how="left")
 
 
 def build_store_branches() -> pd.DataFrame:
+    # Static store branch dimension
     return pd.DataFrame([
         {
             "store_branch_id":              f"BRANCH{i:02d}",
@@ -118,11 +132,14 @@ def build_offline_employees(
     n: int,
     rng: np.random.Generator,
 ) -> pd.DataFrame:
+    # Offline store employees
     branch_ids  = store_branches_df["store_branch_id"].tolist()
     branch_idx  = rng.integers(0, len(branch_ids), size=n)
+
     first_names = rng.choice(FIRST_NAMES, size=n)
     last_names  = rng.choice(LAST_NAMES,  size=n)
     titles      = rng.choice(OFFLINE_EMPLOYEE_TITLES, size=n)
+
     df = pd.DataFrame({
         "employee_id":        make_entity_ids(n, "EMPO"),
         "employee_firstname": first_names,
@@ -131,15 +148,20 @@ def build_offline_employees(
         "employee_salary":    make_salaries(titles.tolist(), OFFLINE_SALARY_RANGES, rng),
         "store_branch_id":    [branch_ids[i] for i in branch_idx],
     })
+
+    # Contact details
     df["employee_email"]        = make_emails(df["employee_firstname"], df["employee_lastname"], EMAIL_DOMAINS, rng)
     df["employee_phone_number"] = make_phones(n, rng)
+
     return df.merge(store_branches_df, on="store_branch_id", how="left")
 
 
 def build_online_employees(n: int, rng: np.random.Generator) -> pd.DataFrame:
+    # Online (warehouse / support) employees
     first_names = rng.choice(FIRST_NAMES, size=n)
     last_names  = rng.choice(LAST_NAMES,  size=n)
     titles      = rng.choice(ONLINE_EMPLOYEE_TITLES, size=n)
+
     df = pd.DataFrame({
         "employee_id":        make_entity_ids(n, "EMPW"),
         "employee_firstname": first_names,
@@ -147,14 +169,18 @@ def build_online_employees(n: int, rng: np.random.Generator) -> pd.DataFrame:
         "employee_title":     titles,
         "employee_salary":    make_salaries(titles.tolist(), ONLINE_SALARY_RANGES, rng),
     })
+
     df["employee_email"]        = make_emails(df["employee_firstname"], df["employee_lastname"], EMAIL_DOMAINS, rng)
     df["employee_phone_number"] = make_phones(n, rng)
+
     return df
 
 
 def build_customers(n: int, rng: np.random.Generator, start_id: int = 1) -> pd.DataFrame:
+    # Customer master table
     first_names     = rng.choice(FIRST_NAMES, size=n)
     last_names      = rng.choice(LAST_NAMES,  size=n)
+
     countries_list  = list(CUSTOMER_COUNTRIES.keys())
     country_weights = np.array(list(CUSTOMER_COUNTRIES.values()), dtype=float)
     countries = rng.choice(countries_list, size=n, p=country_weights / country_weights.sum())
@@ -162,6 +188,7 @@ def build_customers(n: int, rng: np.random.Generator, start_id: int = 1) -> pd.D
         rng.choice(US_CITIES if c == "United States" else INTL_CITIES.get(c, ["Unknown"]))
         for c in countries
     ]
+
     df = pd.DataFrame({
         "customer_id":        make_entity_ids(n, "CUST", start=start_id),
         "customer_firstname": first_names,
@@ -169,12 +196,15 @@ def build_customers(n: int, rng: np.random.Generator, start_id: int = 1) -> pd.D
         "customer_country":   countries,
         "customer_city":      cities,
     })
+
     df["customer_email"]        = make_emails(df["customer_firstname"], df["customer_lastname"], EMAIL_DOMAINS, rng)
     df["customer_phone_number"] = make_phones(n, rng)
+
     return df
 
 
 def build_shipping_options() -> pd.DataFrame:
+    # Shipping reference dimension
     return pd.DataFrame([
         {"shipping_id": f"SHIP{i:02d}", "shipping_method": m, "shipping_carrier": c}
         for i, (m, c) in enumerate(SHIPPING_OPTIONS, 1)
@@ -184,6 +214,7 @@ def build_shipping_options() -> pd.DataFrame:
 # ── Transaction builders ───────────────────────────────────────────────────────
 
 def build_offline_transactions(
+            # Offline transactions (in-store sales)
     n: int,
     customers_df: pd.DataFrame,
     products_df: pd.DataFrame,
@@ -242,15 +273,8 @@ def build_offline_transactions(
     return df
 
 
-def build_online_transactions(
-    n: int,
-    customers_df: pd.DataFrame,
-    products_df: pd.DataFrame,
-    employees_df: pd.DataFrame,
-    shipping_df: pd.DataFrame,
-    rng: np.random.Generator,
-    tx_id_start: int = 1,
-) -> pd.DataFrame:
+def build_online_transactions(...):
+    # Online transactions (e-commerce)
     print(f"  Generating {n:,} online transactions...")
     cust_idx   = rng.choice(len(customers_df), size=n)
     prod_probs = np.array([1 / (i + 1) ** 0.45 for i in range(len(products_df))])
@@ -317,16 +341,18 @@ def build_online_transactions(
     return df
 
 
-# ── Main ───────────────────────────────────────────────────────────────────────
+# ── Main pipeline ───────────────────────────────────────────────────────────────
 
 def main() -> None:
     print(" Initial Load ")
 
     rng      = np.random.default_rng(SEED)
     batch_ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    cloud    = get_cloud_client()
+
+    cloud = get_cloud_client()  # initialize MinIO/S3 client
 
     print(" Building master entities...")
+
     suppliers_df      = build_suppliers()
     products_df       = build_products(suppliers_df, rng)
     store_branches_df = build_store_branches()
@@ -346,6 +372,7 @@ def main() -> None:
     offline_df = build_offline_transactions(N_OFFLINE, customers_df, products_df, employees_off_df, rng)
     online_df  = build_online_transactions( N_ONLINE,  customers_df, products_df, employees_onl_df, shipping_df, rng)
 
+    # Add metadata for ETL tracking
     offline_df = add_batch_metadata(offline_df, LOAD_TYPE, batch_ts)
     online_df  = add_batch_metadata(online_df,  LOAD_TYPE, batch_ts)
 

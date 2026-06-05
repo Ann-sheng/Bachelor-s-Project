@@ -1,5 +1,5 @@
-
--- Load unique attribute combinations into junk dimension, INSERT-only: combinations are immutable
+-- Load unique attribute combinations into the junk dimension (INSERT-only, immutable combinations)
+-- Ensures only new distinct combinations are stored for transaction attributes
 
 CREATE OR REPLACE PROCEDURE bl_dm.load_dm_junk_transactions()
 LANGUAGE plpgsql AS $$
@@ -10,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dm_junk_transactions', 'BL_DM');
 
+    -- Insert new distinct attribute combinations into junk dimension
     INSERT INTO bl_dm.dm_junk_transactions (
         junk_surr_id,
         junk_payment_method,
@@ -45,14 +46,15 @@ BEGIN
   
     GET DIAGNOSTICS v_inserted = ROW_COUNT;
 
+    -- Log successful insertion
     CALL bl_cn.log_success(v_log_id, v_inserted);
 
     RAISE NOTICE '[load_dm_junk_transactions] Inserted: % new combinations', v_inserted;
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
 END;
 $$;
-

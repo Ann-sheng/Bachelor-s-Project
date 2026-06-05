@@ -19,9 +19,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from sklearn.metrics import accuracy_score
 
-# ---------------------------------------------------------------------------
 # Config
-# ---------------------------------------------------------------------------
 
 # Load api/.env 
 _here = Path(__file__).resolve().parent
@@ -44,20 +42,13 @@ DB_NAME     = os.getenv("DB_NAME", "dnd_sales")
 DB_USER     = os.getenv("DB_USER", "svc_nlsql")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_SCHEMA   = os.getenv("DB_SCHEMA", "bl_dm")
-API_URL     = "http://localhost:800/query"
+API_URL     = "http://localhost:800/query" # Keep aligned with the uvicorn port used by llm_api.py.
 PAIRS_FILE  = _here / "test_pairs.json"
 
-# ---------------------------------------------------------------------------
+
 # SQL normalisation (for exact match)
-# ---------------------------------------------------------------------------
 
 def normalise_sql(sql: str) -> str:
-    """
-    Lower-cases, collapses all whitespace to single spaces, strips semicolons.
-    Two semantically identical queries written in different styles will still
-    differ after normalisation — that is expected and why execution match
-    exists as a second metric.
-    """
     sql = sql.lower()
     sql = re.sub(r"\s+", " ", sql)   # collapse whitespace
     sql = sql.strip().rstrip(";")
@@ -68,9 +59,7 @@ def exact_match(generated: str, gold: str) -> bool:
     return normalise_sql(generated) == normalise_sql(gold)
 
 
-# ---------------------------------------------------------------------------
 # Postgres helpers (execution match)
-# ---------------------------------------------------------------------------
 
 def get_connection():
     return psycopg2.connect(
@@ -81,14 +70,9 @@ def get_connection():
         password=DB_PASSWORD,
         options=f"-c search_path={DB_SCHEMA}",
     )
-
+#Runs sql via svc_nlsql.  Returns (rows, error_message).
 
 def run_sql(sql: str):
-    """
-    Runs sql via svc_nlsql.  Returns (rows, error_message).
-    rows is a sorted list of tuples (sortable for order-independent comparison).
-    Returns (None, error_msg) on any DB error.
-    """
     try:
         conn = get_connection()
         cur = conn.cursor()
@@ -102,10 +86,6 @@ def run_sql(sql: str):
 
 
 def execution_match(generated_sql: str, gold_sql: str):
-    """
-    Returns (match: bool, detail: str)
-    match is False if either query errors or row-sets differ.
-    """
     gold_rows, gold_err = run_sql(gold_sql)
     if gold_err:
         return False, f"gold_sql_error: {gold_err}"
@@ -123,15 +103,11 @@ def execution_match(generated_sql: str, gold_sql: str):
         )
 
 
-# ---------------------------------------------------------------------------
+
 # API call
-# ---------------------------------------------------------------------------
+#POST to /query.  Returns (sql: str | None, error: str | None).
 
 def call_api(question: str, timeout_s: int = 300):
-    """
-    POST to /query.  Returns (sql: str | None, error: str | None).
-    timeout_s covers the full round-trip including LLM inference (~3 min on CPU).
-    """
     try:
         resp = requests.post(
             API_URL,
@@ -149,9 +125,8 @@ def call_api(question: str, timeout_s: int = 300):
         return None, str(e)
 
 
-# ---------------------------------------------------------------------------
+
 # Main evaluation loop
-# ---------------------------------------------------------------------------
 
 def run_evaluation(pairs: list, output_path: Path):
     print(f"\n{'='*60}")
@@ -233,9 +208,8 @@ def run_evaluation(pairs: list, output_path: Path):
     print(f"  Results saved to: {output_path}")
     print(f"{'='*60}\n")
 
-
+#Save current progress
 def _save(results, exact_labels, exec_labels, path: Path, final: bool):
-    """Save current progress (and final metrics if final=True) to JSON."""
     payload = {
         "meta": {
             "timestamp"   : datetime.now().isoformat(),
@@ -246,7 +220,6 @@ def _save(results, exact_labels, exec_labels, path: Path, final: bool):
     }
     if final and exact_labels:
         # accuracy_score(y_true, y_pred) — here both are the same list because
-        # we built exact_labels/exec_labels as 1/0 ground truth == predicted.
         # For exact match, ground truth is all-1s vs the model's 1/0 outputs.
         payload["summary"] = {
             "exact_match_score"     : round(accuracy_score(
@@ -262,7 +235,6 @@ def _save(results, exact_labels, exec_labels, path: Path, final: bool):
 
 
 def _category_breakdown(results: list) -> dict:
-    """Per-category exact and execution match rates."""
     cats: dict = {}
     for r in results:
         c = r["category"]
@@ -282,9 +254,8 @@ def _category_breakdown(results: list) -> dict:
     return breakdown
 
 
-# ---------------------------------------------------------------------------
+
 # Entry point
-# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="NL-to-SQL accuracy evaluator")

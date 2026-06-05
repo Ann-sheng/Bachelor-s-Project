@@ -1,4 +1,5 @@
--- SCD Type 1 load for CE_STORE_BRANCHES via MERGE
+-- SCD Type 1 load for CE_STORE_BRANCHES using MERGE
+-- Updates existing branch records and inserts new ones from source data
 
 CREATE OR REPLACE PROCEDURE bl_3nf.load_ce_store_branches()
 LANGUAGE plpgsql AS $$
@@ -9,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_3nf.load_ce_store_branches', 'BL_3NF');
 
+    -- Merge incoming store branch data into target table
     MERGE INTO bl_3nf.ce_store_branches tgt
     USING bl_3nf.fn_get_store_branches_data() src
     ON (
@@ -16,6 +18,8 @@ BEGIN
         AND tgt.source_system   = src.source_system
         AND tgt.source_entity   = src.source_entity
     )
+
+    -- Update existing records if any attributes changed
     WHEN MATCHED AND (
         tgt.store_branch_state           IS DISTINCT FROM src.store_branch_state           OR
         tgt.store_branch_city            IS DISTINCT FROM src.store_branch_city            OR
@@ -30,6 +34,7 @@ BEGIN
         store_branch_operating_hours = src.store_branch_operating_hours,
         ta_update_dt                 = NOW()
 
+    -- Insert new store branch records
     WHEN NOT MATCHED THEN INSERT (
         store_branch_id,
         store_branch_src_id,
@@ -57,9 +62,11 @@ BEGIN
 
     GET DIAGNOSTICS v_affected = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_affected);
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;

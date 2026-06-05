@@ -1,5 +1,5 @@
-
--- SCD1 load from BL_3NF.CE_SUPPLIERS
+-- SCD Type 1 load for suppliers from CE_SUPPLIERS (BL_3NF source)
+-- Updates existing supplier records and inserts new suppliers into the data mart
 
 CREATE OR REPLACE PROCEDURE bl_dm.load_dm_suppliers()
 LANGUAGE plpgsql AS $$
@@ -10,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dm_suppliers', 'BL_DM');
 
+    -- Merge supplier data into dimension table
     MERGE INTO bl_dm.dm_suppliers tgt
     USING (
         SELECT
@@ -27,6 +28,8 @@ BEGIN
         AND tgt.source_system = 'BL_3NF'
         AND tgt.source_entity = 'CE_SUPPLIERS'
     )
+
+    -- Update existing records when any attribute changes
     WHEN MATCHED AND (
         tgt.supplier_name            IS DISTINCT FROM src.supplier_name            OR
         tgt.supplier_email           IS DISTINCT FROM src.supplier_email           OR
@@ -41,6 +44,7 @@ BEGIN
         supplier_location        = src.supplier_location,
         ta_update_dt             = NOW()
 
+    -- Insert new supplier records
     WHEN NOT MATCHED THEN INSERT (
         supplier_surr_id,
         supplier_src_id,
@@ -65,14 +69,15 @@ BEGIN
 
     GET DIAGNOSTICS v_affected = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_affected);
 
     RAISE NOTICE '[load_dm_suppliers] Rows affected: %', v_affected;
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
 END;
 $$;
-

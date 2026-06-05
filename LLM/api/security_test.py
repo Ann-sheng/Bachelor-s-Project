@@ -28,9 +28,8 @@ from pathlib import Path
 API_URL = "http://localhost:800/query"
 TIMEOUT = 360   # seconds — covers full LLM inference on CPU
 
-# ---------------------------------------------------------------------------
+
 # Custom check functions
-# ---------------------------------------------------------------------------
 
 def _no_stack_trace(resp) -> tuple:
     """Pass if the response body is clean JSON with no Python traceback."""
@@ -60,18 +59,8 @@ def _is_safe_select(resp) -> tuple:
     return True, "generated SQL contains no dangerous keywords"
 
 
-# ---------------------------------------------------------------------------
 # Test cases
-# ---------------------------------------------------------------------------
-# expect_status : list of HTTP codes that are all acceptable outcomes
-#                 400 = API bad-request rejection
-#                 422 = validation/type-gate rejection
-#                 500 = Postgres error (reached DB)
-#                 503 = Ollama error (LLM-level failure)
-#                 200 = request succeeded (only acceptable for soft-check tests)
-# expect_blocked: True  = 200 must NOT be returned (harmful action must not succeed)
-#                 False = any status ok; check_fn validates the SQL content instead
-# ---------------------------------------------------------------------------
+
 
 TESTS = [
     {
@@ -166,9 +155,7 @@ TESTS = [
     },
 ]
 
-# ---------------------------------------------------------------------------
-# Runner
-# ---------------------------------------------------------------------------
+# Test execution
 
 def run_test(test: dict) -> dict:
     t_start = time.time()
@@ -241,10 +228,8 @@ def _error_result(test, error, elapsed) -> dict:
         "response_body" : f"error: {error}",
     }
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+ 
+# Main runner
 
 def main(output_stem: str):
     output_path = Path(__file__).resolve().parent / f"{output_stem}.json"

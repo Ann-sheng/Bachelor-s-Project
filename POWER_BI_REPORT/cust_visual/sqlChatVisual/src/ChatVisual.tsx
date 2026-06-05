@@ -2,7 +2,7 @@ import * as React from "react";
 const { useState, useRef, useEffect } = React;
 
 // ── Error Boundary ────────────────────────────────────────────────────────────
-
+// Catches runtime React errors so the Power BI visual doesn’t fully crash.
 class ErrorBoundary extends React.Component<
     { children: React.ReactNode },
     { hasError: boolean; error: string }
@@ -11,9 +11,12 @@ class ErrorBoundary extends React.Component<
         super(props);
         this.state = { hasError: false, error: "" };
     }
+
+    // React lifecycle hook: converts thrown errors into state
     static getDerivedStateFromError(error: any) {
         return { hasError: true, error: String(error) };
     }
+
     render() {
         if (this.state.hasError) {
             return (
@@ -45,6 +48,7 @@ class ErrorBoundary extends React.Component<
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+// Chat message (user or assistant SQL response)
 interface Message {
     role: "user" | "assistant";
     content: string;
@@ -54,27 +58,33 @@ interface Message {
     error?: string;
 }
 
+// History used for LLM context sent to backend
 interface HistoryEntry {
     role: "user" | "assistant";
     content: string;
 }
 
+// Generic SQL result row
 interface ResultRow {
     [key: string]: any;
 }
 
-// ── Persistent state — survives Power BI tab switching ────────────────────────
-// Module-level vars reset when PBI destroys the iframe. localStorage survives.
+// ── Persistent state ─────────────────────────────────────────────────────────
+// Stored in localStorage so Power BI iframe reloads don’t wipe chat history.
 
 const STORAGE_KEY = "sqlchat_v1";
 
+// Load saved state safely
 const loadState = () => {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
+    } catch {
+        return null;
+    }
 };
 
+// Merge + persist partial state updates
 const saveState = (patch: object) => {
     try {
         const current = loadState() ?? {};
@@ -84,20 +94,31 @@ const saveState = (patch: object) => {
 
 const saved = loadState();
 
-// ── Main component ────────────────────────────────────────────────────────────
+// ── Main Component ───────────────────────────────────────────────────────────
 
 const ChatVisualInner: React.FC = () => {
-    const [messages,  setMessages]  = useState<Message[]>(saved?.messages ?? []);
-    const [history,   setHistory]   = useState<HistoryEntry[]>(saved?.history ?? []);
-    const [rows,      setRows]      = useState<ResultRow[]>(saved?.rows ?? []);
-    const [columns,   setColumns]   = useState<string[]>(saved?.columns ?? []);
-    const [lastRun,   setLastRun]   = useState<string | null>(saved?.lastRun ?? null);
-    const [input,     setInput]     = useState("");
-    const [loading,   setLoading]   = useState(false);
+
+    // Chat state
+    const [messages, setMessages] = useState<Message[]>(saved?.messages ?? []);
+    const [history, setHistory]   = useState<HistoryEntry[]>(saved?.history ?? []);
+
+    // Query results state (table view)
+    const [rows, setRows]         = useState<ResultRow[]>(saved?.rows ?? []);
+    const [columns, setColumns]   = useState<string[]>(saved?.columns ?? []);
+    const [lastRun, setLastRun]   = useState<string | null>(saved?.lastRun ?? null);
+
+    // UI state
+    const [input, setInput]       = useState("");
+    const [loading, setLoading]   = useState(false);
+
+    // CSV export state
     const [csvCopied, setCsvCopied] = useState(false);
-    const [csvModal,  setCsvModal]  = useState<string | null>(null);
-    const chatEndRef                = useRef<HTMLDivElement>(null);
-    const abortControllerRef        = useRef<AbortController | null>(null);
+    const [csvModal, setCsvModal]   = useState<string | null>(null);
+
+    const chatEndRef = useRef<HTMLDivElement>(null);
+
+    // Used to cancel in-flight API requests
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     // Mirror state to localStorage so it survives iframe teardown
     useEffect(() => { saveState({ messages }); }, [messages]);
@@ -106,12 +127,13 @@ const ChatVisualInner: React.FC = () => {
     useEffect(() => { saveState({ columns });  }, [columns]);
     useEffect(() => { saveState({ lastRun });  }, [lastRun]);
 
+    // Auto-scroll chat to bottom when messages update
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // ── Send ─────────────────────────────────────────────────────────────────
-
+    // ── Send Query ───────────────────────────────────────────────────────────
+    // Sends user question + history to FastAPI backend for SQL generation
     const handleSend = async () => {
         const question = input.trim();
         if (!question || loading) return;
@@ -119,6 +141,7 @@ const ChatVisualInner: React.FC = () => {
         const controller = new AbortController();
         abortControllerRef.current = controller;
 
+        // Append user message immediately
         setMessages(prev => [...prev, { role: "user", content: question }]);
         setInput("");
         setLoading(true);
@@ -134,13 +157,16 @@ const ChatVisualInner: React.FC = () => {
             let data: any = {};
             try { data = await response.json(); } catch { data = {}; }
 
+            // Handle HTTP errors from backend
             if (!response.ok) {
                 const errMsg = typeof data?.detail === "string"
-                    ? data.detail
-                    : `Server error ${response.status}`;
+                        ? data.detail
+                        : `Server error ${response.status}`;
+
                 setMessages(prev => [...prev, {
                     role: "assistant" as const, content: "", error: errMsg
                 }]);
+
                 setLoading(false);
                 abortControllerRef.current = null;
                 return;
@@ -148,12 +174,13 @@ const ChatVisualInner: React.FC = () => {
 
             const sql: string | null =
                 data.sql && typeof data.sql === "string" && data.sql.trim() !== ""
-                    ? data.sql.trim()
-                    : null;
+                ? data.sql.trim()
+                : null;
 
             const resultRows: ResultRow[] = Array.isArray(data.rows) ? data.rows : [];
             const truncated: boolean = !!data.truncated;
 
+            // Append assistant response (SQL result)
             setMessages(prev => [...prev, {
                 role: "assistant" as const,
                 content: "",
@@ -163,14 +190,16 @@ const ChatVisualInner: React.FC = () => {
                 error: sql ? undefined : "Model returned empty SQL — try rephrasing.",
             }]);
 
+            // Maintain conversational history for backend context
             if (sql) {
                 setHistory(prev => [
                     ...prev,
-                    { role: "user",      content: question },
+                    { role: "user", content: question },
                     { role: "assistant", content: sql },
                 ]);
             }
 
+            // Populate table results
             if (resultRows.length > 0) {
                 setRows(resultRows);
                 setColumns(Object.keys(resultRows[0]));
@@ -179,6 +208,7 @@ const ChatVisualInner: React.FC = () => {
 
         } catch (err: any) {
             const isAbort = err?.name === "AbortError";
+
             setMessages(prev => [...prev, {
                 role: "assistant" as const,
                 content: "",
@@ -192,17 +222,16 @@ const ChatVisualInner: React.FC = () => {
         setLoading(false);
     };
 
-    // ── Abort ────────────────────────────────────────────────────────────────
-
+    // ── Abort Request ────────────────────────────────────────────────────────
     const handleAbort = () => {
         abortControllerRef.current?.abort();
     };
 
-    // ── Clear ────────────────────────────────────────────────────────────────
-
+    // ── Clear All State ──────────────────────────────────────────────────────
     const handleClear = () => {
         abortControllerRef.current?.abort();
         localStorage.removeItem(STORAGE_KEY);
+
         setMessages([]);
         setHistory([]);
         setRows([]);
@@ -212,8 +241,7 @@ const ChatVisualInner: React.FC = () => {
         setCsvModal(null);
     };
 
-    // ── Keyboard ─────────────────────────────────────────────────────────────
-
+    // ── Keyboard Shortcut (Enter to send) ────────────────────────────────────
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -221,38 +249,43 @@ const ChatVisualInner: React.FC = () => {
         }
     };
 
-    // ── CSV export ────────────────────────────────────────────────────────────
+    // ── CSV Export Helpers ───────────────────────────────────────────────────
 
+    // Convert table rows into CSV string
     const buildCsv = (): string => {
         const header = columns.join(",");
+
         const body = rows.map(row =>
             columns.map(col => {
                 const val = row[col];
                 if (val === null || val === undefined) return "";
                 const str = String(val);
+
+                // Escape CSV special characters
                 return str.includes(",") || str.includes('"') || str.includes("\n")
                     ? `"${str.replace(/"/g, '""')}"`
                     : str;
             }).join(",")
         ).join("\n");
+
         return header + "\n" + body;
     };
 
+    // Export CSV (clipboard first, modal fallback)
     const handleExportCSV = async () => {
         if (rows.length === 0) return;
+
         const csv = buildCsv();
 
-        // Primary: clipboard — works in most PBI contexts on a user gesture
         try {
             await navigator.clipboard.writeText(csv);
             setCsvCopied(true);
             setTimeout(() => setCsvCopied(false), 2500);
             return;
         } catch {
-            // Clipboard blocked — fall through to modal
+            // fallback if clipboard blocked in Power BI sandbox
         }
 
-        // Fallback: show CSV in a copyable textarea modal
         setCsvModal(csv);
     };
 

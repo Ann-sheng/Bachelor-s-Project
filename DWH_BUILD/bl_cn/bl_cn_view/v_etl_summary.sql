@@ -1,6 +1,7 @@
 
 
---  Aggregated performance stats per procedure Shows total runs, success rate, avg duration, total rows
+-- Aggregated ETL performance summary per procedure
+-- Provides run counts, success rate, execution times, and row processing metrics
 
 CREATE OR REPLACE VIEW bl_cn.v_etl_summary AS
 SELECT

@@ -1,4 +1,6 @@
---  Surrogate key generators for all BL_3NF entities
+-- Sequences for generating surrogate keys in the 3NF layer
+-- Each sequence is used for a specific dimension or entity
+
 
 CREATE SEQUENCE IF NOT EXISTS bl_3nf.seq_ce_suppliers START 1 INCREMENT 1;
 

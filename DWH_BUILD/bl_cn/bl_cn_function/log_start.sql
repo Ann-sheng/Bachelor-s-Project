@@ -1,6 +1,6 @@
 
-
--- PURPOSE : Called at the START of every load procedure Creates a STARTED log entry and returns log_id Reads run_id from session variable if set by master
+-- Creates a STARTED log entry for a procedure execution and returns the log_id
+-- Reads run_id from session context if provided by the master ETL process
 
 CREATE OR REPLACE FUNCTION bl_cn.log_start(
     p_procedure_name VARCHAR(100),

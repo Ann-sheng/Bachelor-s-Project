@@ -1,3 +1,5 @@
+-- Loads and cleans offline sales data from the SRC layer into STG_CLN.
+-- Applies standardization, validation, and transaction-level deduplication.
 
 CREATE OR REPLACE PROCEDURE stg_cln.load_stg_offline()
 LANGUAGE plpgsql AS $$
@@ -13,7 +15,7 @@ BEGIN
 
     TRUNCATE TABLE stg_cln.sales_offline;
     DELETE FROM stg_cln.reject_sales WHERE source_system = 'OFFLINE';
-
+    -- Load valid records into the staging table after
     INSERT INTO stg_cln.sales_offline (
         customer_id,
         customer_firstname,
@@ -109,7 +111,8 @@ BEGIN
     ) deduped;
 
     GET DIAGNOSTICS v_inserted = ROW_COUNT;
-
+    -- Capture invalid source records and rejection reasons
+    -- for audit, data quality monitoring, and troubleshooting.
     INSERT INTO stg_cln.reject_sales (source_system, source_table, reject_reason, raw_data)
     SELECT
         'OFFLINE',
@@ -146,7 +149,7 @@ BEGIN
     ) s;
 
     GET DIAGNOSTICS v_rejected = ROW_COUNT;
-
+    -- Record load metrics and execution status for ETL monitoring.
     CALL bl_cn.log_success(v_log_id, v_inserted);
 
     RAISE NOTICE '[load_stg_offline] Total src rows: % | Inserted (valid, deduped): % | Rejected: %',

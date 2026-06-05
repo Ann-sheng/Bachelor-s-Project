@@ -1,5 +1,6 @@
 
---  Called at SUCCESS end of every load procedure Updates log entry to SUCCESS with row counts
+-- Marks an ETL log entry as SUCCESS and stores row-level metrics
+-- Used at the end of load procedures to capture processing results
 
 CREATE OR REPLACE PROCEDURE bl_cn.log_success(
     p_log_id      BIGINT,

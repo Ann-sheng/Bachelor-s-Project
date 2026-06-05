@@ -1,4 +1,5 @@
--- Incremental load of FCT_TRANSACTIONS_DD from BL_3NF.
+-- Incremental load of the fact table FCT_TRANSACTIONS_DD from BL_3NF source system
+-- Joins dimension tables and calculates derived measures for analytics
 
 CREATE OR REPLACE PROCEDURE bl_dm.load_fct_transactions_dd()
 LANGUAGE plpgsql AS $$
@@ -9,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_fct_transactions_dd', 'BL_DM');
 
+    -- Insert only new transactions into the fact table
     INSERT INTO bl_dm.fct_transactions_dd (
         transaction_src_id,
         product_surr_id, 
@@ -43,11 +45,15 @@ BEGIN
         COALESCE(t.transaction_quantity_sold, 0),
         COALESCE(t.transaction_discount_pct,  0),
         COALESCE(t.transaction_sale_amount,   0),
+
+        -- Derived metric: gross profit
         CASE
             WHEN dp.product_surr_id IS NULL OR dp.product_surr_id = -1 THEN NULL
             ELSE t.transaction_sale_amount
                  - (t.transaction_quantity_sold * dp.product_unit_cost)
         END,
+
+        -- Derived metric: profit margin
         CASE
             WHEN dp.product_surr_id IS NULL OR dp.product_surr_id = -1 THEN NULL
             WHEN t.transaction_sale_amount <> 0
@@ -56,9 +62,11 @@ BEGIN
                  / t.transaction_sale_amount
             ELSE NULL
         END,
+
         NOW(), NOW()
     FROM bl_3nf.ce_transactions t
 
+    -- Dimension joins
     LEFT JOIN bl_3nf.ce_products ds            
            ON ds.product_id = t.product_id
     LEFT JOIN bl_dm.dm_products dp
@@ -94,6 +102,7 @@ BEGIN
     LEFT JOIN bl_dm.dim_dates dd_ship  ON dd_ship.full_date  = t.transaction_shipped_dt
     LEFT JOIN bl_dm.dim_dates dd_deliv ON dd_deliv.full_date = t.transaction_delivery_dt
 
+    -- Prevent duplicate fact inserts
     WHERE NOT EXISTS (
         SELECT 1 FROM bl_dm.fct_transactions_dd f
         WHERE f.transaction_src_id = t.transaction_id
@@ -101,13 +110,14 @@ BEGIN
 
     GET DIAGNOSTICS v_inserted = ROW_COUNT;
 
+    -- Log successful load
     CALL bl_cn.log_success(v_log_id, v_inserted);
     RAISE NOTICE '[load_fct_transactions_dd] Inserted: % rows', v_inserted;
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
 END;
 $$;
-

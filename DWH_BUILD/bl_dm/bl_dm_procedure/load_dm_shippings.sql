@@ -1,8 +1,5 @@
-
-
-
---  INSERT-only load from BL_3NF.CE_SHIPPINGS
-
+-- INSERT-only load for shipping dimension from CE_SHIPPINGS (BL_3NF source)
+-- Loads new shipping methods and carriers into the data mart
 
 CREATE OR REPLACE PROCEDURE bl_dm.load_dm_shippings()
 LANGUAGE plpgsql AS $$
@@ -13,6 +10,7 @@ DECLARE
 BEGIN
     v_log_id := bl_cn.log_start('bl_dm.load_dm_shippings', 'BL_DM');
 
+    -- Insert new shipping records that do not already exist in the dimension
     INSERT INTO bl_dm.dm_shippings (
         shipping_surr_id,
         shipping_src_id,
@@ -39,11 +37,13 @@ BEGIN
 
     GET DIAGNOSTICS v_inserted = ROW_COUNT;
 
+    -- Log successful execution
     CALL bl_cn.log_success(v_log_id, v_inserted);
 
     RAISE NOTICE '[load_dm_shippings] Inserted: %', v_inserted;
 
 EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
     GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
     CALL bl_cn.log_failure(v_log_id, v_err_msg);
     RAISE;
