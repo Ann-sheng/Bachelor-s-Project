@@ -57,7 +57,7 @@
     "id": 10,
     "category": "date",
     "question": "Which month in 2023 had the highest total gross profit?",
-    "sql": "SELECT d.month_name, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2023 GROUP BY d.month_num, d.month_name ORDER BY total_gross_profit DESC LIMIT 1;"
+    "sql": "SELECT d.month_num, d.month_name, SUM(f.transaction_gross_profit) AS total_gross_profit FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key WHERE d.year = 2023 GROUP BY d.month_num, d.month_num, d.month_name ORDER BY total_gross_profit DESC LIMIT 1;"
   },
   {
     "id": 11,
@@ -130,7 +130,7 @@
     "id": 22, 
     "category": "employee_scd2", 
     "question": "Who are the top 10 employees by total sales?", 
-    "sql": "SELECT e.employee_firstname, e.employee_lastname, e.employee_title, SUM(f.transaction_sale_amount) AS total_sales FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_surr_id, e.employee_firstname, e.employee_lastname, e.employee_title ORDER BY total_sales DESC LIMIT 10;"
+    "sql": "SELECT e.employee_firstname, e.employee_lastname, e.employee_title, SUM(f.transaction_sale_amount) AS total_sales FROM bl_dm.fct_transactions_dd f JOIN bl_dm.v_employees_public e ON f.employee_surr_id = e.employee_surr_id WHERE e.is_active = TRUE GROUP BY e.employee_src_id, e.employee_firstname, e.employee_lastname, e.employee_title ORDER BY total_sales DESC LIMIT 10;"
   },
   {
     "id": 23, 
@@ -292,7 +292,7 @@
     "id": 49,
     "category": "edge_case",
     "question": "What is the total revenue from transactions placed on weekends versus weekdays?",
-    "sql": "SELECT d.is_weekend, SUM(f.transaction_sale_amount) AS total_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key GROUP BY d.is_weekend ORDER BY d.is_weekend;"
+    "sql": "SELECT SUM(CASE WHEN d.is_weekend = TRUE THEN f.transaction_sale_amount ELSE 0 END) AS weekend_revenue, SUM(CASE WHEN d.is_weekend = FALSE THEN f.transaction_sale_amount ELSE 0 END) AS weekday_revenue FROM bl_dm.fct_transactions_dd f JOIN bl_dm.dim_dates d ON f.event_date_key = d.date_key;"
   },
   {
     "id": 50,
