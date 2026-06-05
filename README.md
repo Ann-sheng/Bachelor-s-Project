@@ -23,7 +23,7 @@
 9. [Running the Evaluation Suite](#running-the-evaluation-suite)
 10. [Troubleshooting](#troubleshooting)
 11. [License](#license)
-12. [Contributing](#contributing)
+12. [Author](#Author)
 
 ---
 
@@ -45,41 +45,6 @@ This project implements a **retail data warehouse** for the fictional vintage cl
 
 ---
 
-## Architecture
-
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                         DATA FLOW                                    │
-│                                                                      │
-│  Generator ──► MinIO (Parquet) ──► SRC ──► STG_CLN ──► BL_3NF        │
-│                                                           │          │
-│                                                        BL_DM         │
-│                                                           │          │
-│                                                     Power BI         │
-│                                                      │               │
-│                                              Custom Visual           │
-│                                                      │               │
-│                                            FastAPI NL-to-SQL         │
-│                                                      │               │
-│                                         Ollama + SQLCoder-ft         │
-└──────────────────────────────────────────────────────────────────────┘
-```
-
-### DWH Layer Progression
-
-```
-src         Raw landing tables (VARCHAR everything, no validation)
-  │
-stg_cln     Cleaned & typed staging (duplicate removal, reject capture)
-  │
-bl_3nf      3NF core entities (CE_*) — SCD Type 1 & 2
-  │
-bl_dm       Star schema (fact + dimensions) — optimised for analytics
-  │
-bl_cn       Control & logging (ETL run tracking, views, error surfacing)
-```
-
----
 
 ## Repository Structure
 
@@ -360,9 +325,9 @@ Google Colab with a T4 GPU and takes approximately 60 minutes.
 
 | Model | Exact match | Execution match |
 |---|---|---|
-| Baseline SQLCoder-7B-2 | — | ~62% |
-| + Prompt engineering | — | ~74% |
-| + Fine-tuning | — | ~82% |
+| Baseline SQLCoder-7B-2 | — | ~1% |
+| + Prompt engineering | — | ~48% |
+| + Fine-tuning | — | ~70% |
 
 ---
 
