@@ -71,9 +71,13 @@ GRANT SELECT ON bl_dm.dm_suppliers,
 
 CREATE OR REPLACE VIEW bl_dm.v_employees_public AS
 SELECT
-    employee_surr_id, employee_src_id,
-    employee_firstname, employee_lastname,
-    employee_title, employee_email, employee_phone_number,
+    employee_surr_id,
+     employee_src_id,
+    employee_firstname,
+     employee_lastname,
+    employee_title, 
+    employee_email,
+    employee_phone_number,
     NULL::NUMERIC(12,2) AS employee_salary, 
     start_dt, end_dt, is_active,
     ta_insert_dt, source_system, source_entity
