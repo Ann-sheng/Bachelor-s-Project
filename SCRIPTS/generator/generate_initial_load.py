@@ -273,7 +273,15 @@ def build_offline_transactions(
     return df
 
 
-def build_online_transactions(...):
+def build_online_transactions(
+    n: int,
+    customers_df: pd.DataFrame,
+    products_df: pd.DataFrame,
+    employees_df: pd.DataFrame,
+    shipping_df: pd.DataFrame,
+    rng: np.random.Generator,
+    tx_id_start: int = 1,
+) -> pd.DataFrame:
     # Online transactions (e-commerce)
     print(f"  Generating {n:,} online transactions...")
     cust_idx   = rng.choice(len(customers_df), size=n)

@@ -15,11 +15,11 @@ REVOKE ALL ON SCHEMA bl_cn    FROM PUBLIC;
 
 
 -- dwh_admin: full access on all schemas
-GRANT ALL ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn,  TO dwh_admin;
+GRANT ALL ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn  TO dwh_admin;
 GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_admin;
 
 -- dwh_etl: pipeline execution
-GRANT USAGE   ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn,  TO dwh_etl;
+GRANT USAGE   ON SCHEMA src, stg_cln, bl_3nf, bl_dm, bl_cn  TO dwh_etl;
 GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_etl;
 
 -- dwh_analyst: DM + monitoring views
@@ -32,11 +32,9 @@ GRANT CONNECT ON DATABASE "dnd_sales" TO dwh_reporter;
 
 -- Table-level grants on existing objects
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA src      TO dwh_etl;
-GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA  TO dwh_etl;
 GRANT SELECT, INSERT, UPDATE, TRUNCATE, DELETE ON ALL TABLES IN SCHEMA stg_cln  TO dwh_etl;
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA bl_3nf   TO dwh_etl;
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA bl_dm    TO dwh_etl;
-GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA  bl_cn TO dwh_etl;
 GRANT SELECT, INSERT, UPDATE           ON ALL TABLES IN SCHEMA bl_cn TO dwh_etl;
 
 -- Analyst: all DM tables
@@ -71,13 +69,25 @@ GRANT SELECT ON bl_dm.dm_suppliers,
 
 CREATE OR REPLACE VIEW bl_dm.v_employees_public AS
 SELECT
-    employee_surr_id, employee_src_id,
-    employee_firstname, employee_lastname,
-    employee_title, employee_email, employee_phone_number,
+    employee_surr_id,
+    employee_src_id,
+    employee_firstname,
+    employee_lastname,
+    employee_title,
+    employee_email,
+    employee_phone_number,
     NULL::NUMERIC(12,2) AS employee_salary, 
-    start_dt, end_dt, is_active,
-    ta_insert_dt, source_system, source_entity
-FROM bl_dm.dm_employees_scd;
+    employee_store_branch_src_id,
+    employee_store_branch_state,
+    employee_store_branch_city,
+    start_dt,
+    end_dt,
+    is_active,
+    ta_insert_dt,
+    source_system,
+    source_entity
+FROM bl_dm.dm_employees_scd
+WHERE is_active = TRUE;
 
 GRANT SELECT ON bl_dm.v_employees_public TO dwh_analyst;
 GRANT SELECT ON bl_dm.v_employees_public TO dwh_reporter;
