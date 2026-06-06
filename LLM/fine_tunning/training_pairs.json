@@ -1,4 +1,4 @@
-[
+employee[
   {"question": "Show me the total sales amount across all transactions.", "sql": "SELECT SUM(f.transaction_sale_amount) AS total_sales FROM bl_dm.fct_transactions_dd f"},
   {"question": "Calculate overall income from all sales records.", "sql": "SELECT SUM(f.transaction_sale_amount) AS total_income FROM bl_dm.fct_transactions_dd f"},
   {"question": "Give me the sum of all transaction amounts.", "sql": "SELECT SUM(f.transaction_sale_amount) AS total_amount FROM bl_dm.fct_transactions_dd f"},
