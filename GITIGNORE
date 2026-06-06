@@ -1,0 +1,285 @@
+# ────────────────────────────────────────────────────────────
+#  SECRETS & ENVIRONMENT
+# ────────────────────────────────────────────────────────────
+
+.env
+.env.*
+!.env.example
+*.env
+
+SCRIPTS/.env
+LLM/.env
+
+
+# ────────────────────────────────────────────────────────────
+#  PYTHON
+# ────────────────────────────────────────────────────────────
+
+# Byte-compiled / optimised
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Distribution / packaging
+.Python
+build/
+dist/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+MANIFEST
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+conda-env/
+
+# PyInstaller
+*.spec
+
+# Unit test / coverage
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# pyright / pylance
+.pyright/
+pyrightconfig.json
+
+# Ruff / linting caches
+.ruff_cache/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# Spyder
+.spyderproject.db
+.spyproject/
+
+# Rope
+.ropeproject/
+
+# mkdocs
+/site/
+
+
+# ────────────────────────────────────────────────────────────
+#  DATA FILES  (generated / large / sensitive)
+# ────────────────────────────────────────────────────────────
+
+# Parquet files produced by generators
+*.parquet
+*.snappy.parquet
+
+# CSV exports
+*.csv
+!LLM/evaluation/test_pairs.json        # keep test pairs in VCS
+
+# Temporary local data dirs referenced in .env
+data/
+data/initial/
+data/incremental/
+data/reference/
+
+# MinIO / S3 local mock data
+minio_data/
+.minio/
+
+
+# ────────────────────────────────────────────────────────────
+#  DATABASE / SQL ARTEFACTS
+# ────────────────────────────────────────────────────────────
+
+# PostgreSQL dump files
+*.sql.gz
+*.dump
+*.pg_dump
+*.backup
+*.bak
+
+# pgAdmin workspace files
+*.pgpass
+pgadmin4.db
+pgadmin/
+
+
+# ────────────────────────────────────────────────────────────
+#  DOCKER / CONTAINERS
+# ────────────────────────────────────────────────────────────
+
+# Docker volume data mounted from compose
+postgres_data/
+minio_data/
+
+# Override compose files with local secrets
+docker-compose.override.yml
+docker-compose.local.yml
+
+
+# ────────────────────────────────────────────────────────────
+#  LLM / MODEL FILES
+# ────────────────────────────────────────────────────────────
+
+# GGUF model weights — too large for VCS
+*.gguf
+*.ggml
+*.bin
+
+# Merged / fine-tuned HuggingFace model directories
+LLM/fine_tunning/merged_model/
+LLM/fine_tunning/lora_adapter/
+LLM/fine_tunning/sqlcoder_ft*/
+merged_model/
+lora_adapter/
+
+# HuggingFace cache
+.cache/huggingface/
+~/.cache/huggingface/
+
+# Ollama model blobs (if stored locally)
+ollama_models/
+
+# Evaluation result files with raw row data (can be large)
+LLM/evaluation/results_*.json
+# Keep only the committed baselines if desired — uncomment to re-include:
+# !LLM/evaluation/results_baseline.json
+# !LLM/evaluation/results_finetuned.json
+# !LLM/evaluation/results_after_eng.json
+
+# Security test results
+LLM/api/security_results*.json
+# Keep the committed reference result — uncomment to re-include:
+# !LLM/api/security_results_v1.json
+
+# Colab / training artefacts synced from Google Drive
+LLM/fine_tunning/sqlcoder_ft_f16.gguf
+LLM/fine_tunning/sqlcoder_ft_q4km.gguf
+
+
+# ────────────────────────────────────────────────────────────
+#  NODE / TYPESCRIPT  (Power BI custom visual)
+# ────────────────────────────────────────────────────────────
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+POWER_BI_REPORT/cust_visual/sqlChatVisual/.tmp/
+POWER_BI_REPORT/cust_visual/sqlChatVisual/dist/
+
+# Compiled Power BI visual package
+*.pbiviz
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# ESLint cache
+.eslintcache
+
+
+# ────────────────────────────────────────────────────────────
+#  POWER BI  (report files)
+# ────────────────────────────────────────────────────────────
+
+# Power BI Desktop files often contain embedded data
+*.pbix
+*.pbit
+
+
+# ────────────────────────────────────────────────────────────
+#  LOGS & TEMP FILES
+# ────────────────────────────────────────────────────────────
+
+*.log
+logs/
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Pipeline run artefacts
+pipeline_*.log
+etl_run_*.log
+
+
+# ────────────────────────────────────────────────────────────
+#  OS / EDITOR ARTEFACTS
+# ────────────────────────────────────────────────────────────
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon?
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+
+# VSCode
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# JetBrains (PyCharm / DataGrip / WebStorm)
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+\#*\#
+.\#*

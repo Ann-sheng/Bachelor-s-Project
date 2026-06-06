@@ -1,0 +1,17 @@
+{
+		"version": "1.0.0.0",
+		"author": {"name":"Ana","email":"ana@example.com"},
+		"resources": [
+			{
+				"resourceId": "rId0",
+				"sourceType": 5,
+				"file": "resources/sqlChatVisual17C34E6E05D34ED98671C13491311288.pbiviz.json"
+			}
+		],
+		"visual": {"name":"sqlChatVisual","displayName":"SqlChatVisual","guid":"sqlChatVisual17C34E6E05D34ED98671C13491311288","visualClassName":"Visual","version":"1.0.0.0","description":"SQL Chat Visual","supportUrl":"https://github.com/Ann-sheng/Bachelor-s-Project","gitHubUrl":"https://github.com/Ann-sheng/Bachelor-s-Project"},
+		"metadata": {
+			"pbivizjson": {
+				"resourceId": "rId0"
+			}
+		}
+	}

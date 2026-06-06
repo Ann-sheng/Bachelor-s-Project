@@ -23,3 +23,5 @@ draft 11 power bi - crearte custom visual for llm inside seperate power bi sheet
 draft 12 documentation - create documents such as readme, arcitecture, user manual, etc
 
 draft 13 bug control - perform final evaluation, bug control, add nice to have features.
+
+git repo - https://github.com/Ann-sheng/Bachelor-s-Project 

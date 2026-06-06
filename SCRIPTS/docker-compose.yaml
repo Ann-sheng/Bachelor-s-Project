@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: DnD_minio
+
+    # S3-compatible object storage used for raw/reference parquet files
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+    environment:
+      MINIO_ROOT_USER:     ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+
+    # API endpoint on 9000, web console on 9001
+    command: server /data --console-address ":9001"
+
+    # Persist MinIO data between container restarts
+    volumes:
+      - minio_data:/data
+
+    # Wait until MinIO is accepting requests
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: DnD_postgres
+
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB:       ${DB_NAME}
+
+    volumes:
+      # Persistent PostgreSQL storage
+      - postgres_data:/var/lib/postgresql/data
+
+      # Executes automatically on first database initialization
+      - ./sql/init_staging.sql:/docker-entrypoint-initdb.d/init_staging.sql
+
+    # Verify database is ready before dependent services connect
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  minio_data:
+  postgres_data:

@@ -1,0 +1,83 @@
+-- Load and synchronize product dimension from CE_PRODUCTS (SCD-style MERGE logic)
+-- Inserts new products and updates existing ones when attributes change
+
+CREATE OR REPLACE PROCEDURE bl_dm.load_dm_products()
+LANGUAGE plpgsql AS $$
+DECLARE
+    v_log_id   BIGINT;
+    v_affected INT := 0;
+    v_err_msg  TEXT;
+BEGIN
+    v_log_id := bl_cn.log_start('bl_dm.load_dm_products', 'BL_DM');
+
+    -- Merge source product data into dimension table
+    MERGE INTO bl_dm.dm_products tgt
+    USING (
+        SELECT
+            p.product_id,
+            p.product_category,
+            p.product_name,
+            p.product_unit_cost,
+            p.product_unit_price,
+            p.product_warranty_period
+        FROM bl_3nf.ce_products p
+        WHERE p.product_id <> -1
+    ) src
+    ON (
+        tgt.product_src_id  = src.product_id
+        AND tgt.source_system = 'BL_3NF'
+        AND tgt.source_entity = 'CE_PRODUCTS'
+    )
+
+    -- Update existing records when changes are detected
+    WHEN MATCHED AND (
+        tgt.product_category        IS DISTINCT FROM src.product_category        OR
+        tgt.product_name            IS DISTINCT FROM src.product_name            OR
+        tgt.product_unit_cost       IS DISTINCT FROM src.product_unit_cost       OR
+        tgt.product_unit_price      IS DISTINCT FROM src.product_unit_price      OR
+        tgt.product_warranty_period IS DISTINCT FROM src.product_warranty_period
+    ) THEN UPDATE SET
+        product_category        = src.product_category,
+        product_name            = src.product_name,
+        product_unit_cost       = src.product_unit_cost,
+        product_unit_price      = src.product_unit_price,
+        product_warranty_period = src.product_warranty_period,
+        ta_update_dt            = NOW()
+
+    -- Insert new product records
+    WHEN NOT MATCHED THEN INSERT (
+        product_surr_id,
+        product_src_id,
+        product_category,
+        product_name,
+        product_unit_cost,
+        product_unit_price,
+        product_warranty_period,
+        ta_insert_dt, ta_update_dt,
+        source_system, source_entity
+    ) VALUES (
+        nextval('bl_dm.sq_product_surr_id'),
+        src.product_id,
+        COALESCE(src.product_category, 'n. a.'),
+        COALESCE(src.product_name,     'n. a.'),
+        COALESCE(src.product_unit_cost,  0),
+        COALESCE(src.product_unit_price, 0),
+        src.product_warranty_period,       
+        NOW(), NOW(),
+        'BL_3NF', 'CE_PRODUCTS'
+    );
+
+    GET DIAGNOSTICS v_affected = ROW_COUNT;
+
+    -- Log successful execution
+    CALL bl_cn.log_success(v_log_id, v_affected);
+
+    RAISE NOTICE '[load_dm_products] Rows affected: %', v_affected;
+
+EXCEPTION WHEN OTHERS THEN
+    -- Log failure and rethrow error
+    GET STACKED DIAGNOSTICS v_err_msg = MESSAGE_TEXT;
+    CALL bl_cn.log_failure(v_log_id, v_err_msg);
+    RAISE;
+END;
+$$;
