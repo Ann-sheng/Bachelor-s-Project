@@ -25,3 +25,5 @@ draft 12 documentation - create documents such as readme, arcitecture, user manu
 draft 13 bug control - perform final evaluation, bug control, add nice to have features.
 
 git repo - https://github.com/Ann-sheng/Bachelor-s-Project 
+
+link to gguf (git doesn't allow files that large) - https://drive.google.com/file/d/1-ghAcLmaL5NyxCxEOHbHH803Mp0gd9OD/view?usp=drive_link 
